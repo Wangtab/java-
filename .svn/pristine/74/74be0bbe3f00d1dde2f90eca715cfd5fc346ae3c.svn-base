@@ -1,0 +1,27 @@
+﻿.sence_table{height: 500px;background-color:#CCD6DF;position: absolute;top: 50px;left: 50%;width: 1000px;margin-left: -500px;display: none}
+.sence_table p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.sence_table p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.sence_table .table_box{overflow-y:scroll;height: 400px}
+.sence_table .table_box table{width: 100%;border-collapse:collapse;}
+.sence_table .table_box table tr th, .sence_table .table_box table tr td{color:#fff;height: 30px;line-height: 30px;border:1px solid #fff;text-align: center;font-weight: normal;font-size:15px}
+.sence_table .table_box table tr th{background-color:#FF9900;}
+.sence_table .table_box table tr td{background-color:#014B94}
+.sence_table .table_box table tr td img{width: 24px;height: 24px;}
+.sence_table .table_box table tr td .sence_delete_button,.table_box table tr td .sence_edit_button{width: 21px;height: 21px;display: inline-block;margin-top: 6px;margin-right: 2px;
+    background: url(../images/table_ico.png) no-repeat;}
+.sence_table .table_box table tr td .sence_delete_button{background-position:-97px -6px}
+.sence_table .table_box table tr td .sence_edit_button{background-position:-27px -6px}
+.sence_table .sence_btn_warpper{height: 40px;}
+.sence_table .sence_btn_warpper .sence_add_btn{height: 32px;padding: 0 12px;line-height: 32px;color:#fff;background-color:#126CC4;float: left;margin-left: 10px;text-align: center;cursor: pointer;}
+.sence_table .sence_btn_warpper .sence_add_btn img{width:16px;height:16px;float: left;margin-top:9px;margin-right:6px}
+.second_form{height: 350px;}
+.second_form .detail_box .date_box{position: relative;float: left;width: 232px}
+.second_form .detail_box input[type=text]{width: 232px}
+.slider.slider-horizontal{width: 232px}
+.sence_win_judge_win{width:400px;height:150px;background-color:#fff;position: fixed;left: 50%;top: 150px;margin-left: -240px;
+    margin-top: -100px;border:1px solid #ccc;overflow: hidden;z-index: 800;display: none}
+.sence_win_judge_win p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.sence_win_judge_win p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.sence_win_judge_win h1{height: 40px;line-height: 40px;font-size: 16px;text-align: center;letter-spacing: 2px;font-weight:300;color:#333;}
+.sence_win_judge_win .judge_btn{height: 40px;padding-left: 100px}
+.sence_win_judge_win .judge_btn h2{width:80px;height: 28px;background-color:#126EC5;color:#fff;float: left;margin-right: 40px;font-size: 16px;line-height: 28px;text-align: center;font-weight: normal;margin-top:8px;cursor:pointer;}

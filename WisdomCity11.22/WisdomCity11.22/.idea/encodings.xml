@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/src/main/generatorConfig.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/lamp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/log4j.properties" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/main/mybatis-generator-core-1.3.1.jar" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/mysql-connector-java-5.1.7-bin.jar" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/spring" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

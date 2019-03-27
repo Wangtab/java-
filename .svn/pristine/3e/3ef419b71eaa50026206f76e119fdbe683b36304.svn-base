@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TMonitorServiceMapper">
+    <select id="getTodayPower" resultType="java.util.Map">
+	select r.road_name, ifnull(round(sum(rd.power),0),0) total from record_nb_data rd
+	left join nbiot_manage nm on rd.nb_device = nm.id
+	left join lamp l on l.nbdeviceId = nm.id
+	left join pole_manage p on l.pole_id = p.id
+	left join road_manage r on p.road_id = r.id
+	where l.delflag= 0 and rd.record_time between date(sysdate()) and adddate(date(sysdate()),1)
+	group by r.road_name
+    </select>
+
+    <select id="getLampDetail" parameterType="integer" resultType="java.util.Map">
+        select c.id,a.areaName,r.road_name,rm.cname roadline_name,l.poleCode,lampnum,l.dbcircuit,
+        e.name elecbox_name,rn.dimming,rn.vol,rn.ele,rn.power,rn.record_time,rn.temp,rn.pele,
+        rn.pvol,rn.bvol
+        from controller c
+        left join lamp l on l.controller_id = c.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join elecbox_manage e on l.pdId = e.id
+        left join real_nb_data rn on c.nboit_manage_id = rn.dId
+        where c.id = #{id}
+    </select>
+
+    <select id="getDeviceStatusForWin" parameterType="integer" resultType="java.util.HashMap">
+        select rd.dimming,c.id,r.id road_id from controller c
+        left join real_nb_data rd on c.nboit_manage_id = rd.nb_device
+        left join lamp l on l.controller_id = c.id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        where c.id = #{id} limit 0,1
+    </select>
+
+    <select id="getLampDataLocation" resultType="java.util.Map">
+        select c.id,l.la,l.lo,lt.lamptypename as lampTypeId,rd.conn_state,rd.on_off from controller c
+        left join lamp l on l.controller_id = c.id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nb_device
+        left join lamptype lt on l.typeId = lt.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        left join real_nb_data rn on c.nboit_manage_id = rn.dId
+        where c.delflag = 0 and l.delflag = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        and rd.conn_state is not null and  rn.did IS NOT NULL
+    </select>
+    <!--单灯 开关 -->
+    <update id="controllerLightSwith">
+        update real_nb_data set on_off = #{onOff},dimming = #{dimming} where nbid = #{nbId}
+    </update>
+    <!--单灯-->
+    <select id="getNbDeviceByControllerId" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.protocol,nm.nb_device,nm.id,rd.dimming,rd.power from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nbid
+        where c.id = #{id}
+        <if test="null != on_off and '' != on_off">
+            and rd.on_off = #{on_off}
+        </if>
+    </select>
+
+    <select id="batchSwitchOperLamp" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.protocol,nm.nb_device,nm.id,rd.dimming,rd.power from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nbid
+        where c.id in
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        <if test="null != on_off and '' != on_off">
+            and rd.on_off = #{on_off}
+        </if>
+    </select>
+
+    <select id="getSingleNBDeviceData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select c.protocol,nm.nb_device,nm.id,rd.dimming ,rd.on_off from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join real_nb_data rd on rd.nb_device = c.nboit_manage_id
+        where c.id = #{id} and rd.on_off = #{onOff}
+    </select>
+    
+    <update id="updateLightOnOffState">
+        update real_nb_data set on_off = #{state},dimming = #{dimming},conn_state = #{conn_state} where nbid = #{id}
+    </update>
+
+    <update id="updateLampStatusByRoadId">
+        update real_nb_data set on_off = #{on_off} where nbid in (select * from (
+        select rd.nbid from lamp l
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on r.id = p.road_id
+        left join nbiot_manage nm on nm.id = l.nbdeviceId
+        left join real_nb_data rd on rd.nbid = nm.id
+        where r.id = #{roadId} group by nbid
+        ) a)
+    </update>
+
+    <select id="getLampStatusByRoadId" parameterType="integer" resultType="java.util.Map">
+        select rd.* from lamp l
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on r.id = p.road_id
+        left join nbiot_manage nm on nm.id = l.nbdeviceId
+        left join real_nb_data rd on rd.nbid = nm.id
+        where r.id = #{roadId}
+    </select>
+
+    <select id="getGroupManageByControllerId" resultType="java.util.Map">
+    select pm.id,pm.group_name cname from plan_group_manage pm
+    left join plan_group_manage_detail pd on pm.id = pd.plan_group_id
+    left join controller c on c.id = pd.lamp_id
+    left join sys_user u on c.createby = u.id
+    left join organization o on u.org_id = o.id
+    where pm.delFlag = 0 and c.id = #{id} and o.org_code like CONCAT('%',#{orgCode},'%')
+    group by pm.id
+    </select>
+
+    <update id="loopSwitchByConcentratorId">
+        update real_nb_data set on_off = #{on_off}  where did in (
+        select * from (
+        select rd.did from lamp l
+        left join controller c on l.controller_id = c.id
+        left join concentrator concen on concen.id = c.concentrator_id
+        left join nbiot_manage nm on nm.id = l.nbdeviceId
+        left join real_nb_data rd on nm.id = rd.nbid
+        where l.delflag = 0 and concen.id = #{concenId} and c.concentratorloop = #{loopNum} and on_off = #{opp_on_off}
+        group by rd.did) a
+        )
+    </update>
+
+    <select id="getNbDeviceByRoadId" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.protocol,nm.nb_device,nm.id,rd.dimming,rd.power from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nbid
+        left join lamp l on c.id = l.controller_id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        where r.id = r.id =#{roadId} and c.delflag = 0 and l.delflag = 0 and rm.del_flag = 0 and r.del_flag = 0
+        <if test="null != on_off and '' != on_off">
+            and rd.on_off = #{on_off}
+        </if>
+        group by nm.nb_device
+    </select>
+
+    <select id="getNbDeviceByGroupId" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select l.protocolid,nm.nb_device,nm.id,dimming,rd.power from plan_group_manage pm
+        left join plan_group_manage_detail pd on pm.id = pd.plan_group_id
+        left join lamp l on pd.lamp_id = l.id
+        left join nbiot_manage nm on l.nbdeviceId = nm.id
+        left join real_nb_data rd on nm.id = nbid
+        where pm.id = #{groupId} and l.delflag = 0
+        <if test="null != on_off and '' != on_off">
+            and rd.on_off = #{on_off}
+        </if>
+        group by nm.nb_device
+    </select>
+
+    <select id="getNbDeviceByLoopAndConcenId" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.protocol,nm.nb_device,nm.id,rd.dimming,rd.power from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nbid
+        left join lamp l on c.id = l.controller_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where  c.delflag = 0 and l.delflag = 0 and l.dbcircuit = 1 and o.org_code like CONCAT('%',#{orgCode},'%')
+        where l.delflag = 0 and concen.id = #{concenId}
+        <if test="null != on_off and '' != on_off">
+            and rd.on_off = #{on_off}
+        </if>
+        group by nm.nb_device
+    </select>
+
+    <select id="getLampSwitchRecord" parameterType="integer" resultType="java.util.HashMap">
+        select * from record_lamp_switch
+        where nb_id = #{id} and on_off = 0
+        order by record_time desc limit 0,1
+    </select>
+
+    <insert id="addRecordWorkHour" parameterType="java.util.HashMap">
+        insert into record_work_hour values (REPLACE(UUID(),"-",""),#{startTime},#{endTime},#{hour},#{nbId})
+    </insert>
+
+    <select id="lampSwitchDataByUUID" parameterType="string" resultType="java.util.Map">
+        select * from lamp_switch where uuid = #{uuid} and is_over = 0;
+    </select>
+
+    <insert id="addLampSwitchRecord" parameterType="java.util.HashMap">
+        insert into record_lamp_switch values (REPLACE(UUID(),"-",""),#{onOff},#{dimming},NOW(),#{nbId})
+    </insert>
+
+    <select id="getDistributionListForMap" resultType="java.util.Map">
+        select a.areaName,e.id,e.name,e.longitude lo,e.latitude la,e.createTime from elecbox_manage e
+        left join road_manage r on r.id = e.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on e.createby = u.id
+        left join organization o on o.id = u.org_id
+        where e.del_flag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+    </select>
+
+    <select id="getAllLampDetailData" resultType="java.util.Map">
+        select l.lampname,l.controller_id AS conId,c.controllername,r.road_name,ifnull(concen.concentratorname,'-') concentratorname,a.areaName,rd.ele,rd.vol,rd.power,IFNULL(rd.temp,'-') temp,
+        case rd.conn_state when 1 then '在线' when 2 then '离线' when 3 then '离线' end lamp_status,
+        case rd.on_off when 0 then '开灯' when 1 then '关灯' end on_off,rd.dimming,rd.record_time  from lamp l
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on p.road_id = r.id
+        left join area_manage a on r.area_id = a.id
+        left join controller c on l.controller_id = c.id
+        left join concentrator concen on c.concentrator_id = concen.id
+        left join real_nb_data rd on l.nbdeviceId = rd.nbid
+        left join plan_group_manage_detail g on l.id = g.lamp_id
+        where l.delflag = 0
+        <if test="null != roadId and '' != roadId">
+            and r.id = #{roadId}
+        </if>
+        <if test="null != groupId and '' != groupId">
+            and g.plan_group_id = #{groupId}
+        </if>
+        LIMIT #{curpage}, #{showNum}
+    </select>
+
+    <select id="getCountAllLampDetailData" resultType="integer">
+        select count(*) from lamp l
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on p.road_id = r.id
+        left join plan_group_manage_detail g on l.id = g.lamp_id
+        where l.delflag = 0
+        <if test="null != roadId and '' != roadId">
+            and r.id = #{roadId}
+        </if>
+        <if test="null != groupId and '' != groupId">
+            and g.plan_group_id = #{groupId}
+        </if>
+    </select>
+
+    <select id="getSingleLampLotData" parameterType="integer" resultType="java.util.HashMap">
+        select c.protocol,c.business,nm.id,nm.nb_device from controller c
+        left join nbiot_manage nm on nm.id = c.nboit_manage_id
+        where c.id = #{id}
+    </select>
+
+    <update id="updateSingleLampLotData" parameterType="java.util.HashMap">
+        update real_nb_data set
+        vol = #{record_vol},ele=#{record_ele},
+
+        <if test="record_pvol != null and '' != record_pvol">
+            pvol = #{record_pvol},
+        </if>
+        <if test="record_pele != null and '' != record_pele">
+            pele = #{record_pele},
+        </if>
+        <if test="record_temp != null and '' != record_temp">
+            temp = #{record_temp},
+        </if>
+        <if test="record_bvol != null and '' != record_bvol">
+            bvol = #{record_bvol},
+        </if>
+        <if test="eventTime !=null and '' != eventTime">
+            record_time = #{eventTime},
+        </if>
+        power = #{record_power}
+        where nbid = #{nbid}
+    </update>
+    
+    <select id="getManyLampLotData" resultType="java.util.Map">
+        select nm.nb_device,nm.id nbId,l.protocolid from lamp l
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on p.road_id = r.id
+        left join nbiot_manage nm on l.nbdeviceId = nm.id
+        where 1=1 and nb_device is not null
+        <if test="roadId != null and '' != roadId ">
+            and r.id = #{roadId}
+        </if>
+    </select>
+
+    <update id="batchUpdatelampData" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update real_nb_data
+            <trim suffixOverrides=",">
+            <set>
+                <if test="item.record_vol != null and '' != item.record_vol">
+                    vol = #{item.record_vol},
+                </if>
+                <if test="null != item.record_ele and '' != item.record_ele">
+                    ele=#{item.record_ele},
+                </if>
+                <if test="item.record_pvol != null and '' != item.record_pvol">
+                    pvol = #{item.record_pvol},
+                </if>
+                <if test="item.record_pele != null and '' != item.record_pele">
+                    pele = #{item.record_pele},
+                </if>
+                <if test="item.record_temp != null and '' != item.record_temp">
+                    temp = #{item.record_temp},
+                </if>
+                <if test="item.record_bvol != null and '' != item.record_bvol">
+                    bvol = #{item.record_bvol},
+                </if>
+                <if test="item.eventTime !=null and '' != item.eventTime">
+                    record_time = #{item.eventTime},
+                </if>
+                <if test="item.record_power !=null and '' != item.record_power">
+                    power = #{item.record_power},
+                </if>
+                <if test="item.conSate != null and '' != item.conSate">
+                    conn_state = #{item.conSate},
+                </if>
+            </set>
+            </trim>
+            where nbid = #{item.nbid}
+        </foreach>
+    </update>
+
+    <insert id="batchAddTodayRecordData" parameterType="java.util.List">
+        insert into today_record_nb_data (id,nb_device,vol,ele,power,dimming,on_off,conn_state,record_time,temp,pvol,pele,bvol)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.nbid},
+            <choose>
+                <when test="item.record_vol == null or '' == item.record_vol">0,</when>
+                <when test="item.record_vol != null or '' != item.record_vol">#{item.record_vol},</when>
+            </choose>
+            <choose>
+                <when test="item.record_ele == null or '' == item.record_ele">0,</when>
+                <when test="item.record_ele != null or '' != item.record_ele">#{item.record_ele},</when>
+            </choose>
+            <choose>
+                <when test="item.record_power == null or '' == item.record_power">0,</when>
+                <when test="item.record_power != null or '' != item.record_power">#{item.record_power},</when>
+            </choose>
+            #{item.record_dimming},#{item.on_off},#{item.conSate},#{item.record_time},
+            <choose>
+                <when test="item.record_temp == null or '' == item.record_temp">0,</when>
+                <when test="item.record_temp != null or '' != item.record_temp">#{item.record_temp},</when>
+            </choose>
+            <choose>
+                <when test="item.record_pvol == null or '' == item.record_pvol">0,</when>
+                <when test="item.record_pvol != null or '' != item.record_pvol">#{item.record_pvol},</when>
+            </choose>
+            <choose>
+                <when test="item.record_pele == null or '' == item.record_pele">0,</when>
+                <when test="item.record_pele != null or '' != item.record_pele">#{item.record_pele},</when>
+            </choose>
+            <choose>
+                <when test="item.record_bvol == null or '' == item.record_bvol">0</when>
+                <when test="item.record_bvol != null or '' != item.record_bvol">#{item.record_bvol}</when>
+            </choose>)
+        </foreach>
+    </insert>
+
+    <select id="getCityForMap" resultType="java.util.HashMap">
+        select l.city_name,l.latitude,l.longitude from lamp_city_setting l
+        left join organization o on o.id = l.org_id
+        where o.org_code = #{orgCode} limit 0,1
+    </select>
+
+    <insert id="addCityData" parameterType="com.lamp.model.TCitySetting">
+        insert into lamp_city_setting (city_name,longitude,latitude,org_id,
+        low_temperature,high_temperature,temperature_detail,weather_pic,sunrise,sunset)
+        values (#{cityName},#{lo},#{la},#{orgId},#{lowTemp},#{heightTemp},#{tempDetail},#{weatherPic},#{sunRise},#{sunSet})
+    </insert>
+    <!--功率分析-->
+    <select id="compareTodayPower" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select IFNULL(round(SUM(t.power),0),0) power,'toady_power' times from today_record_nb_data t
+        left join controller c on c.nboit_manage_id = t.nb_device
+        left join lamp l on c.id = l.controller_id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and c.delflag = 0 and o.del_flag = 0 and road_id = #{roadId}
+        union
+        select ifnull(round(SUM(p.power),0),0) power,'yesterday_power' times from record_road_power p
+        left join road_manage r on r.id = p.road_id
+        LEFT JOIN sys_user u on r.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.road_id = #{roadId} and p.record_time = adddate(date(sysdate()),-1)
+    </select>
+
+    <select id="getAllLampDetailData2" resultType="java.util.Map">
+        select l.lampnum,l.controller_id AS conId,nm.nb_code as cnum,ro.road_name as roadname,e.name as ename,am.areaName as areaname,r.ele as ele ,r.vol as vol,r.power as power,
+        r.temp as temp ,case r.conn_state when 1 then '在线' when 2 then '离线' when 3 then '离线' end as state,
+        case r.on_off when 0 then '开灯' when 1 then '关灯' end as onff,r.dimming as dimming,r.record_time as recordtime
+        from controller c
+        LEFT JOIN nbiot_manage AS nm ON nm.id = c.nboit_manage_id
+        left join  real_nb_data r  on c.nboit_manage_id=r.nb_device
+        left join lamp l on l.controller_id=c.id
+        left join roadline_manage rl on rl.id=l.roadline_id
+        left join road_manage ro on ro.id=rl.road_id
+        left join area_manage am on am.id=ro.area_id
+        left join elecbox_manage e on l.pdId=e.id
+        LEFT JOIN sys_user AS  u ON  c.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%')
+        and l.delflag=0 and c.delflag=0
+        <if test="null != roadId and '' != roadId">
+            and ro.id = #{roadId}
+        </if>
+        <if test="null != areaId and '' != areaId">
+            and am.id = #{areaId}
+        </if>
+        <if test="null != roadxId and '' != roadxId">
+            and rl.id = #{roadxId}
+        </if>
+        <if test="null != curpage and '' != curpage">
+            LIMIT #{curpage}, #{showNum}
+        </if>
+
+
+    </select>
+
+
+    <select id="getAllLampDetailData3" resultType="java.util.Map">
+        select l.lampnum,l.controller_id AS conId,nm.nb_code as cnum,ro.road_name as roadname,e.name as ename,am.areaName as areaname,r.ele as ele ,r.vol as vol,r.power as power,
+        r.temp as temp ,case r.conn_state when 1 then '在线' when 2 then '离线' when 3 then '离线' end as state,
+        case r.on_off when 0 then '开灯' when 1 then '关灯' end as onff,r.dimming as dimming,r.record_time as recordtime
+        from controller c
+        LEFT JOIN nbiot_manage AS nm ON nm.id = c.nboit_manage_id
+        left join  real_nb_data r  on c.nboit_manage_id=r.nb_device
+        left join lamp l on l.controller_id=c.id
+        left join roadline_manage rl on rl.id=l.roadline_id
+        left join road_manage ro on ro.id=rl.road_id
+        left join area_manage am on am.id=ro.area_id
+        left join elecbox_manage e on l.pdId=e.id
+        left join plan_group_manage_detail g on l.id = g.lamp_id
+        LEFT JOIN sys_user AS  u ON  c.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%')
+        and l.delflag=0 and c.delflag=0
+        <if test="null != groupId and '' != groupId">
+            and g.plan_group_id = #{groupId}
+        </if>
+        <if test="null != curpage and '' != curpage">
+            LIMIT #{curpage}, #{showNum}
+        </if>
+    </select>
+
+    <select id="getNBlOTDevicedata" resultType="java.util.Map">
+        select nm.nb_device,nm.id,c.business,c.protocol,c.controllerkindid,rd.on_off,rd.dimming,lt.power from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join lamp l on c.id = l.controller_id
+        left join real_nb_data rd on c.nboit_manage_id = rd.nbid
+        left join lamptype lt ON l.typeId = lt.id
+        where c.delflag = 0
+    </select>
+
+    <select id="getCollectDataMaxNum" resultType="integer">
+        SELECT save_collect_num FROM platform_setting
+    </select>
+
+    <insert id="batchAddLampWarnData"  parameterType="java.util.List">
+        insert into temp_lamp_warn (nb_device,warn_content_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.nb_device},#{item.content})
+        </foreach>
+    </insert>
+
+    <select id="getLongitudeAndlatitude" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select l.la,l.lo from lamp l
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on rm.road_id = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on l.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and  rm.road_id = #{roadId}
+        </if>
+        <if test="lineId != null">
+            and  rm.id = #{lineId}
+        </if>
+        limit 0,1
+    </select>
+
+    <select id="dealLampWarn">
+        call deal_lamp_warn_data()
+    </select>
+</mapper>

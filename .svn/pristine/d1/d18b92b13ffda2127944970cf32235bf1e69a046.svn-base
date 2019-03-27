@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TnbmanageMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tnbmanage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="road_id" property="roadId" jdbcType="INTEGER" />
+    <result column="pole_id" property="poleId" jdbcType="INTEGER" />
+    <result column="nb_device" property="nbDevice" jdbcType="VARCHAR" />
+    <result column="nb_code" property="nbCode" jdbcType="VARCHAR" />
+    <result column="nb_name" property="nbName" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="nb_sim" property="nbSim" jdbcType="VARCHAR" />
+    <result column="reg_flag" property="regFlag" jdbcType="TINYINT" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+    <result column="logitude" property="logitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, road_id, pole_id, nb_device, nb_code, nb_name, type_id, nb_sim, reg_flag, oper_id, 
+    oper_time, del_flag, logitude, latitude
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from nbiot_manage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from nbiot_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tnbmanage" >
+    insert into nbiot_manage (id, road_id, pole_id, 
+      nb_device, nb_code, nb_name, 
+      type_id, nb_sim, reg_flag, 
+      oper_id, oper_time, del_flag, 
+      logitude, latitude)
+    values (#{id,jdbcType=INTEGER}, #{roadId,jdbcType=INTEGER}, #{poleId,jdbcType=INTEGER}, 
+      #{nbDevice,jdbcType=VARCHAR}, #{nbCode,jdbcType=VARCHAR}, #{nbName,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=INTEGER}, #{nbSim,jdbcType=VARCHAR}, #{regFlag,jdbcType=TINYINT}, 
+      #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, #{delFlag,jdbcType=TINYINT}, 
+      #{logitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSenbmanage" parameterType="com.lamp.model.Tnbmanage" >
+    insert into nbiot_manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roadId != null" >
+        road_id,
+      </if>
+      <if test="poleId != null" >
+        pole_id,
+      </if>
+      <if test="nbDevice != null" >
+        nb_device,
+      </if>
+      <if test="nbCode != null" >
+        nb_code,
+      </if>
+      <if test="nbName != null" >
+        nb_name,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="nbSim != null" >
+        nb_sim,
+      </if>
+      <if test="regFlag != null" >
+        reg_flag,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="logitude != null" >
+        logitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roadId != null" >
+        #{roadId,jdbcType=INTEGER},
+      </if>
+      <if test="poleId != null" >
+        #{poleId,jdbcType=INTEGER},
+      </if>
+      <if test="nbDevice != null" >
+        #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="nbCode != null" >
+        #{nbCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nbName != null" >
+        #{nbName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="nbSim != null" >
+        #{nbSim,jdbcType=VARCHAR},
+      </if>
+      <if test="regFlag != null" >
+        #{regFlag,jdbcType=TINYINT},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="logitude != null" >
+        #{logitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tnbmanage" >
+    update nbiot_manage
+    <set >
+      <if test="roadId != null" >
+        road_id = #{roadId,jdbcType=INTEGER},
+      </if>
+      <if test="poleId != null" >
+        pole_id = #{poleId,jdbcType=INTEGER},
+      </if>
+      <if test="nbDevice != null" >
+        nb_device = #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="nbCode != null" >
+        nb_code = #{nbCode,jdbcType=VARCHAR},
+      </if>
+      <if test="nbName != null" >
+        nb_name = #{nbName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="nbSim != null" >
+        nb_sim = #{nbSim,jdbcType=VARCHAR},
+      </if>
+      <if test="regFlag != null" >
+        reg_flag = #{regFlag,jdbcType=TINYINT},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+      <if test="logitude != null" >
+        logitude = #{logitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tnbmanage" >
+    update nbiot_manage
+    set road_id = #{roadId,jdbcType=INTEGER},
+      pole_id = #{poleId,jdbcType=INTEGER},
+      nb_device = #{nbDevice,jdbcType=VARCHAR},
+      nb_code = #{nbCode,jdbcType=VARCHAR},
+      nb_name = #{nbName,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      nb_sim = #{nbSim,jdbcType=VARCHAR},
+      reg_flag = #{regFlag,jdbcType=TINYINT},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT},
+      logitude = #{logitude,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectidbynbCode" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select id
+    from nbiot_manage
+    where nb_code = #{nbCode,jdbcType=VARCHAR}
+  </select>
+
+
+
+</mapper>

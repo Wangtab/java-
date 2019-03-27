@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TnbplanMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tnbplan" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="plan_code" property="planCode" jdbcType="TINYINT" />
+    <result column="dimming" property="dimming" jdbcType="TINYINT" />
+    <result column="plan_name" property="planName" jdbcType="VARCHAR" />
+    <result column="plan_des" property="planDes" jdbcType="VARCHAR" />
+    <result column="effective_time" property="effectiveTime" jdbcType="VARCHAR" />
+    <result column="failure_time" property="failureTime" jdbcType="VARCHAR" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, plan_code, dimming, plan_name, plan_des, effective_time, failure_time, oper_id, 
+    oper_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from nbiot_plan
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from nbiot_plan
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tnbplan" >
+    insert into nbiot_plan (id, plan_code, dimming, 
+      plan_name, plan_des, effective_time, 
+      failure_time, oper_id, oper_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{planCode,jdbcType=TINYINT}, #{dimming,jdbcType=TINYINT}, 
+      #{planName,jdbcType=VARCHAR}, #{planDes,jdbcType=VARCHAR}, #{effectiveTime,jdbcType=VARCHAR}, 
+      #{failureTime,jdbcType=VARCHAR}, #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tnbplan" >
+    insert into nbiot_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="planCode != null" >
+        plan_code,
+      </if>
+      <if test="dimming != null" >
+        dimming,
+      </if>
+      <if test="planName != null" >
+        plan_name,
+      </if>
+      <if test="planDes != null" >
+        plan_des,
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time,
+      </if>
+      <if test="failureTime != null" >
+        failure_time,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="planCode != null" >
+        #{planCode,jdbcType=TINYINT},
+      </if>
+      <if test="dimming != null" >
+        #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="planName != null" >
+        #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="planDes != null" >
+        #{planDes,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        #{effectiveTime,jdbcType=VARCHAR},
+      </if>
+      <if test="failureTime != null" >
+        #{failureTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tnbplan" >
+    update nbiot_plan
+    <set >
+      <if test="planCode != null" >
+        plan_code = #{planCode,jdbcType=TINYINT},
+      </if>
+      <if test="dimming != null" >
+        dimming = #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="planName != null" >
+        plan_name = #{planName,jdbcType=VARCHAR},
+      </if>
+      <if test="planDes != null" >
+        plan_des = #{planDes,jdbcType=VARCHAR},
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time = #{effectiveTime,jdbcType=VARCHAR},
+      </if>
+      <if test="failureTime != null" >
+        failure_time = #{failureTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tnbplan" >
+    update nbiot_plan
+    set plan_code = #{planCode,jdbcType=TINYINT},
+      dimming = #{dimming,jdbcType=TINYINT},
+      plan_name = #{planName,jdbcType=VARCHAR},
+      plan_des = #{planDes,jdbcType=VARCHAR},
+      effective_time = #{effectiveTime,jdbcType=VARCHAR},
+      failure_time = #{failureTime,jdbcType=VARCHAR},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

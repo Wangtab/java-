@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TrecnbdataMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Trecnbdata" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="nb_device" property="nbDevice" jdbcType="VARCHAR" />
+    <result column="vol" property="vol" jdbcType="DECIMAL" />
+    <result column="ele" property="ele" jdbcType="DECIMAL" />
+    <result column="power" property="power" jdbcType="DECIMAL" />
+    <result column="dimming" property="dimming" jdbcType="TINYINT" />
+    <result column="on_off" property="onOff" jdbcType="TINYINT" />
+    <result column="conn_state" property="connState" jdbcType="TINYINT" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, nb_device, vol, ele, power, dimming, on_off, conn_state, record_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from record_nb_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from record_nb_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Trecnbdata" >
+    insert into record_nb_data (id, nb_device, vol, 
+      ele, power, dimming, 
+      on_off, conn_state, record_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{nbDevice,jdbcType=VARCHAR}, #{vol,jdbcType=DECIMAL}, 
+      #{ele,jdbcType=DECIMAL}, #{power,jdbcType=DECIMAL}, #{dimming,jdbcType=TINYINT}, 
+      #{onOff,jdbcType=TINYINT}, #{connState,jdbcType=TINYINT}, #{recordTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Trecnbdata" >
+    insert into record_nb_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="nbDevice != null" >
+        nb_device,
+      </if>
+      <if test="vol != null" >
+        vol,
+      </if>
+      <if test="ele != null" >
+        ele,
+      </if>
+      <if test="power != null" >
+        power,
+      </if>
+      <if test="dimming != null" >
+        dimming,
+      </if>
+      <if test="onOff != null" >
+        on_off,
+      </if>
+      <if test="connState != null" >
+        conn_state,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="nbDevice != null" >
+        #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="vol != null" >
+        #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="ele != null" >
+        #{ele,jdbcType=DECIMAL},
+      </if>
+      <if test="power != null" >
+        #{power,jdbcType=DECIMAL},
+      </if>
+      <if test="dimming != null" >
+        #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="onOff != null" >
+        #{onOff,jdbcType=TINYINT},
+      </if>
+      <if test="connState != null" >
+        #{connState,jdbcType=TINYINT},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Trecnbdata" >
+    update record_nb_data
+    <set >
+      <if test="nbDevice != null" >
+        nb_device = #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="vol != null" >
+        vol = #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="ele != null" >
+        ele = #{ele,jdbcType=DECIMAL},
+      </if>
+      <if test="power != null" >
+        power = #{power,jdbcType=DECIMAL},
+      </if>
+      <if test="dimming != null" >
+        dimming = #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="onOff != null" >
+        on_off = #{onOff,jdbcType=TINYINT},
+      </if>
+      <if test="connState != null" >
+        conn_state = #{connState,jdbcType=TINYINT},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Trecnbdata" >
+    update record_nb_data
+    set nb_device = #{nbDevice,jdbcType=VARCHAR},
+      vol = #{vol,jdbcType=DECIMAL},
+      ele = #{ele,jdbcType=DECIMAL},
+      power = #{power,jdbcType=DECIMAL},
+      dimming = #{dimming,jdbcType=TINYINT},
+      on_off = #{onOff,jdbcType=TINYINT},
+      conn_state = #{connState,jdbcType=TINYINT},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

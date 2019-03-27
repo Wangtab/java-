@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TlampmarkerMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tlampmarker" >
+    <id column="companyid" property="companyid" jdbcType="INTEGER" />
+    <result column="companyname" property="companyname" jdbcType="VARCHAR" />
+    <result column="product" property="product" jdbcType="VARCHAR" />
+    <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="operater" property="operater" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    companyid, companyname, product, imgurl, operater, opertime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lampmarker
+    where companyid = #{companyid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lampmarker
+    where companyid = #{companyid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tlampmarker" >
+    insert into lampmarker (companyid, companyname, product, 
+      imgurl, operater, opertime
+      )
+    values (#{companyid,jdbcType=INTEGER}, #{companyname,jdbcType=VARCHAR}, #{product,jdbcType=VARCHAR}, 
+      #{imgurl,jdbcType=VARCHAR}, #{operater,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertMaker" parameterType="com.lamp.model.Tlampmarker" >
+    insert into lampmarker
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="companyname != null" >
+        companyname,
+      </if>
+      <if test="product != null" >
+        product,
+      </if>
+      <if test="imgurl != null" >
+        imgurl,
+      </if>
+      <if test="operater != null" >
+        operater,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="companyid != null" >
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="companyname != null" >
+        #{companyname,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null" >
+        #{product,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="operater != null" >
+        #{operater,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tlampmarker" >
+    update lampmarker
+    <set >
+      <if test="companyname != null" >
+        companyname = #{companyname,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null" >
+        product = #{product,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="operater != null" >
+        operater = #{operater,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where companyid = #{companyid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tlampmarker" >
+    update lampmarker
+    set companyname = #{companyname,jdbcType=VARCHAR},
+      product = #{product,jdbcType=VARCHAR},
+      imgurl = #{imgurl,jdbcType=VARCHAR},
+      operater = #{operater,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR}
+    where companyid = #{companyid,jdbcType=INTEGER}
+  </update>
+  <select id="selectAllmaker" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from lampmarker
+  </select>
+
+  <!--根据区域名搜索-->
+  <select id="selectBymaker" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from lampmarker
+    where companyname LIKE CONCAT('%',#{companyname},'%')
+  </select>
+
+</mapper>

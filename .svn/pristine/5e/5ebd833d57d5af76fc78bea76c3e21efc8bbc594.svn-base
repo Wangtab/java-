@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TrnbdataMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Trnbdata" >
+    <id column="dId" property="dId" jdbcType="INTEGER"></id>
+    <result column="nb_device" property="nbDevice" jdbcType="VARCHAR" />
+    <result column="vol" property="vol" jdbcType="DECIMAL" />
+    <result column="ele" property="ele" jdbcType="DECIMAL" />
+    <result column="power" property="power" jdbcType="DECIMAL" />
+    <result column="dimming" property="dimming" jdbcType="TINYINT" />
+    <result column="on_off" property="onOff" jdbcType="TINYINT" />
+    <result column="conn_state" property="connState" jdbcType="TINYINT" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="networking_state" property="networkingState" jdbcType="VARCHAR"></result>
+    <result column="working_hours" property="workingHours" jdbcType="INTEGER"></result>
+    <result column="signal_intensity" property="signalIntensity" jdbcType="INTEGER"></result>
+    <result column="nbid" property="nbid" jdbcType="INTEGER"></result>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dId,nb_device, vol, ele, power, dimming, on_off, conn_state, record_time,networking_state,working_hours,signal_intensity,nbid
+  </sql>
+  <!--查询灯具实时在线状态-->
+  <select id="queryrnbdataList" resultType="java.util.Map">
+    SELECT d.dId,a.areaName,r.road_name AS roadname,con.concentratorname,cont.controllername,p.pole_code AS code,
+    l.lampname,d.networking_state AS networking,d.vol,d.ele,d.power,d.dimming,d.conn_state AS connstate,
+    d.working_hours AS working,d.signal_intensity AS intensity,d.record_time AS recordtime
+    FROM real_nb_data AS d
+    LEFT JOIN nbiot_manage AS n ON n.id = d.nbid
+    LEFT JOIN road_manage AS r ON r.id = n.road_id
+    LEFT JOIN area_manage AS a ON a.id = r.area_id
+    LEFT JOIN pole_manage AS p ON p.id = n.pole_id
+    LEFT JOIN lamp AS l ON l.nbdeviceId = n.id
+    LEFT JOIN controller AS cont ON l.controller_id = cont.id
+    LEFT JOIN concentrator AS con ON cont.concentrator_id = con.id
+    WHERE  1=1 AND
+    <if test="areaid != '' and areaid != null and areaid != 0 ">
+      r.area_id = #{areaid} AND
+    </if>
+    <if test="roadid != '' and roadid != null and roadid != 0 ">
+      n.road_id = #{roadid} AND
+    </if>
+    <if test="concentid != '' and concentid != null and concentid != 0 ">
+      con.id = #{concentid} AND
+    </if>
+    <if test="contid != '' and contid != null and contid != 0 ">
+      cont.id = #{contid} AND
+    </if>
+    2=2 GROUP BY d.dId ORDER BY d.record_time DESC
+    <if test="page != -1">
+      LIMIT #{page},10
+    </if>;
+  </select>
+  <!--查询灯具信息-->
+  <select id="queryLampDataList" resultType="java.util.Map">
+    SELECT l.id,l.protocolid,n.id AS nid,n.nb_device AS device,n.nb_code AS ncode,r.dId,r.nbid FROM lamp AS l
+    LEFT JOIN nbiot_manage AS n ON l.nbdeviceId = n.id
+    LEFT JOIN real_nb_data AS r ON r.nbid = n.id;
+  </select>
+  <!--查询所有的控制器名称-->
+  <select id="queryControllerAll" resultType="java.util.Map">
+    SELECT cont.id,cont.controllername  FROM controller AS  cont
+  </select>
+
+  <!--更新灯具在线状态表-->
+  <update id="updateRealNbData" parameterType="com.lamp.model.Trnbdata">
+    UPDATE real_nb_data SET
+    <trim suffixOverrides="," >
+      <if test="nbDevice != null" >
+        nb_device = #{nbDevice},
+      </if>
+      <if test="networkingState != null" >
+        networking_state = #{networkingState},
+      </if>
+      <if test="vol != null" >
+        vol = #{vol},
+      </if>
+      <if test="ele != null" >
+        ele = #{ele},
+      </if>
+      <if test="power != null" >
+        power = #{power},
+      </if>
+      <if test="dimming != null" >
+        dimming = #{dimming},
+      </if>
+      <if test="onOff != null" >
+        on_off = #{onOff},
+      </if>
+      <if test="connState != null" >
+        conn_state = #{connState},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime},
+      </if>
+      <if test="workingHours != null" >
+        working_hours = #{workingHours},
+      </if>
+      <if test="signalIntensity != null" >
+        signal_intensity =#{signalIntensity},
+      </if>
+    </trim>
+    WHERE dId = #{dId}
+  </update>
+
+
+
+  <insert id="insertSelective" parameterType="com.lamp.model.Trnbdata" >
+    insert into real_nb_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="nbDevice != null" >
+        nb_device,
+      </if>
+      <if test="networkingState != null" >
+        networkingState,
+      </if>
+      <if test="vol != null" >
+        vol,
+      </if>
+      <if test="ele != null" >
+        ele,
+      </if>
+      <if test="power != null" >
+        power,
+      </if>
+      <if test="dimming != null" >
+        dimming,
+      </if>
+      <if test="onOff != null" >
+        on_off,
+      </if>
+      <if test="connState != null" >
+        conn_state,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+      <if test="workingHours != null" >
+        workingHours,
+      </if>
+      <if test="signalIntensity != null" >
+        signalIntensity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="nbDevice != null" >
+        #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="networkingState != null" >
+        #{networkingState,jdbcType=VARCHAR},
+      </if>
+      <if test="vol != null" >
+        #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="ele != null" >
+        #{ele,jdbcType=DECIMAL},
+      </if>
+      <if test="power != null" >
+        #{power,jdbcType=DECIMAL},
+      </if>
+      <if test="dimming != null" >
+        #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="onOff != null" >
+        #{onOff,jdbcType=TINYINT},
+      </if>
+      <if test="connState != null" >
+        #{connState,jdbcType=TINYINT},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="workingHours != null" >
+        #{workingHours,jdbcType=INTEGER},
+      </if>
+      <if test="signalIntensity != null" >
+        #{signalIntensity,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Trnbdata" >
+    update real_nb_data
+    <set >
+      <if test="vol != null" >
+        vol = #{vol,jdbcType=DECIMAL},
+      </if>
+      <if test="ele != null" >
+        ele = #{ele,jdbcType=DECIMAL},
+      </if>
+      <if test="power != null" >
+        power = #{power,jdbcType=DECIMAL},
+      </if>
+      <if test="dimming != null" >
+        dimming = #{dimming,jdbcType=TINYINT},
+      </if>
+      <if test="onOff != null" >
+        on_off = #{onOff,jdbcType=TINYINT},
+      </if>
+      <if test="connState != null" >
+        conn_state = #{connState,jdbcType=TINYINT},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where nb_device = #{nbDevice,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Trnbdata" >
+    update real_nb_data
+    set vol = #{vol,jdbcType=DECIMAL},
+      ele = #{ele,jdbcType=DECIMAL},
+      power = #{power,jdbcType=DECIMAL},
+      dimming = #{dimming,jdbcType=TINYINT},
+      on_off = #{onOff,jdbcType=TINYINT},
+      conn_state = #{connState,jdbcType=TINYINT},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where nb_device = #{nbDevice,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from real_nb_data
+    where nb_device = #{nbDevice,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from real_nb_data
+    where nb_device = #{nbDevice,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Trnbdata" >
+    insert into real_nb_data (nb_device, vol, ele,
+    power, dimming, on_off,
+    conn_state, record_time)
+    values (#{nbDevice,jdbcType=VARCHAR}, #{vol,jdbcType=DECIMAL}, #{ele,jdbcType=DECIMAL},
+    #{power,jdbcType=DECIMAL}, #{dimming,jdbcType=TINYINT}, #{onOff,jdbcType=TINYINT},
+    #{connState,jdbcType=TINYINT}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+</mapper>

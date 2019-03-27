@@ -1,0 +1,25 @@
+﻿.work_content_box .table_box tr .sendRepairBtn{width:30px;height: 20px;line-height: 20px;font-size: 14px;color:#fff;padding: 0 6px}
+.selRoleWin{width:900px;height: 500px;position: absolute;top: 50px;left: 50%;margin-left: -450px;background-color:#CCD6DF;z-index: 200;display: none}
+.selRoleWin p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;}
+.selRoleWin p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.selRoleWin .Roletable_box{height: 400px;overflow-y:scroll;width: 100%}
+.selRoleWin .Roletable_box table{width: 100%;border-collapse:collapse;}
+tr{display: table-row;vertical-align: inherit;border-color: inherit;}
+.selRoleWin .Roletable_box table tr td{font-size: 12px;padding: 10px;border:1px solid #bfbfbf;}
+.selRoleWin .Roletable_box table .frist_cell{font-weight: bold;}
+.selRoleWin .Roletable_box table .second_cell{width: 200px;float: left;height: 20px;line-height: 20px;}
+.selRoleWin .Roletable_box table input[type="checkbox"]{float: left;margin-top: 1px;margin-right: 4px;width:15px;height:15px }
+.selRoleWin .Roletable_box table .second_cell img{width: 15px;height: 15px;float: left;margin-right: 6px;margin-top:1px;cursor: pointer;}
+.selRoleWin .win_btn{height: 40px;clear: both;}
+.selRoleWin .win_btn .win_btn_box{width:250px;height: 30px;margin: 0 auto;padding-top: 10px;}
+.selRoleWin .win_btn .win_btn_box input[type="button"]{height: 24px;width: 64px;line-height: 24px;text-align: center;color:#fff;float: left;margin-right: 20px;border:none;background-color: #126CC4;cursor: pointer;}
+.selRoleWin .win_btn .win_btn_box label{float: left;margin-right: 20px;height: 24px;line-height: 24px;font-size: 12px;}
+.selRoleWin .win_btn .win_btn_box label input[type="checkbox"]{float: left;margin-top:5px;margin-right: 4px;width:15px;height:15px}
+
+.btn_win {width:200px;height: 300px;position: absolute;top: 70px;left: 50%;margin-left: -100px;background-color:#CCD6DF;z-index: 300;
+    border: 1px solid #000;display: none;}
+.btn_win p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;}
+.btn_win p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.btn_win table{width: 100%;border-collapse:collapse;}
+.btn_win table tr td{font-size: 14px;text-align: center;border:1px solid #bfbfbf;height: 30px;line-height: 30px}
+.btn_win table input[type= "checkbox"]{width: 16px;height:16px;position: relative;top: 3px}

@@ -1,0 +1,9 @@
+﻿.area_analysis{width: 100%;margin-top: 100px;overflow: hidden;}
+.area_analysis .area_model{width:62.67%;height: 400px;float: right;}
+.area_analysis .table_list{width: 26.4%;height: 500px;float: left;margin-left: 4%;display: none}
+.area_analysis .table_list .analysis_title{height: 60px;text-align: center;font-size:16px;color:#fff;line-height: 60px}
+.area_analysis .table_list  table{width: 100%;border-collapse:collapse;}
+.area_analysis .table_list  table tr th,.area_analysis .table_list table tr td{color:#fff;height:40px;line-height:40px;border:1px solid #fff;text-align: center;font-weight: normal;font-size:15px;cursor: pointer;}
+.area_analysis .table_list  table tr th{background-color:#FF9900;}
+.area_analysis .table_list  table tr td{background-color:#014B94}
+.pagebox{margin-left: 0;}

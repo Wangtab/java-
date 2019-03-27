@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TconcentratorkindMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tconcentratorkind" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="kindname" property="kindname" jdbcType="VARCHAR" />
+    <result column="kinddes" property="kinddes" jdbcType="VARCHAR" />
+    <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="maker" property="maker" jdbcType="VARCHAR" />
+    <result column="kindnum" property="kindnum" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+    <result column="delflag" property="delflag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, kindname, kinddes, imgurl, maker, kindnum, operator, opertime,delflag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from concentratorkind
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from concentratorkind
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tconcentratorkind" >
+    insert into concentratorkind (id, kindname, kinddes, 
+      imgurl, maker, kindnum, 
+      operator, opertime)
+    values (#{id,jdbcType=INTEGER}, #{kindname,jdbcType=VARCHAR}, #{kinddes,jdbcType=VARCHAR}, 
+      #{imgurl,jdbcType=VARCHAR}, #{maker,jdbcType=VARCHAR}, #{kindnum,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tconcentratorkind" >
+    insert into concentratorkind
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="kindname != null" >
+        kindname,
+      </if>
+      <if test="kinddes != null" >
+        kinddes,
+      </if>
+      <if test="imgurl != null" >
+        imgurl,
+      </if>
+      <if test="maker != null" >
+        maker,
+      </if>
+      <if test="kindnum != null" >
+        kindnum,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="kindname != null" >
+        #{kindname,jdbcType=VARCHAR},
+      </if>
+      <if test="kinddes != null" >
+        #{kinddes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="maker != null" >
+        #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="kindnum != null" >
+        #{kindnum,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tconcentratorkind" >
+    update concentratorkind
+    <set >
+      <if test="kindname != null" >
+        kindname = #{kindname,jdbcType=VARCHAR},
+      </if>
+      <if test="kinddes != null" >
+        kinddes = #{kinddes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="maker != null" >
+        maker = #{maker,jdbcType=VARCHAR},
+      </if>
+      <if test="kindnum != null" >
+        kindnum = #{kindnum,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tconcentratorkind" >
+    update concentratorkind
+    set kindname = #{kindname,jdbcType=VARCHAR},
+      kinddes = #{kinddes,jdbcType=VARCHAR},
+      imgurl = #{imgurl,jdbcType=VARCHAR},
+      maker = #{maker,jdbcType=VARCHAR},
+      kindnum = #{kindnum,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllckind" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from concentratorkind
+  </select>
+
+  <update id="DeleteckindById" parameterType="java.lang.Integer" >
+    update concentratorkind
+    set
+    delflag = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectBycname" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from concentratorkind
+    where kindname LIKE CONCAT('%',#{kindname},'%')
+  </select>
+
+</mapper>

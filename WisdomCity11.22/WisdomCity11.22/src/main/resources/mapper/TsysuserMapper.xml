@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TsysuserMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tsysuser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="tel_num" property="telNum" jdbcType="VARCHAR" />
+    <result column="auth_id" property="authId" jdbcType="INTEGER" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+    <result column="org_id" property="orgId" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_name, password, real_name, tel_num, auth_id, oper_id, oper_time, del_flag
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tsysuser" >
+    insert into sys_user (id, user_name, password, 
+      real_name, tel_num, auth_id, 
+      oper_id, oper_time, pid, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{realName,jdbcType=VARCHAR}, #{telNum,jdbcType=VARCHAR}, #{authId,jdbcType=INTEGER}, 
+      #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=TIMESTAMP}, #{pid,jdbcType=INTEGER}, 
+      #{delFlag,jdbcType=TINYINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tsysuser" >
+    update sys_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      tel_num = #{telNum,jdbcType=VARCHAR},
+      auth_id = #{authId,jdbcType=INTEGER},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=TIMESTAMP},
+      pid = #{pid,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--selectAuthByUserid-->
+  <select resultType="java.lang.String" id="selectAuthByUserid">
+    select auth_des
+    from sys_auth
+    where id = (
+       select auth_id
+       from sys_user
+       where id = #{userid}
+    )
+  </select>
+
+  <select id="validedLoginUser" resultType="java.util.HashMap">
+  select u.id,u.user_name,u.real_name,u.tel_num,auth_id,u.org_id,o.org_name,o.org_code,
+  l.imager,l.name,ls.low_temperature,ls.high_temperature,ls.temperature_detail,ls.weather_pic
+  from sys_user u
+  left join organization o on u.org_id = o.id
+  left join logo l on u.org_id = l.orgid
+  left join lamp_city_setting ls on u.org_id = ls.org_id
+  where user_name = #{userName} and password = #{password} and u.del_flag = 0 limit 0,1
+  </select>
+</mapper>

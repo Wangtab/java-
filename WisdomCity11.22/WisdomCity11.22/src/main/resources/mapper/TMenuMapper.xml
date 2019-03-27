@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TMenuMapper" >
+    <resultMap id="MenuTree" type="com.lamp.model.TMenu" >
+        <id column="id" property="id"/>
+        <result column="cname" property="cName" />
+        <result column="curl" property="curl"/>
+        <result column="pid" property="pid"/>
+        <result column="img" property="img"/>
+        <result column="operid" property="operId"/>
+        <result column="opertime" property="operTime"/>
+        <result column="orderby" property="orderBy"/>
+    </resultMap>
+
+    <resultMap id="MenuBtn" type="com.lamp.model.TMenuBtn">
+        <id column="id" property="id"/>
+        <result column="menu_id" property="menuId"/>
+        <result column="btn_name" property="btnName"/>
+        <result column="style_css" property="style_css"/>
+    </resultMap>
+
+    <select id="getMenuData" parameterType="integer" resultMap="MenuTree">
+      select * from lamp_menu
+      where id in (select menu_id from lamp_power_list where role_id = #{id})
+    </select>
+
+    <select id="getFistMenuData" resultType="java.util.Map">
+        select id,cname from lamp_menu where pid = 0
+    </select>
+
+    <select id="getMenuDataById" parameterType="integer" resultType="java.util.HashMap">
+        select * from lamp_menu where id = #{id}
+    </select>
+
+    <update id="updateMenuData" parameterType="com.lamp.model.TMenu">
+        update lamp_menu set cname = #{cName},curl = #{curl},pid = #{pid},orderby = #{orderBy},img = #{img},operid = #{operId},opertime = #{operTime} where id = #{id}
+    </update>
+
+    <insert id="saveMenuData" parameterType="com.lamp.model.TMenu">
+    insert into lamp_menu (cname,curl,pid,orderby,img,operid,opertime)
+    VALUES
+    (#{cName},#{curl},#{pid},#{orderBy},#{img},#{operId},#{operTime})
+    </insert>
+
+    <delete id="delMenuById" parameterType="integer">
+        delete from lamp_menu where id = #{id}
+    </delete>
+
+    <select id="getMenuNumByCname" resultType="integer">
+        select count(1) from lamp_menu where 1=1
+        <if test="menuName != null and menuName != ''">
+          and  cname LIKE CONCAT('%',#{menuName},'%')
+        </if>
+    </select>
+
+    <select id="getMenuDataForPage" resultType="java.util.Map">
+        select m.*,u.real_name from lamp_menu m
+        left join sys_user u on m.operid = u.id
+        where 1=1
+        <if test="menuName != null and menuName != ''">
+            and cname LIKE CONCAT('%',#{menuName},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by orderby ${sort}
+            </when>
+            <when test="'cname' == orderBy">
+                order by m.cname ${sort}
+            </when>
+            <when test="'curl' == orderBy">
+                order by m.curl ${sort}
+            </when>
+            <when test="'img' == orderBy">
+                order by m.img ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+            order by m.opertime ${sort}
+        </when>
+            <otherwise>
+                order by orderby asc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getMenuIdByMenuCode" resultType="integer">
+        select id from lamp_menu where menu_code = #{menuCode}
+    </select>
+
+    <select id="getMenuDataByRoleId" parameterType="integer" resultType="java.util.Map">
+        select lb.*, 1 status  from lamp_btn_list l
+        left join lamp_menu_btn lb on l.btn_id = lb.id
+        where l.role_id = #{id}
+    </select>
+
+
+    <select id="getMenuDataAndBtns" parameterType="integer" resultMap="MenuBtn">
+        select lb.* from lamp_btn_list l
+        left join lamp_menu_btn lb on l.btn_id = lb.id
+        where l.role_id = #{id}
+    </select>
+
+
+</mapper>

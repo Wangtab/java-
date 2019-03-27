@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TsmokedataMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tsmokedata" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="smoke_name" property="smokeName" jdbcType="VARCHAR" />
+    <result column="smoke_imei" property="smokeImei" jdbcType="VARCHAR" />
+    <result column="net_state" property="netState" jdbcType="INTEGER" />
+    <result column="warn_time" property="warnTime" jdbcType="VARCHAR" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="logitude" property="logitude" jdbcType="DECIMAL" />
+    <result column="latitude" property="latitude" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, smoke_name, smoke_imei, net_state, warn_time, record_time, logitude, latitude
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from smoke_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from smoke_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tsmokedata" >
+    insert into smoke_data (id, smoke_name, smoke_imei, 
+      net_state, warn_time, record_time, 
+      logitude, latitude)
+    values (#{id,jdbcType=INTEGER}, #{smokeName,jdbcType=VARCHAR}, #{smokeImei,jdbcType=VARCHAR}, 
+      #{netState,jdbcType=INTEGER}, #{warnTime,jdbcType=VARCHAR}, #{recordTime,jdbcType=VARCHAR}, 
+      #{logitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tsmokedata" >
+    insert into smoke_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="smokeName != null" >
+        smoke_name,
+      </if>
+      <if test="smokeImei != null" >
+        smoke_imei,
+      </if>
+      <if test="netState != null" >
+        net_state,
+      </if>
+      <if test="warnTime != null" >
+        warn_time,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+      <if test="logitude != null" >
+        logitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="smokeName != null" >
+        #{smokeName,jdbcType=VARCHAR},
+      </if>
+      <if test="smokeImei != null" >
+        #{smokeImei,jdbcType=VARCHAR},
+      </if>
+      <if test="netState != null" >
+        #{netState,jdbcType=INTEGER},
+      </if>
+      <if test="warnTime != null" >
+        #{warnTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="logitude != null" >
+        #{logitude,jdbcType=DECIMAL},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tsmokedata" >
+    update smoke_data
+    <set >
+      <if test="smokeName != null" >
+        smoke_name = #{smokeName,jdbcType=VARCHAR},
+      </if>
+      <if test="smokeImei != null" >
+        smoke_imei = #{smokeImei,jdbcType=VARCHAR},
+      </if>
+      <if test="netState != null" >
+        net_state = #{netState,jdbcType=INTEGER},
+      </if>
+      <if test="warnTime != null" >
+        warn_time = #{warnTime,jdbcType=VARCHAR},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+      <if test="logitude != null" >
+        logitude = #{logitude,jdbcType=DECIMAL},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tsmokedata" >
+    update smoke_data
+    set smoke_name = #{smokeName,jdbcType=VARCHAR},
+      smoke_imei = #{smokeImei,jdbcType=VARCHAR},
+      net_state = #{netState,jdbcType=INTEGER},
+      warn_time = #{warnTime,jdbcType=VARCHAR},
+      record_time = #{recordTime,jdbcType=VARCHAR},
+      logitude = #{logitude,jdbcType=DECIMAL},
+      latitude = #{latitude,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TpolemanageMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tpolemanage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pole_code" property="poleCode" jdbcType="VARCHAR" />
+    <result column="pole_des" property="poleDes" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pole_code, pole_des, type_id, longitude, latitude, oper_id, oper_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from pole_manage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from pole_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tpolemanage" >
+    insert into pole_manage (id, pole_code, pole_des, 
+      type_id, longitude, latitude, 
+      oper_id, oper_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{poleCode,jdbcType=VARCHAR}, #{poleDes,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, 
+      #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, #{delFlag,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tpolemanage" >
+    insert into pole_manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="poleCode != null" >
+        pole_code,
+      </if>
+      <if test="poleDes != null" >
+        pole_des,
+      </if>
+      <if test="typeId != null" >
+        type_id,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="poleCode != null" >
+        #{poleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="poleDes != null" >
+        #{poleDes,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tpolemanage" >
+    update pole_manage
+    <set >
+      <if test="poleCode != null" >
+        pole_code = #{poleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="poleDes != null" >
+        pole_des = #{poleDes,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null" >
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tpolemanage" >
+    update pole_manage
+    set pole_code = #{poleCode,jdbcType=VARCHAR},
+      pole_des = #{poleDes,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=VARCHAR},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

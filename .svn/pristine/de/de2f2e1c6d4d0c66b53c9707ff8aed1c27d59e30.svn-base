@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TcontrollerMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tcontroller" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="controllerkindid" property="controllerkindid" jdbcType="INTEGER" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+    <result column="delflag" property="delflag" jdbcType="INTEGER" />
+    <result column="Concentrator_id" property="concentratorId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, controllerkindid,
+    operator, opertime, delflag, Concentrator_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from controller
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from controller
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tcontroller" >
+    insert into controller (id, controllername, controllerAddr, 
+      controllerkindid, concentratorloop,
+      roadid, la, lo, poleid, 
+      operator, opertime, delflag, 
+      Concentrator_id)
+    values (#{id,jdbcType=INTEGER}, #{controllername,jdbcType=VARCHAR}, #{controlleraddr,jdbcType=VARCHAR}, 
+      #{controllerkindid,jdbcType=INTEGER}, #{concentratorloop,jdbcType=INTEGER},
+      #{roadid,jdbcType=INTEGER}, #{la,jdbcType=DOUBLE}, #{lo,jdbcType=DOUBLE}, #{poleid,jdbcType=INTEGER}, 
+      #{operator,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR}, #{delflag,jdbcType=INTEGER}, 
+      #{concentratorId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertController" parameterType="com.lamp.model.Tcontroller" >
+    insert into controller
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+
+      <if test="roadid != null" >
+        roadid,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+      <if test="delflag != null" >
+        delflag,
+      </if>
+      <if test="concentratorId != null" >
+        Concentrator_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="concentratorId != null" >
+        #{concentratorId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tcontroller" >
+    update controller
+    <set >
+      <if test="la != null" >
+        la = #{la,jdbcType=DOUBLE},
+      </if>
+      <if test="lo != null" >
+        lo = #{lo,jdbcType=DOUBLE},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        delflag = #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="concentratorId != null" >
+        Concentrator_id = #{concentratorId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tcontroller" >
+    update controller
+    set controllername = #{controllername,jdbcType=VARCHAR},
+      controllerAddr = #{controlleraddr,jdbcType=VARCHAR},
+      controllerkindid = #{controllerkindid,jdbcType=INTEGER},
+      concentratorloop = #{concentratorloop,jdbcType=INTEGER},
+      roadid = #{roadid,jdbcType=INTEGER},
+      la = #{la,jdbcType=DOUBLE},
+      lo = #{lo,jdbcType=DOUBLE},
+      poleid = #{poleid,jdbcType=INTEGER},
+      operator = #{operator,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR},
+      delflag = #{delflag,jdbcType=INTEGER},
+      Concentrator_id = #{concentratorId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllcontrolkind" resultType="java.util.HashMap" >
+    select
+    id, kindname, kinddes, controllerkind.imgurl, Controllertype,kindnum,controllerkind.operator, controllerkind.opertime,
+    controllerkind.delflag,lampmarker.companyname
+    from controllerkind,lampmarker
+    where controllerkind.makerid = lampmarker.companyid
+  </select>
+
+</mapper>

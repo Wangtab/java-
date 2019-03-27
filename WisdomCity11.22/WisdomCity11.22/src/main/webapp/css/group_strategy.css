@@ -1,0 +1,5 @@
+﻿.second_form{height:380px;}
+.second_form .detail_box .date_box{position: relative;float: left;width: 232px}
+.second_form .detail_box input[type=text]{width: 232px}
+.slider.slider-horizontal{width: 232px}
+.judge_btn h2{width:80px;height: 28px;background-color:#126EC5;color:#fff;float: left;margin-right: 40px;font-size: 16px;line-height: 28px;text-align: center;font-weight: normal;margin-top:8px;cursor:pointer;}

@@ -1,0 +1,5 @@
+﻿.second_form{height: 480px;}
+.second_form .detail_box select{width:220px}
+.detail_text{height: 100px;width:800px;float: left;clear: both;}
+.second_form .detail_text span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align:center;}
+.second_form .detail_text textarea{width: 606px;height: 100px;float: left;max-height: 100px;min-height: 100px;max-width: 606px;min-width: 606px}

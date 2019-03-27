@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TareapositionMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tareaposition" >
+    <id column="posiId" property="posiid" jdbcType="INTEGER" />
+    <result column="logitude" property="logitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="areaId" property="areaid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    posiId, logitude, latitude, areaId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from area_position
+    where posiId = #{posiid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from area_position
+    where posiId = #{posiid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tareaposition" >
+    insert into area_position (posiId, logitude, latitude, 
+      areaId)
+    values (#{posiid,jdbcType=INTEGER}, #{logitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, 
+      #{areaid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tareaposition" >
+    insert into area_position
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="posiid != null" >
+        posiId,
+      </if>
+      <if test="logitude != null" >
+        logitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="areaid != null" >
+        areaId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="posiid != null" >
+        #{posiid,jdbcType=INTEGER},
+      </if>
+      <if test="logitude != null" >
+        #{logitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null" >
+        #{areaid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tareaposition" >
+    update area_position
+    <set >
+      <if test="logitude != null" >
+        logitude = #{logitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null" >
+        areaId = #{areaid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where posiId = #{posiid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tareaposition" >
+    update area_position
+    set logitude = #{logitude,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=VARCHAR},
+      areaId = #{areaid,jdbcType=INTEGER}
+    where posiId = #{posiid,jdbcType=INTEGER}
+  </update>
+</mapper>

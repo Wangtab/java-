@@ -1,0 +1,183 @@
+﻿body > img{width: 100%;height: 1080px;position: absolute;left: 0;top: 0;z-index:200;}
+body > h6{height: 0px}
+.baiduMap{width: 100%;height: 100%;}
+.body_warpper .light_rate a:hover,.body_warpper .lamp_warn a:hover,.body_warpper .realConsumePower .rcp_content .rcp_box a:hover{color:#FFB900;}
+.body_warpper{width:100%;height:1080px;position: relative;overflow: hidden;}
+.body_warpper .screen_title{height:62px;position: absolute;left: 54px;top: 8px;z-index: 2000;}
+.body_warpper .screen_title img{width:84px;height:58px;float: left;margin-top:10px}
+.body_warpper .screen_title h1{color:#fff;height: 62px;line-height: 62px;font-size:28px;float: left;letter-spacing:4px;margin-left: 6px}
+
+.body_warpper .light_rate{width: 436px;height: 168px;background: url(../images/light_rate.png) no-repeat;position: absolute;top:127px;left:30px;}
+.body_warpper .light_rate > a{height: 52px;line-height: 52px;font-size: 22px;color:#fff;width:168px;text-align: center;margin-left: 140px;letter-spacing: 4px;float: left;}
+.body_warpper .light_rate h6{width: 28px;height:25px;background: url(../images/screen_left_btn.png) no-repeat;position: absolute;left: 2px;bottom: 3px;z-index: 500;}
+.body_warpper .light_rate .light_rate_content{clear: both;height: 108px;}
+.body_warpper .light_rate .light_rate_content .light_num{width: 240px;height:108px;float: left;margin-left:46px}
+.body_warpper .light_rate .light_rate_content .light_num  span{height: 20px;color:#fff;font-family: '宋体';font-size: 12px;float: left;margin-top:6px}
+.body_warpper .light_rate .light_rate_content .light_num ul{clear: both;}
+.body_warpper .light_rate .light_rate_content .light_num ul li{width: 32px;float: left;height: 60px;color:#fff;font-size: 40px;border:1px solid #10A1F2;line-height: 60px;text-align: center;margin-right: 2px;background: linear-gradient(to top, #05427d ,#028bf3);}
+.body_warpper .light_rate .light_rate_content .lightRateCharts{width:110px;height:110px;float: right;position: relative;top:-7px;right: 25px}
+.body_warpper .light_rate .light_rate_content .lightRateCharts .lightRateCharts_box{width: 100%;height: 100%;}
+.body_warpper .light_rate .light_rate_content .lightRateCharts .lightRateChartsNum{height: 20px;width: 20px;font-size:17px;line-height:20px;color:#fff;text-align: center;position: absolute;left: 27px;top:43px}
+
+.body_warpper .lamp_warn{width:432px;height: 412px;position: absolute;left: 38px;top: 312px;background: url(../images/today_warn.png) no-repeat;}
+.body_warpper .lamp_warn a{height: 52px;line-height: 52px;font-size: 22px;color:#fff;letter-spacing:4px;width:182px;text-align: center;margin-left: 140px;float: left;}
+.body_warpper .lamp_warn .lamp_content{width: 100%;height: 100%;position: relative;}
+.body_warpper .lamp_warn .tody_alarm_disc{height:330px;margin-top:24px;}
+.body_warpper .lamp_warn .alarm_text{height: 20px;line-height: 20px;width: 476px;padding-left: 82px;margin-top:-15px}
+.body_warpper .lamp_warn .alarm_text p{width: 108px;float: left;height: 20px;font-size: 16px;color:#fff;}
+.body_warpper .lamp_warn .alarm_text p span{width: 16px;height: 16px;float: left;margin-right: 10px;margin-top:2px}
+.body_warpper .lamp_warn .alarm_text p .span_fine{background-color:#00FF7D;}
+.body_warpper .lamp_warn .alarm_text p .span_allow{background-color:#FF9C01;}
+.body_warpper .lamp_warn .alarm_text p .span_not_allow{background-color:#FF3702;}
+.body_warpper .lamp_warn em{height:436px;width:45px;position: absolute;left:-19px;top: 0;background: url(../images/screen_star_height.png) no-repeat;}
+.body_warpper .lamp_warn b{height:436px;width:45px;position: absolute;right:-19px;top: 0;background: url(../images/screen_star_height.png) no-repeat;}
+.body_warpper .lamp_warn i{width: 28px;height:25px;position: absolute;left: 0;top: 21px;cursor: pointer;z-index: 500;}
+.body_warpper .lamp_warn .deal_num{height: 20px;line-height: 20px;color:#fff;line-height: 20px;margin-top: 14px}
+.body_warpper .lamp_warn .deal_num .frist_dealBox{margin-left: 88px}
+.body_warpper .lamp_warn .deal_num p{height: 20px;width:30%;text-align: center;float: left;font-size: 15px}
+
+.body_warpper .realConsumePower{height: 305px;position: absolute;bottom:34px;width:96%;left: 2%}
+.body_warpper .realConsumePower .realConsumePower_warpper{width: 100%;height: 100%;position: relative;}
+.body_warpper .realConsumePower .realConsumePower_warpper  > img{width: 100%;height: 100%;position: absolute;left: 0px;top: 0px}
+.body_warpper .realConsumePower .realConsumePower_warpper i{position: absolute;width: 20px;height: 20px;left: 2px;top:11px;z-index: 800;cursor: pointer;background: url(../images/screen_down_btn.png);}
+.body_warpper .realConsumePower .title{height: 50px;position: relative;}
+.body_warpper .realConsumePower .title h1{height: 50px;line-height: 50px;width: 220px;position: absolute;left:50%;margin-left: -110px;font-size: 22px;color:#fff;text-align: center;letter-spacing: 2px}
+.body_warpper .realConsumePower .rcp_content{height: 220px;}
+.body_warpper .realConsumePower .rcp_content .rcp_box{height:250px;width:25%;float: left;margin-top: 8px;position: relative;}
+.body_warpper .realConsumePower .rcp_content .rcp_box a{font-size: 14px;height: 20px;position: absolute;left: 0px;top: 0px;width: 100%;font-size:18px;line-height: 20px;color:#fff;text-align: center;z-index: 500;}
+.body_warpper .realConsumePower .rcp_content .savePower{height:280px;}
+.body_warpper .realConsumePower .rcp_content .charts_box{width: 100%;height: 100%;position: relative;z-index: 200;float: left;margin-top: -20px}
+
+.body_warpper .roadList{width: 180px;height: 588px;background-color:#0173BC;position: absolute;right: 30px;top:150px;background: linear-gradient(45deg, transparent 28px, #0173BC 0);}
+.body_warpper .roadList .aa{width: 200px;height: 600px}
+.body_warpper .roadList i{width: 40px;height: 40px;background: url(../images/roadlist_sj.png) no-repeat;position: absolute;left:1px;bottom: -5px;cursor: pointer;}
+
+.body_warpper .roadList h1{height: 38px;line-height: 38px;font-size: 14px;color:#fff;font-weight: normal;background: linear-gradient(to top, #05427d ,#028bf3)}
+.body_warpper .roadList h1 img{width: 28px;height: 25px;float: left;margin-left: 20px;margin-top:8px}
+.body_warpper .roadList .roadList_deatail{height:548px;overflow: scroll;margin-top:8px;margin-left:37px;}
+.body_warpper .roadList .roadList_deatail > ul{margin-top:12px;}
+.body_warpper .roadList .roadList_deatail ul{margin-left: 10px;display: none;}
+.body_warpper .roadList .roadList_deatail ul li{font-size: 14px;color:#fff;}
+.body_warpper .roadList .roadList_deatail ul li p{height: 26px;line-height: 26px;cursor: pointer;white-space: nowrap;margin-left: -10px}
+.body_warpper .roadList .roadList_deatail ul li p:hover{color:#E9BC2B;}
+.body_warpper .roadList .roadList_deatail ul li b{width: 16px;height: 16px;font-size:18px;font-style: normal;float: left;margin-right: 2px;margin-top: 2px}
+
+.body_warpper .time_warpper{width:140px;height: 124px;position: absolute;top:8px;right:6px;z-index:2000;}
+.body_warpper .time_warpper > a{height: 24px;width:44px;float: left;margin-left: -14px;margin-top: 10px}
+.body_warpper .time_warpper span{height: 10px;color:#fff;font-size: 10px;line-height: 10px;margin-top:32px;margin-left: 18px;float: left;}
+.body_warpper .time_warpper h1{height: 28px;font-size:28px;line-height: 28px;color:#fff;float: left;margin-top:6px;margin-left: 44px;font-weight: normal;}
+.body_warpper .time_warpper p{height: 15px;line-height: 15px;font-size:8px;color:#fff;float: left;margin-left:42px;margin-top: 4px;}
+.body_warpper .time_warpper p img{float: left;margin-right: 4px}
+.body_warpper .time_warpper i{width: 40px;height: 40px;float: left;background: url(../images/screen_map_style_btn.png) no-repeat;margin-top: -34px;margin-left: -191px;cursor: pointer;}
+.body_warpper .lampNumList{background: url(../images/screen_lamp_list.png) no-repeat;width: 906px;height: 62px;position: absolute;top: 0;top: 52px;right:256px;}
+.body_warpper .lampNumList span{height: 62px;line-height: 50px;color:#fff;font-size:16px;float: left;width: 114px;font-weight: 400;margin-left:30px;}
+.body_warpper .lampNumList .open_lamp{margin-left: 58px}
+.body_warpper .lampNumList h1{width:68px;height: 62px;font-size:14px;line-height: 62px;color:#fff;float: right;margin-right:44px;font-weight: normal;margin-top: -4px;cursor: pointer;}
+.body_warpper .lampNumList h1:hover{color:#FFB900;}
+.body_warpper .lampNumList i{width:20px;height: 20px;position: absolute;top: 4px;right: 0px;cursor: pointer;}
+
+.body_warpper .common_screen_btn{width: 20px;height:100px;border: 2px solid #43B0FA;cursor: pointer;display: none;position: absolute;z-index: 4000;}
+.body_warpper .common_screen_transverse_btn{width: 100px;height:20px;border: 2px solid #43B0FA;cursor: pointer;display: none;position: absolute;}
+.body_warpper .roadList_btn{right: 22px;top:384px;background: url(../images/screen_left_btn.png) -3px center no-repeat;background-color: #026CB4;}
+.body_warpper .light_rate_btn{left: 22px;top:174px;background: url(../images/screen_right_btn.png) -3px center no-repeat;background-color: #026CB4;}
+.body_warpper .lamp_warn_btn{left: 22px;top:460px;background: url(../images/screen_right_btn.png) -3px center no-repeat;background-color: #026CB4;}
+.body_warpper .lampNumList_btn{left:50%;top:40px;background: url(../images/screen_down_btn.png)  center 0 no-repeat;background-color: #026CB4;}
+.body_warpper .realConsumePower_btn{left:50%;bottom:40px;background: url(../images/screen_up_btn.png)  center 0 no-repeat;background-color: #026CB4;}
+.baiduMap{width: 100%;height: 100%;}
+
+.top_left_corner{position: absolute;left: 0;top:0;width:718px;height: 144px;z-index: 1000;background: url(../images/top_left_corner.png) no-repeat;}
+.top_left_corner i{width: 4px;height: 12px;float: right;background-color:#026CB4;margin-top:18px;border-top: 2px solid #3BAAF4;border-bottom: 2px solid #3BAAF4}
+.left_border_bg{position: absolute;left: 0;top:144px;width:34px;height: 936px;z-index: 1000;background: url(../images/left_border.png) no-repeat;}
+.left_bottom_border{position: absolute;left: 34px;bottom:-1px;width:684px;height: 45px;z-index: 1000;background: url(../images/left_bottom_border.png) no-repeat;}
+.left_bottom_border i{width: 4px;height: 5px;float: right;background-color:#015698;margin-top:24px;border-top: 2px solid #3BAAF4;border-bottom: 2px solid #3BAAF4}
+.top_right_corner{position: absolute;right: 0;top:0;width:176px;height:142px;z-index: 1000;background: url(../images/top_right_corner.png) no-repeat;}
+.right_border_bg{position: absolute;right:0;top:142px;width:47px;height:938px;z-index: 1000;background: url(../images/right_border.png) no-repeat;}
+.right_top_border_bg{position: absolute;right:176px;top:0;width:426px;height:55px;z-index: 1000;background: url(../images/right_top_border_bg.png) no-repeat;}
+.right_bottom_border{position: absolute;right:47px;bottom:0;width:555px;height: 36px;z-index: 1000;background: url(../images/right_bottom_border.png) no-repeat;}
+
+
+.showAllData_win{width:1000px;height:510px;background-color:#fff;position: absolute;left: 50%;top: 174px;display: none;
+    margin-left: -400px;overflow: hidden;background-color: #CCD6DF}
+.showAllData_win > p{height: 40px;color:#fff;font-size:16px;color:#fff;background-color:#126CC4;line-height: 40px;padding-left: 16px}
+.showAllData_win > p span{font-size: 14px;line-height: 40px;float: right;width:30px;cursor: pointer;}
+.showAllData_win > p span:hover{color:#DF9D3D;}
+.showAllData_win .search_box{height:50px;padding-top: 10px;padding-left: 10px}
+.showAllData_win .search_box select{height: 32px;border:1px solid #ccc;float: left;width:150px;margin-right: 10px;font-family: 'Microsoft YaHei'}
+.showAllData_win .search_box .ipt_box{height: 34px;position: relative;float: left;margin-right: 10px}
+.showAllData_win .search_box .ipt_box input[type=text]{height: 30px;border:1px solid #ccc;width:210px;padding-left: 45px;border-radius: 0px}
+.showAllData_win .search_box .ipt_box i{width:31px;height: 21px;position: absolute;left:6px;top:7px;background: url(../images/alarm_record_search_ico.png) no-repeat;border-right:1px solid #FF9900;}
+.showAllData_win .search_box input[type=submit]{width:64px;height:32px;float: left;color:#fff;background-color:#FF9900;line-height: 32px;text-align: center;border:none;margin-left: 10px;cursor:pointer;}
+.showAllData_win .search_box .add_btn,.work_content_box .search_box .excel_btn,
+.showAllData_win .search_box .import_btn,.showAllData_win .search_box .send_btn{height: 32px;padding: 0 12px;line-height: 32px;color:#fff;background-color:#126CC4;float: left;margin-left: 10px;text-align: center;cursor: pointer;border:none}
+.showAllData_win .search_box .send_btn{height: 30px;line-height: 30px;margin-top:4px;width:64px;}
+.showAllData_win .search_box .add_btn img{width:16px;height:16px;float: left;margin-top:9px;margin-right:6px}
+.showAllData_win .search_box .command_box{width:452px;height: 40px;float:left;margin-top: 12px;}
+.showAllData_win .search_box .command_box span,.showAllData_win .search_box .command_box label{padding: 0 10px;height:40px;line-height: 40px;font-size: 12px;float: left;font-weight: bold}
+.showAllData_win .search_box .command_box input[type="radio"]{height: 16px;width:16px;float: left;margin-top: 12px;}
+.showAllData_win .search_box .command_box .win_processBar{width:200px;height: 20px;float:left;margin-top:6px;margin-left: 18px}
+
+.showAllData_win table{width: 100%;table-layout:fixed;word-wrap:break-word;}
+.showAllData_win .dataBox{clear:both;overflow-y: scroll;position: relative}
+.showAllData_win .dataBox .data_deatil{height:270px;border-bottom:1px solid #ccc;}
+.showAllData_win ul{height:40px;width:1262px;position:absolute;top:0px;z-index: 500}
+.showAllData_win ul li{float: left;height: 40px;line-height: 40px;background-color:#FF9900;color:#fff;font-size: 15px;text-align: center;}
+.showAllData_win ul .a0{width:30px;}
+.showAllData_win ul .a1{width:113px;}
+.showAllData_win ul .a2{width: 103px;}
+.showAllData_win ul .a3{width: 113px;}
+.showAllData_win ul .a4{width: 123px;}
+.showAllData_win ul .a5{width: 113px;}
+.showAllData_win ul .a6{width: 66px;}
+.showAllData_win ul .a7{width: 123px;}
+.showAllData_win table{border-collapse:collapse;margin-top: 40px;}
+.showAllData_win table tr td{color:#fff;border:1px solid #fff;text-align: center;background-color:#014B94;font-size: 14px;height: 36px;line-height: 24px}
+.showAllData_win table tr .t0{width: 30px;}
+.showAllData_win table tr .t1{width: 103px;}
+.showAllData_win table tr .t2{width: 103px;}
+.showAllData_win table tr .t3{width: 113px;}
+.showAllData_win table tr .t4{width: 66px;}
+.showAllData_win table tr .t5{width: 123px;}
+
+.page{height:40px;margin-top:20px;clear: both;}
+.page .pagebox{float: right;height: 40px}
+.page a{float: left;font-size: 14px;border: 1px solid #B4B4B4;text-align: center;line-height: 26px;color:#fff;width:20px;margin-right:16px;background-color:#014B94}
+.page .prePage{width: 90px;height:26px;}
+.page .firstPage{width: 48px;}
+.pagebox{margin-left:234px;}
+.page a:hover{background-color:#FF9900;color:#fff;}
+.page .curpage{background-color:#FF9900;color:#fff;}
+.page .curpage:hover{}
+
+.roadList_deatail::-webkit-scrollbar {/*滚动条整体样式*/
+    width:8px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+}
+.roadList_deatail::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+    background-color: #92C5E0;
+}
+.roadList_deatail::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background-color:#0173BC;
+}
+.roadList_deatail::-webkit-scrollbar-corner {/*边角（位置6）*/
+    background-color: #0173BC;
+}
+
+.showAllData_win .dataBox::-webkit-scrollbar,.roadList_deatail::-webkit-scrollbar {/*滚动条整体样式*/
+    width:8px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-thumb,.roadList_deatail::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+    background-color: #92C5E0;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-track,.roadList_deatail::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background-color:#0173BC;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-corner,.roadList_deatail::-webkit-scrollbar-corner {/*边角（位置6）*/
+    background-color: #0173BC;
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TScreenMapper">
+
+   <!-- 获取总能耗消耗-->
+    <select id="getSumPowers" resultType = "string">
+        select sum(power) num from record_sum_power rs
+        left join organization o on rs.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+    </select>
+
+    <select id="getAreasPower" resultType="java.util.Map">
+	    select * from (
+        select a.id,a.areaName,DATE_FORMAT(p.record_time,'%Y-%m-%d') record_times,round(sum(energy),2) energy from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and  a.delFlag = 0 and p.record_time between adddate(date(sysdate()),-4) and now()
+        group by p.record_time,a.id
+        union
+        select a.id,a.areaName,DATE_FORMAT(now(),'%Y-%m-%d') record_times,round(ifnull(FORMAT(sum(td.power)/1000*3,3),0),2) energy from today_record_nb_data td
+        left join controller c on td.nb_device = c.nboit_manage_id
+        left join lamp l on c.id = l.controller_id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on o.id = u.org_id
+        where a.areaName is not null and a.delFlag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and power != 0
+        group by a.id
+        ) a1
+    </select>
+
+    <select id="getFourDaysSumPowerData" resultType="java.util.Map">
+        select sum(power) power,record_time from record_sum_power rs
+        left join organization o on rs.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        group by rs.record_time asc limit 0 ,4
+    </select>
+
+    <select id="getTodayPowerData" resultType="java.lang.Double">
+        select  ifnull(TRUNCATE(sum(power)/1000*3,3),0) num from today_record_nb_data t1
+        left join controller c on t1.nb_device = c.nboit_manage_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+    </select>
+
+    <update id="updateSumPowerData" parameterType="java.util.HashMap">
+        update record_sum_power set power = #{calPower}, record_time = #{date} where id = #{id}
+    </update>
+
+    <select id="dealTodayRecordData">
+        call deal_today_lamp_record_data()
+    </select>
+
+    <select id="getSumEnergyData" resultType="java.util.Map">
+        select * from (
+        select date_format(p.record_time, '%Y-%m-%d') record_time,p.energy from record_sum_power p
+        left join organization o on p.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        order by record_time
+        )b
+        union
+        select date_format(adddate(date(sysdate()),0), '%Y-%m-%d') record_time,round(p1 * h1,3) + e1  from
+        (
+            select
+                (
+                    select IFNULL(sum(rd.power),0) power from today_record_nb_data rd
+                    left join controller c on rd.nb_device = c.nboit_manage_id
+                    left join sys_user u on c.createby = u.id
+                    left join organization o on o.id = u.org_id
+                    where o.org_code like CONCAT('%',#{orgCode},'%') and rd.power != 0
+                ) p1,
+                (
+                    select IFNULL(sum(h.work_hour),1) from record_work_hour h
+                    left join controller c on h.nb_id = c.nboit_manage_id
+                    left join sys_user u on c.createby = u.id
+                    left join organization o on o.id = u.org_id
+                    where o.org_code like CONCAT('%',#{orgCode},'%')
+                ) h1,
+                (
+                select p.energy from record_sum_power p
+                left join organization o on p.org_id = o.id
+                where o.org_code like CONCAT('%',#{orgCode},'%')
+                order by record_time desc limit 0,1
+                ) e1
+                    from iot_dianxin limit 0,1
+        ) a
+    </select>
+
+    <select id="getSingleData" resultType="java.util.HashMap">
+         call show_screen_single_data(#{orgCode})
+    </select>
+</mapper>

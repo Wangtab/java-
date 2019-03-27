@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TlogoMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tlogo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="operid" property="operid" jdbcType="INTEGER" />
+    <result column="uptime" property="uptime" jdbcType="VARCHAR" />
+    <result column="imager" property="imager" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+
+
+  <update id="updateinfo" parameterType="com.lamp.model.Tlogo" >
+    update logo
+    <set >
+      <if test="uptime != null" >
+        uptime=#{uptime},
+      </if>
+      <if test="name != null" >
+        name=#{name},
+      </if>
+      <if test="operid != null" >
+        operid= #{operid},
+      </if>
+      <if test="imager != null" >
+        imager=  #{imager},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="getAll" resultType="map">
+     select l.*,s.user_name as username
+    from logo l
+    left join sys_user s on s.id=l.operid
+    where l.id=1
+  </select>
+
+  <select id="getOne" resultType="map">
+    select l.*,s.user_name as username,s.real_name as realname
+    from logo l
+    left join sys_user s on s.id=l.operid
+    where l.id=#{id}
+  </select>
+
+  <select id="getAll2" resultType="java.util.Map">
+    select l.*,s.user_name as username,s.real_name as realname from logo l left join organization o on l.orgid=o.id
+    left join sys_user s on s.id=l.operid
+    where 1=1 and o.del_flag=0
+    <if test="orgCode !='' and orgCode != ''">
+      AND o.org_code LIKE concat("%",#{orgCode},"%")
+    </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(uptime,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="'name' == orderBy">
+        order by s.user_name ${sort}
+      </when>
+      <when test="'realname' == orderBy">
+      order by s.real_name ${sort}
+    </when>
+      <otherwise>
+        order by str_to_date(l.uptime,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+    <if test="num != null" >
+      limit ${num},${showNum}
+    </if>
+  </select>
+
+  <select id="getAllcount2" parameterType="java.util.HashMap" resultType="integer">
+    select count(1) from logo l left join organization o on l.orgid=o.id
+    left join sys_user s on s.id=l.operid
+    where 1=1 and o.del_flag=0
+    <if test="orgCode !='' and orgCode != ''">
+      AND o.org_code LIKE concat("%",#{orgCode},"%")
+    </if>
+  </select>
+
+
+
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TbuildinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tbuildinfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="roadid" property="roadid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="poleid" property="poleid" jdbcType="INTEGER" />
+    <result column="buildtypeid" property="buildtypeid" jdbcType="INTEGER" />
+    <result column="node" property="node" jdbcType="VARCHAR" />
+    <result column="operid" property="operid" jdbcType="INTEGER" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+
+  <select id="getAll" resultType="map">
+   select b.id,b.buildtime,b.opertime,b.node,s.user_name as username,s.id as sid,p.pole_code as polecode,p.id as pid,
+    r.id as rid ,r.road_name as roadname,bs.id as bid,bs.buildname,rp.id as rpid,rp.name as rpname,rp.number as rpnumber
+    from buildinfo b
+    inner join sys_user s on s.id=b.operid
+    inner join buildstandard bs on b.buildtypeid=bs.id
+    inner join road_manage r on r.id=b.roadid
+    inner join pole_manage p on p.id=b.poleid
+	inner join repair_people rp on rp.id=b.uid
+    where b.state=0 order by b.opertime desc
+  </select>
+
+  <select id="getAllfy" resultType="map">
+  select b.id,b.buildtime,b.opertime,b.node,s.user_name as username,s.id as sid,p.pole_code as polecode,p.id as pid,
+    r.id as rid ,r.road_name as roadname,bs.id as bid,bs.buildname,rp.id as rpid,rp.name as rpname,rp.number as rpnumber
+    from buildinfo b
+    inner join sys_user s on s.id=b.operid
+    inner join buildstandard bs on b.buildtypeid=bs.id
+    inner join road_manage r on r.id=b.roadid
+    inner join pole_manage p on p.id=b.poleid
+		inner join repair_people rp on rp.id=b.uid
+    where b.state=0 order by b.opertime desc limit #{start},#{limit}
+  </select>
+
+  <select id="getAllfybyname" resultType="map">
+    select b.id,b.buildtime,b.opertime,b.node,s.user_name as username,s.id as sid,p.pole_code as polecode,p.id as pid,
+    r.id as rid ,r.road_name as roadname,bs.id as bid,bs.buildname,rp.id as rpid,rp.name as rpname,rp.number as rpnumber
+    from buildinfo b
+    inner join sys_user s on s.id=b.operid
+    inner join buildstandard bs on b.buildtypeid=bs.id
+    inner join road_manage r on r.id=b.roadid
+    inner join pole_manage p on p.id=b.poleid
+    inner join repair_people rp on rp.id=b.uid
+    where b.state=0 and rp.name like CONCAT('%',#{rpname},'%') order by b.opertime desc
+    <if test="start != null" >
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+
+  <select id="getroad" resultType="map">
+    select r.id,r.road_name as roadname  from road_manage r where del_flag=0
+  </select>
+
+  <select id="getpole" resultType="map">
+    select p.id,p.pole_code as polecode from pole_manage p where del_flag=0
+  </select>
+
+  <select id="getbuilds" resultType="map">
+  select bs.id ,bs.buildname from buildstandard bs where state=0
+  </select>
+
+  <select id="getrepair" resultType="map">
+    select rp.id ,rp.name from repair_people rp where del_flag=0
+  </select>
+
+  <insert id="saveinfo" parameterType="com.lamp.model.Tbuildinfo">
+    insert into buildinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roadid != null" >
+        roadid,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="poleid != null" >
+        poleid,
+      </if>
+      <if test="buildtypeid != null" >
+        buildtypeid,
+      </if>
+      <if test="buildtime != null" >
+        buildtime,
+      </if>
+      <if test="node != null" >
+        node,
+      </if>
+      <if test="operid != null" >
+        operid,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+       #{id} ,
+      </if>
+      <if test="roadid != null" >
+        #{roadid},
+      </if>
+      <if test="uid != null" >
+        #{uid},
+      </if>
+      <if test="poleid != null" >
+        #{poleid},
+      </if>
+      <if test="buildtypeid != null" >
+        #{buildtypeid},
+      </if>
+      <if test="buildtime != null" >
+        #{buildtime},
+      </if>
+      <if test="node != null" >
+        #{node},
+      </if>
+      <if test="operid != null" >
+        #{operid},
+      </if>
+      <if test="opertime != null" >
+        #{opertime},
+      </if>
+      <if test="state != null" >
+        #{state},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getinfobyid" resultMap="BaseResultMap" parameterType="Integer">
+    select* from buildinfo b where b.state=0 and b.id=#{id}
+  </select>
+
+  <update id="updateinfo" parameterType="com.lamp.model.Tbuildinfo" >
+    update buildinfo
+    <set >
+      <if test="roadid != null" >
+        roadid= #{roadid},
+      </if>
+      <if test="uid != null" >
+        uid= #{uid},
+      </if>
+      <if test="poleid != null" >
+        poleid= #{poleid},
+      </if>
+      <if test="buildtypeid != null" >
+        buildtypeid= #{buildtypeid},
+      </if>
+      <if test="buildtime != null" >
+        buildtime=#{buildtime},
+      </if>
+      <if test="node != null" >
+        node=#{node},
+      </if>
+      <if test="operid != null" >
+        operid= #{operid},
+      </if>
+      <if test="opertime != null" >
+        opertime=  #{opertime},
+      </if>
+      <if test="state != null" >
+        state= #{state},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="getinfobystanid" resultMap="BaseResultMap" parameterType="Integer">
+    select*from buildinfo b where b.state=0 and b.buildtypeid=#{id}
+  </select>
+
+  <delete id="delwlbyid" parameterType="java.lang.Integer" >
+    delete from buildinfo
+    where id = #{id}
+  </delete>
+
+</mapper>

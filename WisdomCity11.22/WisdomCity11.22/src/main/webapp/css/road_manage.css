@@ -1,0 +1,8 @@
+﻿.work_content_box .table_box table tr td img{width: 30px;height:30px;}
+.win_show_img{width: 400px;height: 400px;background-color:#fff;position: absolute;left: 20px;top:100px;border:14px solid #fff;display: none;z-index: 2000;overflow: hidden;}
+.win_show_img img{width: 400px;height: 400px;}
+.table_win .form_box select{width: 220px}
+.slider.slider-horizontal{width: 220px}
+.slider .tooltip.top{margin-top:30px;left: 0px}
+.tooltip.top .tooltip-arrow{top:0px;border-width:0px 5px 5px 5px;border-bottom-color: #000;}
+label{max-width:999px;}

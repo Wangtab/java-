@@ -1,0 +1,19 @@
+﻿.concentrator_win{width:800px;height:530px;border:1px solid #ccc;position: absolute;
+	left: 50%;top: 50px;margin-left: -400px;background-color: #fff;overflow: hidden;display: none;}
+.concentrator_win p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.concentrator_win p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.concentrator_win .concentrator_box,.concentrator_win .son_box{height: 40px;padding-left:200px;display: block;}
+.concentrator_win .concentrator_box span,.concentrator_win .son_box span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align:center;}
+.concentrator_win .concentrator_box select,.concentrator_win .son_box select{width: 232px;height: 28px;border:1px solid #ccc;font-size: 13px}
+.concentrator_win .concentrator_box input[type=text],.concentrator_win .son_box input[type=text]{width: 220px;height: 28px;border:1px solid #ccc;padding-left: 10px}
+.concentrator_win .concentrator_box input[type=submit]{width:84px;height:32px;float: left;color:#fff;background-color: #126CC4;line-height: 32px;text-align: center;border:none;margin-left:136px;cursor:pointer;}
+.concentrator_win .concentrator_table{overflow-x:scroll;height:90px;clear: both;}
+.concentrator_win table{width:1300px;border-collapse:collapse;clear: both;border:1px solid #ccc;}
+.concentrator_win table tr th,.concentrator_win table tr td{color:#666;height: 20px;line-height: 30px;border:1px solid #ccc;text-align: center;font-weight: normal;font-size:15px}
+.concentrator_win .concentrator_info{height: 40px;width:380px;float: left;}
+.concentrator_win .concentrator_info span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align:right;}
+.concentrator_win .concentrator_info input[type=text]{width: 220px;height: 28px;padding-left: 10px;border:1px solid #fff;color:#555;}
+.concentrator_win h6{height:30px;}
+.concentrator_win .son_box{display: none}
+.detailBox{height:23px;clear: both;font-size: 14px;line-height: 23px;}
+.table_box table tr td .set_pwd_button{display: none}

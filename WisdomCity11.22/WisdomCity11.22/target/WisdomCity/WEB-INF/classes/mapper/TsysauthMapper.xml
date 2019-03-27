@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TsysauthMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tsysauth" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="auth_code" property="authCode" jdbcType="INTEGER" />
+    <result column="auth_des" property="authDes" jdbcType="VARCHAR" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, auth_code, auth_des, oper_id, oper_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_auth
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_auth
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tsysauth" >
+    insert into sys_auth (id, auth_code, auth_des, 
+      oper_id, oper_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{authCode,jdbcType=INTEGER}, #{authDes,jdbcType=VARCHAR}, 
+      #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, #{delFlag,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tsysauth" >
+    insert into sys_auth
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="authCode != null" >
+        auth_code,
+      </if>
+      <if test="authDes != null" >
+        auth_des,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="authCode != null" >
+        #{authCode,jdbcType=INTEGER},
+      </if>
+      <if test="authDes != null" >
+        #{authDes,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tsysauth" >
+    update sys_auth
+    <set >
+      <if test="authCode != null" >
+        auth_code = #{authCode,jdbcType=INTEGER},
+      </if>
+      <if test="authDes != null" >
+        auth_des = #{authDes,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tsysauth" >
+    update sys_auth
+    set auth_code = #{authCode,jdbcType=INTEGER},
+      auth_des = #{authDes,jdbcType=VARCHAR},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--selectByAuthname-->
+  <select id="selectByAuthname" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_auth
+    where auth_des LIKE concat("%",#{authName},"%") and del_flag = 0
+  </select>
+
+  <!-- selectAll-->
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_auth
+    WHERE  del_flag = 0
+  </select>
+
+  <!--deleteById-->
+  <update id="deleteById">
+    update sys_auth
+    set del_flag = 1
+    where id = #{id}
+  </update>
+
+  <!--returnId-->
+  <select id="returnId" resultType="java.lang.Integer">
+    select id
+    from sys_auth
+    WHERE  auth_des = #{role}
+  </select>
+
+</mapper>

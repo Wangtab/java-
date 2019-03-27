@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TsysuserlogMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tsysuserlog" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="log_name" property="logName" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="log_realname" property="logRealname" jdbcType="VARCHAR" />
+    <result column="log_date" property="logDate" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid,log_name,log_realname,ip,log_date
+  </sql>
+  <!--动态加载登录信息-->
+  <insert id="userLogInsert" parameterType="com.lamp.model.Tsysuserlog">
+    insert into sys_user_log (uuid,ip,userid,log_date)
+    values (#{uuid},#{ip},#{userId},#{logDate})
+  </insert>
+</mapper>

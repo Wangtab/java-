@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TroadLightingMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.TroadLighting" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="roadName" property="roadname" jdbcType="VARCHAR" />
+    <result column="lampType" property="lamptype" jdbcType="VARCHAR" />
+    <result column="dimming" property="dimming" jdbcType="VARCHAR" />
+    <result column="lighting" property="lighting" jdbcType="VARCHAR" />
+    <result column="install_peo" property="installPeo" jdbcType="VARCHAR" />
+    <result column="install_time" property="installTime" jdbcType="VARCHAR" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, roadName, lampType, dimming, lighting, install_peo, install_time, oper_id, oper_time, 
+    del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from road_lighting
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from road_lighting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.TroadLighting" >
+    insert into road_lighting (id, roadName, lampType, 
+      dimming, lighting, install_peo, 
+      install_time, oper_id, oper_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{roadname,jdbcType=VARCHAR}, #{lamptype,jdbcType=VARCHAR}, 
+      #{dimming,jdbcType=VARCHAR}, #{lighting,jdbcType=VARCHAR}, #{installPeo,jdbcType=VARCHAR}, 
+      #{installTime,jdbcType=VARCHAR}, #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.TroadLighting" >
+    insert into road_lighting
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roadname != null" >
+        roadName,
+      </if>
+      <if test="lamptype != null" >
+        lampType,
+      </if>
+      <if test="dimming != null" >
+        dimming,
+      </if>
+      <if test="lighting != null" >
+        lighting,
+      </if>
+      <if test="installPeo != null" >
+        install_peo,
+      </if>
+      <if test="installTime != null" >
+        install_time,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roadname != null" >
+        #{roadname,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptype != null" >
+        #{lamptype,jdbcType=VARCHAR},
+      </if>
+      <if test="dimming != null" >
+        #{dimming,jdbcType=VARCHAR},
+      </if>
+      <if test="lighting != null" >
+        #{lighting,jdbcType=VARCHAR},
+      </if>
+      <if test="installPeo != null" >
+        #{installPeo,jdbcType=VARCHAR},
+      </if>
+      <if test="installTime != null" >
+        #{installTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.TroadLighting" >
+    update road_lighting
+    <set >
+      <if test="roadname != null" >
+        roadName = #{roadname,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptype != null" >
+        lampType = #{lamptype,jdbcType=VARCHAR},
+      </if>
+      <if test="dimming != null" >
+        dimming = #{dimming,jdbcType=VARCHAR},
+      </if>
+      <if test="lighting != null" >
+        lighting = #{lighting,jdbcType=VARCHAR},
+      </if>
+      <if test="installPeo != null" >
+        install_peo = #{installPeo,jdbcType=VARCHAR},
+      </if>
+      <if test="installTime != null" >
+        install_time = #{installTime,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.TroadLighting" >
+    update road_lighting
+    set roadName = #{roadname,jdbcType=VARCHAR},
+      lampType = #{lamptype,jdbcType=VARCHAR},
+      dimming = #{dimming,jdbcType=VARCHAR},
+      lighting = #{lighting,jdbcType=VARCHAR},
+      install_peo = #{installPeo,jdbcType=VARCHAR},
+      install_time = #{installTime,jdbcType=VARCHAR},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--selectAllRL-->
+  <select id="selectAllRL" resultType="hashmap">
+    select road_lighting.id, roadName, lampType, dimming, lighting, install_peo, install_time, user_name, road_lighting.oper_time
+    from road_lighting,sys_user
+    WHERE  road_lighting.del_flag = 0 AND road_lighting.oper_id = sys_user.id
+  </select>
+  <!---->
+  <select id="selectByRoad" resultType="hashmap">
+    select road_lighting.id, roadName, lampType, dimming, lighting, install_peo, install_time, user_name, road_lighting.oper_time
+    from road_lighting,sys_user
+    WHERE  road_lighting.del_flag = 0 AND road_lighting.oper_id = sys_user.id AND roadName LIKE concat("%",#{roadName},"%")
+  </select>
+</mapper>

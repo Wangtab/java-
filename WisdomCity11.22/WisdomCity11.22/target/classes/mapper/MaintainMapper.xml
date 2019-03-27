@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.MaintainMapper" >
+    <cache/>
+    <select id="getBuildingInfoData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select b.id,b.ordernum,a.areaName,r.road_name,b.modelnum,devicenum,p.name,p.number,bs.buildname,case repairtype when 0 then '维护' when 1 then '更换' end repairtype,
+        case deal_result when 0 then '在维' when 1 then '完成' end deal_result,b.buildtime,s.real_name,b.opertime
+        from buildinfo b
+        left join area_manage a on b.areaid = a.id
+        left join road_manage r on r.id = b.roadid
+        left join repair_people p on b.repairmanid = p.id
+        left join buildstandard bs on b.buildtypeid = bs.id
+        left join sys_user s on s.id = b.operid
+        left join sys_user su on su.id = b.createby
+        left join organization o on o.id = su.org_id
+        where b.state = 0 and o.org_code like concat('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="orderNum != null and '' != orderNum">
+            and ordernum LIKE CONCAT('%',#{orderNum},'%')
+        </if>
+        <if test="null != startDate and '' != startDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        <choose>
+            <when test="'ordernum' == orderBy">
+                order by b.ordernum ${sort}
+            </when>
+            <when test="'areaName' == orderBy ">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'modelnum' == orderBy">
+                order by b.modelnum ${sort}
+            </when>
+            <when test="'devicenum' == orderBy">
+                order by devicenum ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by p.name ${sort}
+            </when>
+            <when test="'number' == orderBy">
+                order by p.number ${sort}
+            </when>
+            <when test="'buildname' == orderBy">
+                order by bs.buildname ${sort}
+            </when>
+            <when test="'repairtype' == orderBy">
+                order by repairtype ${sort}
+            </when>
+            <when test="'deal_result' == orderBy">
+                order by deal_result ${sort}
+            </when>
+            <when test="'buildtime' == orderBy">
+                order by str_to_date(b.buildtime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by s.real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by str_to_date(b.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(b.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountBuildingInfoData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from buildinfo b
+        left join sys_user u on b.createby = u.id
+        left join organization o on o.id = u.org_id
+        where b.state = 0 and o.org_code like concat('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="orderNum != null and '' != orderNum">
+            and ordernum LIKE CONCAT('%',#{orderNum},'%')
+        </if>
+        <if test="null != startDate and '' != startDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+    </select>
+
+    <select id="exportBuildingInfoData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select b.id,b.ordernum,a.areaName,r.road_name,b.modelnum,devicenum,p.name,p.number,bs.buildname,case repairtype when 0 then '维护' when 1 then '更换' end repairtype,
+        case deal_result when 0 then '在维' when 1 then '完成' end deal_result,b.buildtime,s.real_name,b.opertime
+        from buildinfo b
+        left join area_manage a on b.areaid = a.id
+        left join road_manage r on r.id = b.roadid
+        left join repair_people p on b.repairmanid = p.id
+        left join buildstandard bs on b.buildtypeid = bs.id
+        left join sys_user s on s.id = b.operid
+        left join sys_user su on su.id = b.createby
+        left join organization o on o.id = su.org_id
+        where b.state = 0 and o.org_code like concat('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="orderNum != null and '' != orderNum">
+            and ordernum LIKE CONCAT('%',#{ordernum},'%')
+        </if>
+        <if test="null != startDate and '' != startDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate">
+            and  str_to_date(b.opertime,'%Y-%m-%d') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        order by str_to_date(b.opertime,'%Y-%m-%d %H:%i:%s') desc
+    </select>
+
+    <select id="getRepairPeopleAndNumberData" resultType="java.util.Map">
+        select p.id,p.name cname,p.number from repair_people p
+        left join sys_user u on p.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like concat('%',#{orgCode},'%') and o.del_flag = 0 and p.del_flag = 0
+    </select>
+
+    <select id="getBuildingInfoDataById" parameterType="integer" resultType="java.util.HashMap">
+        select b.ordernum,b.buildtypeid,b.roadid,b.areaid,b.modelnum,b.devicenum,b.repairmanid,b.repairtype,b.deal_result,b.buildtime from buildinfo b
+        where id = #{id}
+    </select>
+
+    <update id="delBuildingInfoData" parameterType="integer">
+        update buildinfo set state = 1 where id = #{id}
+    </update>
+
+    <insert id="addBuildingInfoData" parameterType="com.lamp.model.Tbuildinfo">
+        insert into buildinfo(roadid,buildtypeid,buildtime,node,operid,opertime,state,areaid,ordernum,repairmanid,modelnum,devicenum,repairtype,deal_result,createby,createTime)
+        VALUES
+        (#{roadid},#{buildtypeid},#{buildtime},#{node},#{operid},#{opertime},0,#{areaid},#{ordernum},#{repairmanid},#{modelnum},#{devicenum},#{repairtype},#{deal_result},#{createby},#{createTime})
+    </insert>
+
+    <update id="updateBuildingInfoData" parameterType="com.lamp.model.Tbuildinfo">
+        update buildinfo set areaid = #{areaid},roadid = #{roadid},
+        modelnum = #{modelnum},devicenum = #{devicenum},repairmanid=#{repairmanid},repairtype=#{repairtype},deal_result=#{deal_result},buildtypeid=#{buildtypeid},
+        buildtime = #{buildtime},node = #{node} where id = #{id}
+    </update>
+
+    <select id="getCountRecord_warnByOrderNum" resultType="java.util.Map">
+        select nb_device,ordernum from record_warn where ordernum = #{ordernum} and deal_flag = 0
+        group by nb_device
+    </select>
+
+    <update id="updateLampWarnDataByOrderNum">
+        update record_warn set deal_flag = 10,ordernum=#{ordernum} where ordernum = #{ordernum} and deal_flag = 0 and nb_device = #{nb_device}
+    </update>
+
+    <select id="queryLogUserList" resultType="java.util.Map">
+        select s.uuid,u.user_name log_name,u.real_name log_realname,s.ip,s.log_date from sys_user_log s
+        left join sys_user u on s.userid = u.id
+        left join organization o on o.id=u.org_id
+        WHERE
+        o.org_code like concat('%',#{orgCode},'%')
+        AND o.del_flag=0
+        <if test="startDate !='' and startDate != null ">
+            AND str_to_date(log_date,'%Y-%m-%d %H:%i:%s')  &gt;= #{startDate}
+        </if>
+        <if test="endDate !='' and endDate != null ">
+            AND str_to_date(log_date,'%Y-%m-%d %H:%i:%s') &lt;= #{endDate}
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(log_date,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'log_name' == orderBy">
+                order by u.user_name ${sort}
+            </when>
+            <when test="'log_realname' == orderBy ">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'ip' == orderBy">
+                order by s.ip ${sort}
+            </when>
+            <when test="'log_date' == orderBy">
+                order by s.log_date ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(log_date,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="queryCountLogUserList" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM sys_user_log s
+        left join sys_user u on s.userid = u.id
+        left join organization o on o.id=u.org_id
+        WHERE  1=1
+        AND o.org_code like concat('%',#{orgCode},'%')
+        AND o.del_flag=0
+        <if test="startDate !='' and startDate != null ">
+            AND str_to_date(log_date,'%Y-%m-%d %H:%i:%s') &gt;= #{startDate}
+        </if>
+        <if test="endDate !='' and endDate != null ">
+            AND str_to_date(log_date,'%Y-%m-%d %H:%i:%s') &lt;= #{endDate}
+        </if>
+    </select>
+
+    <select id="getCountOperationData" resultType="integer" parameterType="java.util.HashMap">
+        SELECT count(1)
+        FROM oper_log ol
+        LEFT JOIN sys_user u on ol.userid = u.id
+        LEFT JOIN organization o ON u.org_id = o.id
+        left join lamp_menu lm on lm.id=ol.menu_id
+        WHERE  o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and  str_to_date(ol.opertime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and  str_to_date(ol.opertime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null !=menuId and '' !=menuId">
+            AND lm.id=#{menuId}
+        </if>
+        <if test="null !=kindId and '' !=kindId">
+            AND ol.kind_id=#{kindId}
+        </if>
+        AND o.del_flag = 0
+        AND u.del_flag = 0
+    </select>
+
+    <select id="getOperationData" resultType="java.util.Map" parameterType="java.util.HashMap">
+        SELECT
+        ol.id, operdes, ol.opertime, case kind_id when 10 then '添加' when 20 then '修改' when 30 then '删除' end kind_id,lm.cname,u.real_name
+        FROM oper_log ol
+        LEFT JOIN sys_user u on ol.userid = u.id
+        LEFT JOIN organization o ON u.org_id = o.id
+        left join lamp_menu lm on lm.id=ol.menu_id
+        WHERE  o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        AND o.del_flag = 0
+        AND u.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and  str_to_date(ol.opertime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and  str_to_date(ol.opertime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null !=menuId and '' !=menuId">
+            AND lm.id=#{menuId}
+        </if>
+        <if test="null !=kindId and '' !=kindId">
+            AND ol.kind_id=#{kindId}
+        </if>
+        <choose>
+            <when test="'real_name' == orderBy ">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'kind_id' == orderBy">
+                order by kind_id ${sort}
+            </when>
+            <when test="'operdes' == orderBy">
+                order by operdes ${sort}
+            </when>
+            <when test="'cname' == orderBy">
+                order by lm.cname ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by ol.opertime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(ol.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getOperationLogData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.areaName,r.road_name,rm.cname,l.poleCode,nm.nb_device,nm.nb_code,
+        case rn.on_off when 0 then '开灯' when 1 then '关灯' end on_off,
+        case rn.conn_state when 1 then '在线' when 2 then '离线' when 3 then '异常'end conn_state,rn.vol,rn.ele,rn.power,
+        rn.vol,rn.ele,rn.power,
+        rn.dimming,rd.record_time,rn.temp,rn.pvol,rn.pele,rn.bvol
+        from record_nb_data rd
+        left join nbiot_manage nm on rd.nb_device = nm.id
+        left join controller c on rd.nb_device = c.id
+        left join real_nb_data rn on rd.nb_device = rn.nbid
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        where c.delflag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.delFlag = 0
+        and r.del_flag = 0 and rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+            and r.id = #{roadId}
+        </if>
+        <if test="lineId != null and '' != roadId">
+            and rm.id = #{lineId}
+        </if>
+        <if test="lampId !=null and '' != lampId">
+            and l.id = #{lampId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') desc
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'cname' == orderBy ">
+                order by rm.cname ${sort}
+            </when>
+            <when test="'poleCode' == orderBy">
+                order by l.poleCode ${sort}
+            </when>
+            <when test="'nb_device' == orderBy">
+                order by nm.nb_device ${sort}
+            </when>
+            <when test="'nb_code' == orderBy">
+                order by nm.nb_code ${sort}
+            </when>
+            <when test="'on_off' == orderBy">
+                order by rn.on_off ${sort}
+            </when>
+            <when test="'conn_state' == orderBy">
+                order by rn.conn_state ${sort}
+            </when>
+            <when test="'vol' == orderBy">
+                order by rn.vol ${sort}
+            </when>
+            <when test="'ele' == orderBy">
+                order by rn.ele ${sort}
+            </when>
+            <when test="'power' == orderBy">
+                order by rn.power ${sort}
+            </when>
+            <when test="'dimming' == orderBy">
+                order by rn.dimming ${sort}
+            </when>
+            <when test="'record_time' == orderBy">
+                order by rn.record_time ${sort}
+            </when>
+            <when test="'temp' == orderBy">
+                order by rn.temp ${sort}
+            </when>
+            <when test="'temp' == orderBy">
+                order by rn.temp ${sort}
+            </when>
+            <when test="'pvol' == orderBy">
+                order by rn.pvol ${sort}
+            </when>
+            <when test="'pele' == orderBy">
+                order by rn.pele ${sort}
+            </when>
+            <when test="'bvol' == orderBy">
+                order by rn.bvol ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countGetOperationLogData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from record_nb_data rd
+        left join nbiot_manage nm on rd.nb_device = nm.id
+        left join controller c on rd.nb_device = c.id
+        left join real_nb_data rn on rd.nb_device = rn.nbid
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        where c.delflag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        and a.delFlag = 0 and r.del_flag = 0 and rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+            and r.id = #{roadId}
+        </if>
+        <if test="lineId != null and '' != roadId">
+            and rm.id = #{lineId}
+        </if>
+        <if test="lampId !=null and '' != lampId">
+            and l.id = #{lampId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+    </select>
+
+    <select id="exportOperationLampData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.areaName,r.road_name,rm.cname,l.poleCode,lt.lampModel,l.lampnum,lt.power,lt.lampFactory, case lt.lamptypename when 1 then '普通路灯' when 2 then '太阳能路灯' end lamptypename,
+        nm.nb_device,nm.nb_code,ck.kindname,c.c_num,c.factory_name, case c.business when 4 then '上海产业院IOT平台' when 3 then '上海产业院IOT平台' end business,
+        case c.protocol when 0 then 'UDP协议' when 1 then 'COAP协议' end protocol,c.sim_code,em.name eleName,
+        case rn.on_off when 0 then '开灯' when 1 then '关灯' end on_off,
+        case rn.conn_state when 1 then '在线' when 2 then '离线' when 3 then '异常'end conn_state,rn.vol,rn.ele,rn.power,
+        rn.dimming,rd.record_time,rn.temp,rn.pvol,rn.pele,rn.bvol
+        from record_nb_data rd
+        left join nbiot_manage nm on rd.nb_device = nm.id
+        left join controller c on rd.nb_device = c.id
+        left join real_nb_data rn on rd.nb_device = rn.nbid
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join controllerkind ck on c.controllerkindid = ck.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join elecbox_manage em on l.dbcircuit = em.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        where c.delflag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.delFlag = 0
+        and r.del_flag = 0 and rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+            and r.id = #{roadId}
+        </if>
+        <if test="lineId != null and '' != roadId">
+            and rm.id = #{lineId}
+        </if>
+        <if test="lampId !=null and '' != lampId">
+            and l.id = #{lampId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate">
+            and str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+    </select>
+
+    <select id="getCountRoutingData" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1)  FROM checkinfo AS ch
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0 AND o.org_code LIKE CONCAT('%',#{orgCode},'%') AND ch.state = 0
+        <if test="cname != '' and cname != null">
+            AND  p.name LIKE CONCAT('%',#{cname,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="getRoutingData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT  a.areaName,ch.id,ch.roadid,ch.uid,r.road_name,p.name AS peopleName,ch.startime,
+        ch.endtime,ch.checkdescribe,u.real_name AS opername,ch.opertime,ch.state
+        FROM checkinfo AS ch LEFT JOIN road_manage AS r ON ch.roadid = r.id
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN area_manage AS a ON a.id = r.area_id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0 AND o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="cname != '' and cname != null">
+            AND  p.name LIKE CONCAT('%',#{cname,jdbcType=VARCHAR},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(ch.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+
+            <when test="'areaName' == orderBy">
+                order by areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy">
+                order by road_name ${sort}
+            </when>
+            <when test="'peopleName' == orderBy ">
+                order by peopleName ${sort}
+            </when>
+            <when test="'startime' == orderBy">
+                order by ch.startime ${sort}
+            </when>
+            <when test="'endtime' == orderBy">
+                order by ch.endtime ${sort}
+            </when>
+            <when test="'checkdescribe' == orderBy">
+                order by ch.checkdescribe ${sort}
+            </when>
+            <when test="'opername' == orderBy">
+                order by opername ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by ch.opertime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(ch.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getRoutingDataById" parameterType="integer" resultType="java.util.HashMap">
+        SELECT ch.id,a.areaName,p.name,r.road_name,r.area_id AS
+        areaid,ch.roadid,ch.uid,ch.startime,ch.endtime,ch.checkdescribe FROM checkinfo AS ch
+        LEFT JOIN road_manage AS r ON ch.roadid = r.id
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN area_manage AS a ON a.id = r.area_id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0  AND ch.id = #{id}
+    </select>
+
+    <update id="delRoutingDataById" parameterType="integer">
+        update checkinfo set state = 1 where id = #{id}
+    </update>
+
+    <insert id="addRoutingData" parameterType="com.lamp.model.TroutingInspection">
+        insert into checkinfo (roadid,uid,startime,endtime,checkdescribe,operid,opertime,state,createby,createTime)
+        values
+        (#{roadid},#{uid},#{startime},#{endtime},#{checkdescribe},#{operid},#{opertime},0,#{createby},#{createTime})
+    </insert>
+
+    <update id="updateRoutingData" parameterType="com.lamp.model.TroutingInspection">
+        update checkinfo set roadid = #{roadid},uid= #{uid},startime = #{startime},endtime = #{endtime},checkdescribe = #{checkdescribe},operid = #{operid},opertime = #{opertime}
+        where id = #{id}
+    </update>
+
+    <select id="getCountStockData" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1) FROM stock AS s
+        LEFT JOIN sys_user AS  u ON  s.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        LEFT JOIN category c ON c.catId = s.catId
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND s.state = 0
+        <if test="equipName != null and equipName != ''">
+            AND s.equipName like  CONCAT('%',#{equipName},'%')
+        </if>
+        <if test="cname != null and cname != ''">
+            AND s.catId like  CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+    <select id="getStockData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT s.id,s.catId,c.catName,s.equipName,s.totime,
+        s.stocknum,s.changeNum,s.changetime,s.endopertime,s.node,s.opertime,s.state,u2.real_name
+        FROM stock AS s
+        LEFT JOIN sys_user AS  u ON  s.createby = u.id
+        left join sys_user u2 on u2.id = s.operid
+        LEFT JOIN organization o ON o.id = u.org_id
+        LEFT JOIN category c ON c.catId = s.catId
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND s.state = 0
+        <if test="cname != null and cname !=''">
+            AND s.catId LIKE CONCAT('%',#{cname},'%')
+        </if>
+        <if test=" equipName != null and equipName !=''">
+            AND s.equipName LIKE CONCAT('%',#{equipName,jdbcType=VARCHAR},'%')
+        </if>
+        <choose>
+            <when test="'catName' == orderBy">
+                order by c.catName ${sort}
+            </when>
+            <when test="'endopertime' == orderBy">
+                order by s.endopertime ${sort}
+            </when>
+            <when test="'equipName' == orderBy">
+                order by s.equipName ${sort}
+            </when>
+            <when test="'catName' == orderBy ">
+                order by catName ${sort}
+            </when>
+            <when test="'stocknum' == orderBy ">
+                order by s.stocknum ${sort}
+            </when>
+            <when test="'changeNum' == orderBy">
+                order by s.changeNum ${sort}
+            </when>
+            <when test="'node' == orderBy">
+                order by s.node ${sort}
+            </when>
+            <when test="'realName' == orderBy">
+                order by u2.realName ${sort}
+            </when>
+            <when test="'equipName' == orderBy">
+                order by s.equipName ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by s.opertime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(s.opertime,'%Y-%m-%d %H:%i:%s') DESC
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getStockDataById" parameterType="integer" resultType="java.util.HashMap">
+        SELECT s.id,s.catId,c.catname,s.equipName,s.totime,s.stocknum,s.node
+        FROM stock AS s
+        LEFT JOIN category c ON c.catId = s.catId
+        WHERE s.id = #{id}
+    </select>
+
+    <update id="delStockDataById" parameterType="integer">
+        update stock set state = 1 where id = #{id}
+    </update>
+
+    <insert id="addStockData" parameterType="com.lamp.model.Tstock">
+        insert into stock (catId, equipName,totime,stocknum,changenum,changetime,endopertime,
+        node,operid,opertime,state,createby,createTime)
+        values
+        (#{catId},#{equipName},#{totime},#{stocknum},#{changenum},#{changetime},#{endopertime},
+        #{node},#{operid},#{opertime},0,#{createby},#{createTime})
+    </insert>
+
+    <update id="updateStockData" parameterType="com.lamp.model.Tstock">
+        UPDATE stock SET catId =  #{catId},equipName = #{equipName},totime = #{totime},
+        changenum = #{changenum},stocknum = #{stocknum},changetime = #{changetime},endopertime = #{endopertime},
+        node = #{node},operid = #{operid},opertime = #{opertime} where id = #{id}
+    </update>
+
+    <select id="getPlatformDianSumPrice" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.*,o.org_name from ammeter_price a
+        left join organization o on a.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by STR_TO_DATE(a.record_time,'%Y-%m-%d') desc
+            </when>
+            <when test="'price' == orderBy">
+                order by price ${sort}
+            </when>
+            <when test="'record_time' == orderBy">
+                order by record_time ${sort}
+            </when>
+            <when test="'energy' == orderBy">
+                order by energy ${sort}
+            </when>
+            <when test="'sum_price' == orderBy">
+                order by a.sum_price ${sort}
+            </when>
+            <when test="'org_name' == orderBy">
+                order by org_name ${sort}
+            </when>
+            <otherwise>
+                order by STR_TO_DATE(a.record_time,'%Y-%m-%d') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countGetPlatformDianSumPrice" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from ammeter_price a
+        left join organization o on a.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+    </select>
+
+    <select id="getCountRepairData" parameterType="java.util.HashMap" resultType="integer">
+        SELECT count(1) FROM repair_people r
+        LEFT JOIN sys_user u on r.createby = u.id
+        LEFT JOIN organization o ON u.org_id = o.id
+        WHERE  r.del_flag = 0
+        AND o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        AND o.del_flag = 0
+        AND u.del_flag = 0
+        <if test="name != '' and name != null">
+            and r.name LIKE CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="getRepairData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select r.id, name, number,case sex when 0 then '男' when 1 then '女' end sex , tel, address,u2.real_name, r.oper_time, r.del_flag,numjob,
+        o2.org_name orgname
+        from repair_people r
+        LEFT JOIN sys_user u on r.createby = u.id
+        left join sys_user u2 on r.operId = u2.id
+        LEFT JOIN organization o ON u.org_id = o.id
+        left join organization o2 on o2.id = r.orgid
+        WHERE  r.del_flag = 0
+        AND o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        AND o.del_flag = 0
+        AND u.del_flag = 0
+        <if test="name != '' and name != null">
+            and r.name LIKE CONCAT('%',#{name},'%')
+        </if>
+
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by r.name ${sort}
+            </when>
+            <when test="'number' == orderBy ">
+                order by r.number ${sort}
+            </when>
+            <when test="'sex' == orderBy">
+                order by sex ${sort}
+            </when>
+            <when test="'numjob' == orderBy">
+                order by r.numjob ${sort}
+            </when>
+            <when test="'tel' == orderBy">
+                order by r.tel ${sort}
+            </when>
+            <when test="'address' == orderBy">
+                order by r.address ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u2.real_name ${sort}
+            </when>
+            <when test="'orgname' == orderBy">
+                order by orgname ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by r.oper_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        LIMIT #{num},#{showNum};
+    </select>
+
+    <select id="getRepairDataById" parameterType="integer" resultType="java.util.HashMap">
+        select r.id, name, number,sex, tel, address,r.del_flag,numjob,orgid,o.org_name orgname
+        from repair_people r
+        LEFT JOIN sys_user u on r.createby = u.id
+        LEFT JOIN organization o ON u.org_id = o.id
+        WHERE  r.del_flag = 0 AND r.id =#{id}
+    </select>
+
+    <update id="deleteRepById" parameterType="integer">
+        update repair_people set del_flag = 1 where id = #{id}
+    </update>
+
+    <insert id="saveRepData" parameterType="com.lamp.model.TrepairPeople">
+        insert into repair_people (name,sex,number,numjob,tel,operId,oper_time,del_flag,address,orgid,createby,createTime)
+        values
+        (#{name},#{sex},#{number},#{numjob},#{tel},#{operid},#{operTime},0,#{address},#{orgid},#{createby},#{createTime})
+    </insert>
+
+    <update id="updateRepData" parameterType="com.lamp.model.TrepairPeople" >
+        update repair_people SET name=#{name},sex=#{sex},number=#{number},numjob=#{numjob},
+        tel=#{tel},operId=#{operid},oper_time=#{operTime},address=#{address}
+        WHERE id=#{id}
+    </update>
+
+    <select id="checkRepairNum" resultType="integer">
+        SELECT COUNT(*) FROM repair_people  r
+        left join sys_user u on r.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        and number = #{number}
+    </select>
+
+    <select id="getCountBuildStandard" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1) FROM buildstandard b
+        LEFT JOIN sys_user s  ON s.id=b.operid
+        LEFT JOIN sys_user ss ON ss.id = b.createby
+        LEFT JOIN organization o ON ss.org_id = o.id
+        WHERE b.state=0 AND o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        <if test="cname != null and cname != ''">
+            AND buildname like  CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+    <select id="getBuildStandard" parameterType="java.util.HashMap" resultType="java.util.Map" >
+        select b.*,s.user_name,s.real_name from buildstandard b
+        left join sys_user s  on s.id=b.operid
+        left join sys_user ss on ss.id = b.createby
+        left join organization o on ss.org_id = o.id
+        where b.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="cname != null and cname != ''">
+            AND buildname like  CONCAT('%',#{cname},'%')
+        </if>
+        <choose>
+            <when test="'buildname' == orderBy">
+                order by buildname ${sort}
+            </when>
+            <when test="'builddescribe' == orderBy ">
+                order by builddescribe ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by b.opertime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(b.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getBuildStandardById" parameterType="integer" resultType="java.util.HashMap" >
+        select * from buildstandard b  where b.state=0 and b.id=#{id}
+    </select>
+
+    <update id="delBuildStandardById" parameterType="integer">
+        update buildstandard set state = 1 where id = #{id}
+    </update>
+
+    <insert id="addBuildStandard" parameterType="com.lamp.model.Tbuildstandard" >
+        insert into buildstandard ( id,buildname,builddescribe,opertime,operid,state,createby,createTime)
+        values (#{id},#{buildname}, #{builddescribe}, #{opertime}, #{operid},0,#{createby}, #{createTime})
+    </insert>
+
+    <update id="updateBuildStandard" parameterType="com.lamp.model.Tbuildstandard" >
+        update buildstandard set buildname = #{buildname},builddescribe = #{builddescribe},operid = #{operid}, opertime = #{opertime}
+        where id = #{id}
+    </update>
+</mapper>

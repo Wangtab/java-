@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TareamanageMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tareamanage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="areaName" property="areaname" jdbcType="VARCHAR" />
+    <result column="areaDes" property="areades" jdbcType="VARCHAR" />
+    <result column="manager" property="manager" jdbcType="VARCHAR" />
+    <result column="operId" property="operid" jdbcType="INTEGER" />
+    <result column="operTime" property="opertime" jdbcType="VARCHAR" />
+    <result column="delFlag" property="delflag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, areaName, areaDes, manager, operId, operTime, delFlag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from area_manage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--根据区域名搜索-->
+  <select id="selectByArea" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from area_manage
+    where areaName LIKE CONCAT('%',#{areaname},'%')
+  </select>
+
+
+  <select id="selectAllarea" resultMap="BaseResultMap"  >
+  select
+  <include refid="Base_Column_List" />
+  from area_manage
+</select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from area_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.lamp.model.Tareamanage" >
+    insert into area_manage (id, areaName, areaDes, 
+      manager, operId, operTime, 
+      delFlag)
+    values (#{id,jdbcType=INTEGER}, #{areaname,jdbcType=VARCHAR}, #{areades,jdbcType=VARCHAR}, 
+      #{manager,jdbcType=VARCHAR}, #{operid,jdbcType=INTEGER}, #{opertime,jdbcType=VARCHAR},
+      #{delflag,jdbcType=TINYINT})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.lamp.model.Tareamanage" >
+    insert into area_manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="areaname != null" >
+        areaName,
+      </if>
+      <if test="areades != null" >
+        areaDes,
+      </if>
+      <if test="manager != null" >
+        manager,
+      </if>
+      <if test="operid != null" >
+        operId,
+      </if>
+      <if test="opertime != null" >
+        operTime,
+      </if>
+      <if test="delflag != null" >
+        delFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="areaname != null" >
+        #{areaname,jdbcType=VARCHAR},
+      </if>
+      <if test="areades != null" >
+        #{areades,jdbcType=VARCHAR},
+      </if>
+      <if test="manager != null" >
+        #{manager,jdbcType=VARCHAR},
+      </if>
+      <if test="operid != null" >
+        #{operid,jdbcType=INTEGER},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        #{delflag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tareamanage" >
+    update area_manage
+    <set >
+      <if test="areaname != null" >
+        areaName = #{areaname,jdbcType=VARCHAR},
+      </if>
+      <if test="areades != null" >
+        areaDes = #{areades,jdbcType=VARCHAR},
+      </if>
+      <if test="manager != null" >
+        manager = #{manager,jdbcType=VARCHAR},
+      </if>
+      <if test="operid != null" >
+        operId = #{operid,jdbcType=INTEGER},
+      </if>
+      <if test="opertime != null" >
+        operTime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        delFlag = #{delflag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tareamanage" >
+    update area_manage
+    set areaName = #{areaname,jdbcType=VARCHAR},
+      areaDes = #{areades,jdbcType=VARCHAR},
+      manager = #{manager,jdbcType=VARCHAR},
+      operId = #{operid,jdbcType=INTEGER},
+      operTime = #{opertime,jdbcType=VARCHAR},
+      delFlag = #{delflag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="DeleteAreaById" parameterType="java.lang.Integer" >
+    update area_manage
+    set
+    delFlag = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

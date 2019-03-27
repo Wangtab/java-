@@ -1,0 +1,15 @@
+﻿body{background: url(../images/login_bg.jpg) no-repeat;}
+.login{width: 400px;height:360px;background-color: #fff;position: absolute;right: 50%;top: 50%;opacity: 0.9;margin-right: -200px;margin-top: -180px;}
+.login > p{line-height: 64px;font-size: 21px;color:#fff;padding-left: 20px;background-color:#003F6D}
+.login > p span{float: right;line-height: 64px;color:#fff;font-size: 15px;margin-right: 26px}
+.login .login_box{height:150px;width:355px;float: left;margin-left: 22px;margin-top: 28px;position: relative;}
+.login .login_box input{width:329px;height:50px;background-color:#E6E5EA;border:1px solid #B8B8B9;line-height: 50px;font-size: 14px;padding-left:26px;margin-bottom:20px}
+.login .login_box i{width:22px;height:22px;background: url(../images/user_ico.png) no-repeat;position: absolute;right: 10px;top:15px}
+.login .login_box b{width: 13px;height: 16px;background: url(../images/password_ico.png) -5px -4px no-repeat;position: absolute;right:14px;top: 88px}
+.login .login_checkbox{height: 20px;clear: both;padding-left:31px}
+.login .login_checkbox p{height: 20px;float: left;font-size: 12px;line-height: 20px}
+.login .login_checkbox input{width: 16px;height:16px;border:1px solid #B8B8B9;float: left;margin-right: 4px;}
+.login .login_checkbox label{height: 20px;padding: 0 4px;float: left;line-height: 20px;margin-top: -1px;color:#222;margin-right: 16px}
+.login .login_sub_btn{height: 44px;padding-left: 31px;margin-top:20px}
+.login .login_sub_btn input{height: 42px;width:104px;background-color:#003F6D;color:#fff;border:none;float: left;cursor: pointer;}
+.login .login_sub_btn a{height: 12px;line-height: 12px;font-size: 12px;color:#10425B;text-decoration: underline;float: left;margin-left:20px;margin-top:20px}

@@ -1,0 +1,5 @@
+﻿
+    $(function() {
+        proUntil.commonSelect("Maintain/getPlatformDianSumPrice",{},null,null,null,"no_btn");
+    });
+

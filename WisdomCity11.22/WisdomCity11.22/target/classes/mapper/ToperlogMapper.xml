@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.ToperlogMapper" >
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from oper_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Toperlog" >
+    insert into oper_log (id, username, operkind, 
+      opermodule, operdes, opertime
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{operkind,jdbcType=VARCHAR}, 
+      #{opermodule,jdbcType=VARCHAR}, #{operdes,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertOperLog" parameterType="com.lamp.model.Toperlog" >
+    insert into oper_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="operkind != null" >
+        operkind,
+      </if>
+      <if test="opermodule != null" >
+        opermodule,
+      </if>
+      <if test="operdes != null" >
+        operdes,
+      </if>
+      <if test="opertime != null" >
+      opertime,
+     </if>
+      <if test="createby != null" >
+        createby,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="menuid != null" >
+        menuid,
+      </if>
+      <if test="king_id != null" >
+        king_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="operkind != null" >
+        #{operkind,jdbcType=VARCHAR},
+      </if>
+      <if test="opermodule != null" >
+        #{opermodule,jdbcType=VARCHAR},
+      </if>
+      <if test="operdes != null" >
+        #{operdes,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="createby != null" >
+        #{createby},
+      </if>
+      <if test="createTime != null" >
+        #{createTime},
+      </if>
+      <if test="userid != null" >
+        #{userid},
+      </if>
+      <if test="menuid != null" >
+        #{menuid},
+      </if>
+      <if test="kind_id != null" >
+        #{kind_id},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Toperlog" >
+    update oper_log
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="operkind != null" >
+        operkind = #{operkind,jdbcType=VARCHAR},
+      </if>
+      <if test="opermodule != null" >
+        opermodule = #{opermodule,jdbcType=VARCHAR},
+      </if>
+      <if test="operdes != null" >
+        operdes = #{operdes,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="createby != null" >
+        createby = #{createby},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{creteTime},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid},
+      </if>
+      <if test="menuid != null" >
+        menuid = #{menuid},
+      </if>
+      <if test="kind_id != null" >
+        kind_id = #{kind_id},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Toperlog" >
+    update oper_log
+    set username = #{username,jdbcType=VARCHAR},
+      operkind = #{operkind,jdbcType=VARCHAR},
+      opermodule = #{opermodule,jdbcType=VARCHAR},
+      operdes = #{operdes,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getLmCnameForSelect" resultType="java.util.Map">
+    SELECT lm.id,cname FROM lamp_menu lm WHERE pid != 0
+  </select>
+
+</mapper>

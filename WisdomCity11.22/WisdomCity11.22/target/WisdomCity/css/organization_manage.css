@@ -1,0 +1,25 @@
+﻿.work_content_box{padding-bottom: 0}
+.tree_warpper{clear: both;overflow: hidden;height: 100%;position: relative;min-height: 500px}
+.left_content_tree{width: 200px;position: absolute;left: 0;
+    top:0;height: 100%;overflow: scroll;background-color:#014B94;color:#fff;font-size: 14px;}
+.left_content_tree img{width: 12px;height: 9px;margin-top: 6px;display: inline-block;margin-right: 10px}
+.tree_node{padding-left:20px;clear: both;display: none;}
+.tree_node p{height: 28px;line-height: 28px;white-space:nowrap;padding-right:20px;cursor: pointer;}
+.right_data{height: 100%;margin-left: 200px}
+
+.left_content_tree::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+}
+.left_content_tree::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+    background-color: #3C6E9F;
+}
+.left_content_tree::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background-color: #0A4A88;
+}
+.left_content_tree::-webkit-scrollbar-corner {/*边角（位置6）*/
+    background-color: #0A4A88;
+}

@@ -1,0 +1,84 @@
+﻿body >h6{height: 60px;clear: both;}
+.work_content_box{width:95%;margin: 0 auto;background-color: #00335E;border-bottom: 2px solid #FF9900;height:auto;
+	padding-bottom:20px;margin-bottom: 30px;position: relative;}
+.work_content_box > p{height: 40px;line-height: 40px;background-color: #126CC4;padding-left: 20px;color:#fff;}
+.work_content_box .search_box{height:50px;padding-top: 40px;padding-left: 84px}
+.work_content_box .search_box select{height: 32px;border:1px solid #ccc;float: left;width:150px;margin-right: 10px;font-family: 'Microsoft YaHei'}
+.work_content_box .search_box .ipt_box{height: 34px;position: relative;float: left;margin-right: 10px}
+.work_content_box .search_box .ipt_box input[type=text]{height: 30px;border:1px solid #ccc;width:210px;padding-left: 45px;border-radius: 0px}
+.work_content_box .search_box .ipt_box i{width:31px;height: 21px;position: absolute;left:6px;top:7px;background: url(../images/alarm_record_search_ico.png) no-repeat;border-right:1px solid #FF9900;}
+.work_content_box .search_box input[type=submit]{width:64px;height:32px;float: left;color:#fff;background-color:#FF9900;line-height: 32px;text-align: center;border:none;margin-left: 10px;cursor:pointer;}
+.work_content_box .search_box .add_btn,.work_content_box .search_box .excel_btn,
+.work_content_box .search_box .import_btn{height: 32px;padding: 0 12px;line-height: 32px;color:#fff;background-color:#126CC4;float: left;margin-left: 10px;text-align: center;cursor: pointer;}
+.work_content_box .search_box .add_btn img{width:16px;height:16px;float: left;margin-top:9px;margin-right:6px}
+.work_content_box  .table_map{height: 500px;clear: both;}
+.work_content_box .table_box{padding: 20px;clear: both;overflow: hidden}
+.work_content_box .table_box table{width: 100%;border-collapse:collapse;table-layout:fixed;word-wrap:break-word;}
+.table_box th img{width: 7px;height: 12px;margin-left:4px}
+.work_content_box .table_box table tr th{cursor: pointer}
+.work_content_box .table_box table tr th, .work_content_box .table_box table tr td{color:#fff;height: 30px;line-height: 24px;border:1px solid #fff;text-align: center;font-weight: normal;font-size:15px;word-wrap:break-word;}
+.work_content_box .table_box table tr th{background-color:#FF9900;}
+.work_content_box .table_box table tr td{background-color:#014B94}
+.work_content_box .table_box table tr td img{width: 24px;height: 24px;}
+.table_box table tr td .delete_button,.table_box table tr td .edit_button,.table_box table tr td .set_pwd_button,
+.table_box table tr td .add_button{width: 21px;height: 21px;display: inline-block;margin-top: 6px;margin-right: 6px;
+background: url(../images/table_ico.png) no-repeat;}
+.table_box table tr td .delete_button{background-position:-97px -6px}
+.table_box table tr td .edit_button{background-position:-27px -6px}
+.table_box table tr td .set_pwd_button{background-position:-64px -6px}
+.table_box table tr td .add_button{background: url(../images/jia.png) -6px -5px no-repeat}
+.table_box table input[type='checkbox']{margin: 7px 3px auto;zoom: 1.5}
+
+.page{height:40px;margin-top:20px;clear: both;}
+.page .pagebox{float: right;height: 40px}
+.page a{float: left;font-size: 14px;border: 1px solid #B4B4B4;text-align: center;line-height: 26px;color:#fff;
+	margin-right:16px;background-color:#014B94;padding: 0 6px;}
+.page .prePage{width: 90px;height:26px;}
+.page .firstPage{width: 48px;}
+.pagebox{margin-left:234px;}
+.page a:hover{background-color:#FF9900;color:#fff;}
+.page .curpage{background-color:#FF9900;color:#fff;}
+.page .curpage:hover{}
+
+.judge_win{width:400px;height:150px;background-color:#fff;position: fixed;left: 50%;top: 150px;margin-left: -240px;
+	margin-top: -100px;border:1px solid #ccc;display: none;overflow: hidden;}
+.judge_win p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.judge_win p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.judge_win h1{height: 40px;line-height: 40px;font-size: 16px;text-align: center;letter-spacing: 2px;font-weight:300;color:#333;}
+.judge_win .judge_btn{height: 40px;padding-left: 100px}
+.judge_win .judge_btn h2{width:80px;height: 28px;background-color:#126EC5;color:#fff;float: left;margin-right: 40px;font-size: 16px;line-height: 28px;text-align: center;font-weight: normal;margin-top:8px;cursor:pointer;}
+
+.table_win{width: 480px;background-color:#fff;position: absolute;left: 50%;top:50px;margin-left: -240px;border:1px solid #ccc;
+	display: none;padding-bottom: 30px}
+.table_win p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.table_win p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.table_win .form_box{height: 40px;padding-left: 30px;padding-top: 10px;}
+.table_win .form_box > span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align: right;}
+.table_win .form_box select{width: 232px;height: 28px;border:1px solid #ccc;}
+.table_win .form_box input[type=text]{width: 220px;height: 28px;border:1px solid #ccc;padding-left: 10px}
+.table_win .form_box input[type=submit]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;float: left;margin-left:130px;margin-top: 20px;cursor: pointer;}
+.table_win .form_box input[type=button]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;float: left;margin-left:10px;margin-top: 20px;cursor: pointer;}
+.table_win .form_box input[type=radio]{float: left;margin-top:10px;margin-left: 10px}
+.table_win .form_box label{float: left;margin-top:4px;margin-left: 6px}
+.table_win .form_add_box{height: 140px;clear: both;padding-left: 30px;padding-top: 10px;}
+.table_win .form_add_box input[type=file]{display: none;}
+.table_win .form_add_box span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align: right;}
+.table_win .form_add_box img{width: 120px;height: 120px;float: left;}
+.table_win .win_map{height: 240px;clear: both;}
+.anchorBL{display:none;}
+
+.second_form{width: 800px;height:645px;position: absolute;left: 50%;top: 50px;
+	border:1px solid #ccc;margin-left: -400px;background-color: #fff;display: none;}
+.second_form p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.second_form p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}
+.second_form .form_detail_warpper{max-height: 540px}
+.second_form .detail_box{height: 40px;width:380px;float: left;}
+.second_form .detail_box > span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align:center;}
+.second_form .detail_box select{width: 232px;height: 28px;border:1px solid #ccc;}
+.second_form .detail_box input[type=text]{width: 220px;height: 28px;border:1px solid #ccc;padding-left: 10px}
+.second_form  .detail_box input[type=button]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;float: left;margin-left:10px;margin-top: 20px;cursor: pointer;}
+.second_form .detail_box .win_map{height: 240px;clear: both;}
+.second_form .detail_box_submit{width:100px;margin: 0 auto;clear: both;height: 28px;padding-top: 20px}
+.second_form .detail_box_submit input[type=submit]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;cursor: pointer;}
+.second_form .detail_box_submit input[type=button]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;cursor: pointer;}
+.second_form .win_map{height: 240px;clear: both;}

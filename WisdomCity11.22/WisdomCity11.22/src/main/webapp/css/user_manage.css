@@ -1,0 +1,7 @@
+﻿.update_pwd{width: 480px;background-color: #fff;position: fixed;left: 50%;top: 50px;height: 300px;margin-left: -240px;border:1px solid #ccc;display: none;}
+.update_pwd p{height:40px;line-height: 40px;background-color: #126CC4;font-size: 16px;padding-left: 16px;color:#fff;margin-bottom: 20px}
+.update_pwd .form_box{height: 40px;padding-left: 30px;padding-top: 10px;}
+.update_pwd .form_box span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align: right;}
+.update_pwd .form_box input[type=password]{width: 220px;height: 28px;border:1px solid #ccc;padding-left: 10px}
+.update_pwd .form_box input[type=submit]{width: 100px;height: 28px;background-color:#126EC5;color:#fff;border:none;float: left;margin-left:130px;margin-top: 20px}
+.update_pwd p span{font-size: 14px;line-height: 40px;float: right; width: 30px;cursor: pointer;margin-bottom: 20px;}

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TSafeManageMapper" >
+
+  <select id="getCountRoleManageNum" resultType="integer">
+    select count(1) from role_manage
+    where 1=1
+    <if test="roleName != null and '' != roleName">
+      and role_name LIKE CONCAT('%',#{roleName},'%')
+    </if>
+  </select>
+
+  <select id="getRoleManageData" resultType="java.util.Map">
+    select rm.*,u.real_name from role_manage rm
+    left join sys_user u on rm.oper_id = u.id
+    where 1=1
+    <if test="roleName != null and '' != roleName">
+      and role_name LIKE CONCAT('%',#{roleName},'%')
+    </if>
+    order by str_to_date(rm.oper_time,'%Y-%m-%d %H:%i:%s') desc limit #{num},#{showNum}
+  </select>
+  
+  <select id="getRoleDataById" parameterType="integer" resultType="java.util.HashMap">
+    select * from role_manage where id = #{id}
+  </select>
+
+  <insert id="saveRoleData" parameterType="com.lamp.model.TRoleManage">
+  insert into role_manage
+  values (#{id},#{roleName},#{roleDesc},#{operId},#{operTime})
+  </insert>
+  
+  <update id="updateRoleData" parameterType="com.lamp.model.TRoleManage">
+    update role_manage set role_name = #{roleName},role_desc = #{roleDesc},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+  </update>
+  
+  <delete id="deleteRoleDataById" parameterType="integer">
+    delete from role_manage where id = #{id}
+  </delete>
+
+  <delete id="clearDataByRoId" parameterType="integer">
+    delete from lamp_power_list where role_id = #{integer}
+  </delete>
+
+  <insert id="batchSaveLampPowerList" parameterType="java.util.List">
+    insert into lamp_power_list
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.roleId},#{item.menuId})
+    </foreach>
+  </insert>
+
+  <select id="getRolManageForSelect" resultType="java.util.Map">
+    select id,role_name cname from role_manage
+  </select>
+
+  <delete id="deleteRoleListByRoleId" parameterType="integer">
+    delete from lamp_power_list where role_id = #{id}
+  </delete>
+
+  <select id="getMenuListByRoleId" parameterType="integer" resultType="java.util.Map">
+    select menu_id from lamp_power_list where role_id = #{id}
+  </select>
+
+  <select id="getOrgManageForSelect" parameterType="String" resultType="java.util.Map">
+    select id,org_name cname,pid
+    from organization
+    where del_flag = 0
+      AND org_code  LIKE CONCAT ('%',#{org_code},'%')
+  </select>
+
+  <select id="getUserList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select u.id, u.user_name,u.real_name,r.role_name,o.org_name,(select u2.real_name from sys_user u2 where id = u.oper_id ) oper_name,u.oper_time from sys_user u
+    left join role_manage r on u.auth_id = r.id
+    left join organization o on u.org_id = o.id
+    where u.del_flag = 0
+      and o.del_flag = 0
+      and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="userName != null and '' != userName">
+      and u.user_name LIKE CONCAT('%',#{userName},'%')
+    </if>
+    <if test="realName != null and '' != realName">
+      and u.real_name LIKE CONCAT('%',#{realName},'%')
+    </if>
+    <if test="orgId != null and '' != orgId">
+      and o.id = #{orgId}
+    </if>
+    order by STR_TO_DATE('u.oper_time','%Y-%m-%d %H:%i:%s') desc limit #{num},#{showNum}
+  </select>
+
+  <select id="getCountUserNum" parameterType="java.util.HashMap" resultType="integer">
+    select count(1) from sys_user u
+    left join role_manage r on u.auth_id = r.id
+    left join organization o on u.org_id = o.id
+    where u.del_flag = 0
+      and o.del_flag = 0
+      and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="userName != null and '' != userName">
+      and u.user_name LIKE CONCAT('%',#{userName},'%')
+    </if>
+    <if test="realName != null and '' != realName">
+      and u.real_name LIKE CONCAT('%',#{realName},'%')
+    </if>
+    <if test="orgId != null and '' != orgId">
+      and o.id = #{orgId}
+    </if>
+  </select>
+
+  <select id="getUserById" parameterType="integer" resultType="java.util.Map">
+    select * from sys_user where id = #{id}
+  </select>
+
+  <insert id="saveUserData" parameterType="com.lamp.model.Tsysuser">
+    insert into sys_user (user_name,`password`,real_name,tel_num,auth_id,oper_id,oper_time,org_id,del_flag,createby,createTime)
+    values
+    (#{userName},#{password},#{realName},#{telNum},#{authId},#{operId},#{operTime},#{orgId},0,#{createBy},#{createTime})
+  </insert>
+
+  <update id="updateUserData" parameterType="com.lamp.model.Tsysuser">
+    update sys_user set user_name = #{userName},real_name = #{realName},auth_id = #{authId},org_id = #{orgId},oper_id =#{operId},
+    tel_num = #{telNum},oper_time = #{operTime} where id = #{id}
+  </update>
+
+  <delete id="deleteUserById" parameterType="integer">
+    update sys_user set del_flag = 1 where id = #{id}
+  </delete>
+
+  <select id="getUserOldPwd" resultType="integer">
+    select count(1) from sys_user where id = #{id} and `password` = #{pwd}
+  </select>
+
+  <update id="changeUserPwd">
+    update sys_user set `password` = #{pwd} where id = #{id}
+  </update>
+
+  <select id="getTopOrganizationTree" resultType="java.util.Map">
+    select o.*,u.real_name from organization o
+      left join sys_user u on o.operId = u.id
+      where o.del_flag = 0 and pid = 0
+  </select>
+
+  <select id="getOrganizationTreeByPid" parameterType="integer" resultType="java.util.Map">
+      select o.*,u.real_name from organization o
+      left join sys_user u on o.operId = u.id
+      where o.del_flag = 0 and pid = #{pid}
+  </select>
+
+  <select id="getOrganizationById" parameterType="integer" resultType="java.util.HashMap">
+    select * from organization where id = #{id}
+  </select>
+
+  <select id="getOrganizationCodeByPid" parameterType="integer" resultType="java.util.Map">
+    select org_code from organization where pid = #{pid} and del_flag = 0
+  </select>
+
+  <insert id="saveOrganizationData" parameterType="com.lamp.model.Torganization">
+    insert into organization (org_name,org_des,pid,org_code,operId,oper_time)
+    values (#{orgName},#{orgDes},#{pid},#{orgCode},#{operid},#{operTime})
+  </insert>
+
+  <update id="updateOrganizationData" parameterType="com.lamp.model.Torganization">
+    update organization set org_name = #{orgName},org_des = #{orgDes},operId = #{operid},oper_time = #{operTime} where id = #{id}
+  </update>
+
+  <update id="delOrganizationById" parameterType="integer">
+    update organization set del_flag = 1 where id = #{id}
+  </update>
+</mapper>

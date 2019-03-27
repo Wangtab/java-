@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TconcentratorMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tconcentrator" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="concentratoraddr" property="concentratoraddr" jdbcType="VARCHAR" />
+    <result column="concentratorname" property="concentratorname" jdbcType="VARCHAR" />
+    <result column="concentratorkindid" property="concentratorkindid" jdbcType="INTEGER" />
+    <result column="concentratordes" property="concentratordes" jdbcType="VARCHAR" />
+    <result column="areaid" property="areaid" jdbcType="INTEGER" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="subnetmask" property="subnetmask" jdbcType="VARCHAR" />
+    <result column="defaultgateway" property="defaultgateway" jdbcType="VARCHAR" />
+    <result column="serverip" property="serverip" jdbcType="VARCHAR" />
+    <result column="serverport" property="serverport" jdbcType="VARCHAR" />
+    <result column="la" property="la" jdbcType="DOUBLE" />
+    <result column="lo" property="lo" jdbcType="DOUBLE" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, concentratoraddr, concentratorname, concentratorkindid, concentratordes, areaid, 
+    ip, subnetmask, defaultgateway, serverip, serverport, la, lo, operator, opertime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from concentrator
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from concentrator
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tconcentrator" >
+    insert into concentrator (id, concentratoraddr, concentratorname, 
+      concentratorkindid, concentratordes, areaid, 
+      ip, subnetmask, defaultgateway, 
+      serverip, serverport, la, 
+      lo, operator, opertime
+      )
+    values (#{id,jdbcType=INTEGER}, #{concentratoraddr,jdbcType=VARCHAR}, #{concentratorname,jdbcType=VARCHAR}, 
+      #{concentratorkindid,jdbcType=INTEGER}, #{concentratordes,jdbcType=VARCHAR}, #{areaid,jdbcType=INTEGER}, 
+      #{ip,jdbcType=VARCHAR}, #{subnetmask,jdbcType=VARCHAR}, #{defaultgateway,jdbcType=VARCHAR}, 
+      #{serverip,jdbcType=VARCHAR}, #{serverport,jdbcType=VARCHAR}, #{la,jdbcType=DECIMAL}, 
+      #{lo,jdbcType=DECIMAL}, #{operator,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tconcentrator" >
+    insert into concentrator
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="concentratoraddr != null" >
+        concentratoraddr,
+      </if>
+      <if test="concentratorname != null" >
+        concentratorname,
+      </if>
+      <if test="concentratorkindid != null" >
+        concentratorkindid,
+      </if>
+      <if test="concentratordes != null" >
+        concentratordes,
+      </if>
+      <if test="areaid != null" >
+        areaid,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="subnetmask != null" >
+        subnetmask,
+      </if>
+      <if test="defaultgateway != null" >
+        defaultgateway,
+      </if>
+      <if test="serverip != null" >
+        serverip,
+      </if>
+      <if test="serverport != null" >
+        serverport,
+      </if>
+      <if test="la != null" >
+        la,
+      </if>
+      <if test="lo != null" >
+        lo,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="concentratoraddr != null" >
+        #{concentratoraddr,jdbcType=VARCHAR},
+      </if>
+      <if test="concentratorname != null" >
+        #{concentratorname,jdbcType=VARCHAR},
+      </if>
+      <if test="concentratorkindid != null" >
+        #{concentratorkindid,jdbcType=INTEGER},
+      </if>
+      <if test="concentratordes != null" >
+        #{concentratordes,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null" >
+        #{areaid,jdbcType=INTEGER},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="subnetmask != null" >
+        #{subnetmask,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultgateway != null" >
+        #{defaultgateway,jdbcType=VARCHAR},
+      </if>
+      <if test="serverip != null" >
+        #{serverip,jdbcType=VARCHAR},
+      </if>
+      <if test="serverport != null" >
+        #{serverport,jdbcType=VARCHAR},
+      </if>
+      <if test="la != null" >
+        #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo != null" >
+        #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tconcentrator" >
+    update concentrator
+    <set >
+      <if test="concentratoraddr != null" >
+        concentratoraddr = #{concentratoraddr,jdbcType=VARCHAR},
+      </if>
+      <if test="concentratorname != null" >
+        concentratorname = #{concentratorname,jdbcType=VARCHAR},
+      </if>
+      <if test="concentratorkindid != null" >
+        concentratorkindid = #{concentratorkindid,jdbcType=INTEGER},
+      </if>
+      <if test="concentratordes != null" >
+        concentratordes = #{concentratordes,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null" >
+        areaid = #{areaid,jdbcType=INTEGER},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="subnetmask != null" >
+        subnetmask = #{subnetmask,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultgateway != null" >
+        defaultgateway = #{defaultgateway,jdbcType=VARCHAR},
+      </if>
+      <if test="serverip != null" >
+        serverip = #{serverip,jdbcType=VARCHAR},
+      </if>
+      <if test="serverport != null" >
+        serverport = #{serverport,jdbcType=VARCHAR},
+      </if>
+      <if test="la != null" >
+        la = #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo != null" >
+        lo = #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tconcentrator" >
+    update concentrator
+    set concentratoraddr = #{concentratoraddr,jdbcType=VARCHAR},
+      concentratorname = #{concentratorname,jdbcType=VARCHAR},
+      concentratorkindid = #{concentratorkindid,jdbcType=INTEGER},
+      concentratordes = #{concentratordes,jdbcType=VARCHAR},
+      areaid = #{areaid,jdbcType=INTEGER},
+      ip = #{ip,jdbcType=VARCHAR},
+      subnetmask = #{subnetmask,jdbcType=VARCHAR},
+      defaultgateway = #{defaultgateway,jdbcType=VARCHAR},
+      serverip = #{serverip,jdbcType=VARCHAR},
+      serverport = #{serverport,jdbcType=VARCHAR},
+      la = #{la,jdbcType=DECIMAL},
+      lo = #{lo,jdbcType=DECIMAL},
+      operator = #{operator,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllconcentrator" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from concentrator
+  </select>
+
+</mapper>

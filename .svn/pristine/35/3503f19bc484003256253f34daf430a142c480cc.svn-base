@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TrecnbammMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Trecnbamm" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="nb_device" property="nbDevice" jdbcType="VARCHAR" />
+    <result column="a_vol" property="aVol" jdbcType="DECIMAL" />
+    <result column="b_vol" property="bVol" jdbcType="DECIMAL" />
+    <result column="c_vol" property="cVol" jdbcType="DECIMAL" />
+    <result column="a_ele" property="aEle" jdbcType="DECIMAL" />
+    <result column="b_ele" property="bEle" jdbcType="DECIMAL" />
+    <result column="c_ele" property="cEle" jdbcType="DECIMAL" />
+    <result column="a_power" property="aPower" jdbcType="DECIMAL" />
+    <result column="b_power" property="bPower" jdbcType="DECIMAL" />
+    <result column="c_power" property="cPower" jdbcType="DECIMAL" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, nb_device, a_vol, b_vol, c_vol, a_ele, b_ele, c_ele, a_power, b_power, c_power, 
+    record_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from record_nb_ammeter
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from record_nb_ammeter
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Trecnbamm" >
+    insert into record_nb_ammeter (id, nb_device, a_vol, 
+      b_vol, c_vol, a_ele, b_ele, 
+      c_ele, a_power, b_power, 
+      c_power, record_time)
+    values (#{id,jdbcType=INTEGER}, #{nbDevice,jdbcType=VARCHAR}, #{aVol,jdbcType=DECIMAL}, 
+      #{bVol,jdbcType=DECIMAL}, #{cVol,jdbcType=DECIMAL}, #{aEle,jdbcType=DECIMAL}, #{bEle,jdbcType=DECIMAL}, 
+      #{cEle,jdbcType=DECIMAL}, #{aPower,jdbcType=DECIMAL}, #{bPower,jdbcType=DECIMAL}, 
+      #{cPower,jdbcType=DECIMAL}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Trecnbamm" >
+    insert into record_nb_ammeter
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="nbDevice != null" >
+        nb_device,
+      </if>
+      <if test="aVol != null" >
+        a_vol,
+      </if>
+      <if test="bVol != null" >
+        b_vol,
+      </if>
+      <if test="cVol != null" >
+        c_vol,
+      </if>
+      <if test="aEle != null" >
+        a_ele,
+      </if>
+      <if test="bEle != null" >
+        b_ele,
+      </if>
+      <if test="cEle != null" >
+        c_ele,
+      </if>
+      <if test="aPower != null" >
+        a_power,
+      </if>
+      <if test="bPower != null" >
+        b_power,
+      </if>
+      <if test="cPower != null" >
+        c_power,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="nbDevice != null" >
+        #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="aVol != null" >
+        #{aVol,jdbcType=DECIMAL},
+      </if>
+      <if test="bVol != null" >
+        #{bVol,jdbcType=DECIMAL},
+      </if>
+      <if test="cVol != null" >
+        #{cVol,jdbcType=DECIMAL},
+      </if>
+      <if test="aEle != null" >
+        #{aEle,jdbcType=DECIMAL},
+      </if>
+      <if test="bEle != null" >
+        #{bEle,jdbcType=DECIMAL},
+      </if>
+      <if test="cEle != null" >
+        #{cEle,jdbcType=DECIMAL},
+      </if>
+      <if test="aPower != null" >
+        #{aPower,jdbcType=DECIMAL},
+      </if>
+      <if test="bPower != null" >
+        #{bPower,jdbcType=DECIMAL},
+      </if>
+      <if test="cPower != null" >
+        #{cPower,jdbcType=DECIMAL},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Trecnbamm" >
+    update record_nb_ammeter
+    <set >
+      <if test="nbDevice != null" >
+        nb_device = #{nbDevice,jdbcType=VARCHAR},
+      </if>
+      <if test="aVol != null" >
+        a_vol = #{aVol,jdbcType=DECIMAL},
+      </if>
+      <if test="bVol != null" >
+        b_vol = #{bVol,jdbcType=DECIMAL},
+      </if>
+      <if test="cVol != null" >
+        c_vol = #{cVol,jdbcType=DECIMAL},
+      </if>
+      <if test="aEle != null" >
+        a_ele = #{aEle,jdbcType=DECIMAL},
+      </if>
+      <if test="bEle != null" >
+        b_ele = #{bEle,jdbcType=DECIMAL},
+      </if>
+      <if test="cEle != null" >
+        c_ele = #{cEle,jdbcType=DECIMAL},
+      </if>
+      <if test="aPower != null" >
+        a_power = #{aPower,jdbcType=DECIMAL},
+      </if>
+      <if test="bPower != null" >
+        b_power = #{bPower,jdbcType=DECIMAL},
+      </if>
+      <if test="cPower != null" >
+        c_power = #{cPower,jdbcType=DECIMAL},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Trecnbamm" >
+    update record_nb_ammeter
+    set nb_device = #{nbDevice,jdbcType=VARCHAR},
+      a_vol = #{aVol,jdbcType=DECIMAL},
+      b_vol = #{bVol,jdbcType=DECIMAL},
+      c_vol = #{cVol,jdbcType=DECIMAL},
+      a_ele = #{aEle,jdbcType=DECIMAL},
+      b_ele = #{bEle,jdbcType=DECIMAL},
+      c_ele = #{cEle,jdbcType=DECIMAL},
+      a_power = #{aPower,jdbcType=DECIMAL},
+      b_power = #{bPower,jdbcType=DECIMAL},
+      c_power = #{cPower,jdbcType=DECIMAL},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

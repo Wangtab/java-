@@ -1,0 +1,133 @@
+﻿body{overflow: hidden}
+.anchorBL{display:none;}
+.device_num{height: 80px;background:linear-gradient(to top, #05427d ,#028bf3);position: absolute;
+bottom: 0px;left: 0px;width: 100%;z-index:900;}
+.device_num ul li{width: 16.6%;height:80px;float: left;font-size: 20px;color:#fff;opacity: 1;cursor: pointer;line-height: 86px}
+.device_num ul li img{float: left;margin-top:12px;margin-left:18px;margin-right: 16px}
+.device_num .data_list_btn{line-height:90px;text-align: center;}
+#allmap{width: 100%;height: 100%}
+.lamp_info_box{position: relative;}
+.lamp_info_box .detailBox{height:23px;clear: both;font-size: 14px;line-height: 23px;}
+.lamp_info_box .detailBox{}
+.lamp_info_box span{height:30px;line-height: 30px;width:80px;text-align: center;color:#fff;
+    background-color:#126CC4;font-size: 13px;position: absolute;right:10px;bottom:40px;cursor: pointer}
+.controller_light{width:400px;height:260px;overflow:hidden;border:1px solid #ccc;background-color: #fff;position:fixed;left: 50%;top:50%;margin-left: -200px;
+    margin-top: -130px;z-index: 500;display: none;}
+.controller_light > p{height: 40px;color:#fff;font-size:16px;color:#fff;background-color:#126CC4;line-height: 40px;padding-left: 16px}
+.controller_light > p span{font-size: 14px;line-height: 40px;float: right;width:30px;cursor: pointer;}
+.controller_light > p span:hover{color:#DF9D3D;}
+.controller_light > p i{font-style: normal;}
+.controller_light .cl_controller_group_name{height:30px;border-bottom: 1px solid #ccc}
+.controller_light .cl_controller_group_name span{line-height: 30px;width:97px;border-left: 1px solid #ccc;text-align: center;float: left;}
+.controller_light .cl_controller_group_name .current_group{color:#126CC4;}
+.controller_light .cl_group_detail{height:160px;padding-top: 20px;display:none}
+.controller_light .cl_group_detail .cgd_box{height: 30px;padding-left: 50px;font-size:14px;padding-right: 34px;margin-bottom: 20px}
+.controller_light .cl_group_detail .cgd_box span{line-height: 30px;width:60px;float: left;}
+.controller_light .cl_group_detail .cgd_box p{line-height: 30px;}
+.controller_light .cl_group_detail .cgd_box p input{width:16px;height: 16px;border-radius: 50%;margin-right: 4px;float: left;margin-top:8px;margin-left: 10px}
+.controller_light .cl_group_detail .cgd_box label{line-height: 30px;float: left;margin-left:2px;margin-right: 8px;font-weight: normal;}
+.controller_light .cl_group_detail .cgd_box a{width: 56px;height:30px;background-color:#126EC5;color:#fff;float: right;text-align: center;line-height: 30px;font-size:15px}
+.controller_light .cl_group_detail .cgd_box select{width: 240px;height:30px;border:1px solid #ccc;margin-left: 10px}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar{width: 180px;height: 30px;float: left;position: relative;margin-top:4px;}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar h1{height:2px;background-color: #999;width: 180px;float: left;margin-top:16px}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar > i{width:12px;height:12px;border-radius: 50%;background-color: #126EC5;position: absolute;
+    left: 0px;top:12px;cursor:pointer;z-index: 2000}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar .processbar_shownum{width: 32px;height:18px;position: relative;background-color:#126EC5;float: left;margin-top: 10px;margin-left: -10px;text-align: center;font-size: 12px;color:#fff;line-height: 18px;top:6px}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar .processbar_shownum i{width: 0;height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;border-bottom: 8px solid #126EC5;position: absolute;top: -8px;left: 10px;}
+.controller_light .cl_group_detail .cgd_box .cgd_processbar .processbar_shownum b{font-weight: normal;}
+.watting_box{width:300px;height:50px;background-color: #fff;position: fixed;left: 50%;top: 50%;margin-top: -150px;margin-left: -50px;line-height: 50px;font-size: 15px;z-index: 5000;opacity: 1;display: none;}
+.watting_box img{float: left;margin-top: 10px;margin-left:20px;margin-right: 10px;}
+.watting_bg{width: 100%;height: 100%;background-color: #000;opacity: 0.5;position: absolute;left: 0px;top: 0px;z-index: 4000;display: none;}
+.slider.slider-horizontal{width: 180px;}
+.slider .tooltip.top{margin-top:30px;margin-left: -20px}
+.tooltip.top .tooltip-arrow{top:0px;border-width:0px 5px 5px 5px;border-bottom-color: #000;}
+
+.right_menu_box{width:140px;height:200px;position: absolute;left: 10%;top: 10%;overflow: hidden;background-color: #fff;display: none}
+.map_right_title{height: 38px;line-height: 38px;font-size:16px;text-align: center;background-color:#126CC4;color:#fff;}
+.map_right_btn{height: 38px;line-height: 38px;font-size:14px;cursor: pointer;text-align: center;color:#000;}
+.map_right_btn:hover{color:#126CC4;}
+
+.showAllData_win{width:1000px;height:510px;background-color:#fff;position: absolute;left: 50%;top: 50px;
+    margin-left: -500px;overflow: hidden;background-color: #CCD6DF}
+.showAllData_win > p{height: 40px;color:#fff;font-size:16px;color:#fff;background-color:#126CC4;line-height: 40px;padding-left: 16px}
+.showAllData_win > p span{font-size: 14px;line-height: 40px;float: right;width:30px;cursor: pointer;}
+.showAllData_win > p span:hover{color:#DF9D3D;}
+.showAllData_win .search_box{height:50px;padding-top: 10px;padding-left: 10px}
+.showAllData_win .search_box select{height: 32px;border:1px solid #ccc;float: left;width:150px;margin-right: 10px;font-family: 'Microsoft YaHei'}
+.showAllData_win .search_box .ipt_box{height: 34px;position: relative;float: left;margin-right: 10px}
+.showAllData_win .search_box .ipt_box input[type=text]{height: 30px;border:1px solid #ccc;width:210px;padding-left: 45px;border-radius: 0px}
+.showAllData_win .search_box .ipt_box i{width:31px;height: 21px;position: absolute;left:6px;top:7px;background: url(../images/alarm_record_search_ico.png) no-repeat;border-right:1px solid #FF9900;}
+.showAllData_win .search_box input[type=submit]{width:64px;height:32px;float: left;color:#fff;background-color:#FF9900;line-height: 32px;text-align: center;border:none;margin-left: 10px;cursor:pointer;}
+.showAllData_win .search_box .add_btn,.work_content_box .search_box .excel_btn,
+.showAllData_win .search_box .import_btn,.showAllData_win .search_box .send_btn{height: 32px;padding: 0 12px;line-height: 32px;color:#fff;background-color:#126CC4;float: left;margin-left: 10px;text-align: center;cursor: pointer;border:none}
+.showAllData_win .search_box .send_btn{height: 30px;line-height: 30px;margin-top:4px;width:64px;}
+.showAllData_win .search_box .add_btn img{width:16px;height:16px;float: left;margin-top:9px;margin-right:6px}
+.showAllData_win .search_box .command_box{width:452px;height: 40px;float:left;margin-top: 12px;}
+.showAllData_win .search_box .command_box span,.showAllData_win .search_box .command_box label{padding: 0 10px;height:40px;line-height: 40px;font-size: 12px;float: left;font-weight: bold}
+.showAllData_win .search_box .command_box input[type="radio"]{height: 16px;width:16px;float: left;margin-top: 12px;}
+.showAllData_win .search_box .command_box .win_processBar{width:200px;height: 20px;float:left;margin-top:6px;margin-left: 18px}
+
+.showAllData_win table{width: 100%;table-layout:fixed;word-wrap:break-word;}
+.showAllData_win .dataBox{clear:both;overflow-y: scroll;position: relative}
+.showAllData_win .dataBox .data_deatil{height:270px;border-bottom:1px solid #ccc;}
+.showAllData_win ul{height:40px;width:1262px;position:absolute;top:0px;z-index: 500}
+.showAllData_win ul li{float: left;height: 40px;line-height: 40px;background-color:#FF9900;color:#fff;font-size: 15px;text-align: center;}
+.showAllData_win ul .a0{width:30px;}
+.showAllData_win ul .a1{width:113px;}
+.showAllData_win ul .a2{width: 103px;}
+.showAllData_win ul .a3{width: 113px;}
+.showAllData_win ul .a4{width: 123px;}
+.showAllData_win ul .a5{width: 113px;}
+.showAllData_win ul .a6{width: 66px;}
+.showAllData_win ul .a7{width: 123px;}
+.showAllData_win table{border-collapse:collapse;margin-top: 40px;}
+.showAllData_win table tr td{color:#fff;border:1px solid #fff;text-align: center;background-color:#014B94;font-size: 14px;height: 36px;line-height: 24px}
+.showAllData_win table tr .t0{width: 30px;}
+.showAllData_win table tr .t1{width: 103px;}
+.showAllData_win table tr .t2{width: 103px;}
+.showAllData_win table tr .t3{width: 113px;}
+.showAllData_win table tr .t4{width: 66px;}
+.showAllData_win table tr .t5{width: 123px;}
+
+.page{height:40px;margin-top:20px;clear: both;}
+.page .pagebox{float: right;height: 40px}
+.page a{float: left;font-size: 14px;border: 1px solid #B4B4B4;text-align: center;line-height: 26px;color:#fff;width:20px;margin-right:16px;background-color:#014B94}
+.page .prePage{width: 90px;height:26px;}
+.page .firstPage{width: 48px;}
+.pagebox{margin-left:234px;}
+.page a:hover{background-color:#FF9900;color:#fff;}
+.page .curpage{background-color:#FF9900;color:#fff;}
+.page .curpage:hover{}
+
+.roadList{width: 180px;height: 460px;background-color:#0173BC;opacity:0;position: absolute;right: -90px;top:50px;background: linear-gradient(45deg, transparent 28px, #0173BC 0);}
+.roadList .aa{width: 200px;height: 600px}
+.roadList i{width: 40px;height: 40px;background: url(../images/roadlist_sj.png) no-repeat;position: absolute;left:1px;bottom: -5px;cursor: pointer;}
+
+.roadList h1{height: 38px;line-height: 38px;font-size: 14px;color:#fff;font-weight: normal;background: linear-gradient(to top, #05427d ,#028bf3)}
+.roadList h1 img{width: 28px;height: 25px;float: left;margin-left: 20px;margin-top:8px}
+.roadList .roadList_deatail{height:420px;overflow: scroll;margin-top:8px;margin-left:37px;}
+.roadList .roadList_deatail > ul{margin-top:12px;}
+.roadList .roadList_deatail ul{margin-left: 10px;display: none;}
+.roadList .roadList_deatail ul li{font-size: 14px;color:#fff;}
+.roadList .roadList_deatail ul li p{height: 26px;line-height: 26px;cursor: pointer;white-space: nowrap;margin-left: -10px}
+.roadList .roadList_deatail ul li p:hover{color:#E9BC2B;}
+.roadList .roadList_deatail ul li b{width: 16px;height: 16px;font-size:18px;font-style: normal;float: left;margin-right: 2px;margin-top: 2px}
+.roadList_btn{right:4px;top:200px;background: url(../images/screen_left_btn.png) -3px center no-repeat;background-color: #026CB4;}
+.common_screen_btn{width: 20px;height:100px;border: 2px solid #43B0FA;cursor: pointer;position: absolute;z-index: 4000;}
+
+.showAllData_win .dataBox::-webkit-scrollbar,.roadList_deatail::-webkit-scrollbar {/*滚动条整体样式*/
+    width:8px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-thumb,.roadList_deatail::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+    background-color: #92C5E0;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-track,.roadList_deatail::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background-color:#0173BC;
+}
+.showAllData_win .dataBox::-webkit-scrollbar-corner,.roadList_deatail::-webkit-scrollbar-corner {/*边角（位置6）*/
+    background-color: #0173BC;
+}

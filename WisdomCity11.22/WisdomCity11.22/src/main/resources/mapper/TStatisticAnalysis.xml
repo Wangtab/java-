@@ -1,0 +1,1648 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TStatisticAnalysisMapper">
+
+    <select id="getAreaDimmingAnalysisData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select '' id,'平台亮灯率' cName,round(avg(dimming)) num,'area' dataType from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id,a.areaName cName, round(avg(dimming)) num,'area' dataType from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by  a.id
+        ) a where cName is not null
+        limit #{curPage},#{showNum}
+    </select>
+
+    <select id="getCountAreaDimmingAnalysisData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select '' id,'平台亮灯率' cName,round(avg(dimming)) num from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id,a.areaName cName, round(avg(dimming)) num from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by  a.id
+        ) a where cName is not null
+    </select>
+
+    <select id="getAreaDimmingAnalysisDataByAreaId" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select a.id,a.areaName cName, round(avg(dimming)) num,'area' dataType from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="areaId !=null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by  a.id
+        union
+        select r.id,r.road_name cName,round(avg(re.dimming),0) num,'road' dataType from record_road_power re
+        left join road_manage r on re.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="areaId != null and '' != areaId ">
+            and r.area_id = #{areaId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and re.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and re.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY r.id
+        ) a where cName is not null
+        limit #{curPage},#{showNum}
+    </select>
+
+    <select id="countGetAreaDimmingAnalysisDataByAreaId" parameterType="java.util.HashMap" resultType="integer">
+        select count(*) from (
+        select a.id,a.areaName cName, round(avg(dimming)) num,'area' dataType from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="areaId !=null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by  a.id
+        union
+        select r.id,r.road_name cName,round(avg(re.dimming),0) num,'road' dataType from record_road_power re
+        left join road_manage r on re.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="areaId != null and '' != areaId ">
+            and r.area_id = #{areaId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and re.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and re.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY r.id
+        ) a where cName is not null
+    </select>
+
+    <select id="getRoadDimmingAnalysisData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select r.id,r.road_name cName,round(avg(re.dimming),0) num,'road' dataType from record_road_power re
+        left join road_manage r on re.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="roadId != null and '' != roadId ">
+            and re.road_id = #{roadId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and re.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and re.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY r.id
+        union
+        select rm.id,rm.cname cName,round(avg(rr.dimming),0) num,'road_line' dataType from record_roadline_power rr
+        left join roadline_manage rm on rr.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="roadId != null and '' != roadId ">
+            and rm.road_id = #{roadId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and rr.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and rr.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY rm.id
+        ) a where cName is not null
+        limit #{curPage},#{showNum}
+    </select>
+
+    <select id="countGetRoadDimmingAnalysisData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select r.id,r.road_name cName,round(avg(re.dimming),0) num,'road' dataType from record_road_power re
+        left join road_manage r on re.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="roadId != null and '' != roadId ">
+            and re.road_id = #{roadId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and re.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and re.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY r.id
+        union
+        select rm.id,rm.cname cName,round(avg(rr.dimming),0) num,'road_line' dataType from record_roadline_power rr
+        left join roadline_manage rm on rr.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="roadId != null and '' != roadId ">
+            and rm.road_id = #{roadId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and rr.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and rr.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY rm.id
+        ) a where cName is not null
+    </select>
+
+    <select id="getRoadLineDimmingAnalysisData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select rm.id,rm.cname cName,round(avg(rr.dimming),0) num from record_roadline_power rr
+        left join roadline_manage rm on rr.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="lineId != null and '' != lineId ">
+            and rr.roadline_id = #{lineId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and rr.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and rr.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY rm.id
+        ) a where cName is not null
+        limit #{curPage},#{showNum}
+    </select>
+
+    <select id="countGetRoadLineDimmingAnalysisData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select rm.id,rm.cname cName,round(avg(rr.dimming),0) num from record_roadline_power rr
+        left join roadline_manage rm on rr.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="lineId != null and '' != lineId ">
+            and rr.roadline_id = #{lineId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and rr.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and rr.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY rm.id
+        ) a where cName is not null
+    </select>
+
+    <select id="getAreaDimmingAnalysisDataById" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select round(avg(dimming)) dimming,r.record_time from record_area_power r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != dataId and '' != dataId ">
+            and r.area_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and r.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.record_time order by r.record_time asc
+    </select>
+
+    <select id="getRoadDimmingAnalysisDataById" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select round(avg(dimming)) dimming,r1.record_time from record_road_power r1
+        left join road_manage r2 on r1.road_id = r2.id
+        left join sys_user u on r2.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != dataId and '' != dataId ">
+            and r1.road_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and r1.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r1.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r1.record_time order by r1.record_time asc
+    </select>
+
+    <select id="getRoadLineDimmingAnalysisDataById" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select round(avg(dimming)) dimming,r1.record_time from record_roadline_power r1
+        left join roadline_manage rm on r1.roadline_id = rm.id
+        left join sys_user u on rm.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != dataId and '' != dataId ">
+            and r1.roadline_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and r1.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and r1.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r1.record_time order by r1.record_time asc
+    </select>
+
+    <select id="getSavePowerCharData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    select
+    (
+        select IFNULL(sum(energy),0) energy from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on r.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0 and r.id = #{roadId}
+    ) energy,
+    (
+        select IFNULL(avg(t.power),0) num from lamp l
+        left join lamptype t on l.typeId = t.id
+        left join sys_user u on l.createby = u.id
+        left join organization o on o.id = u.org_id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and l.delflag= 0 and r.id = #{roadId}
+    ) num
+    from iot_dianxin limit 0,1
+    </select>
+
+    <select id="getRoadManagecutonById" parameterType="integer" resultType="java.lang.Double">
+        select cuton from road_manage where id = #{id}
+    </select>
+
+    <select id="countPlatformEnergyAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select '' id,'平台总能耗' cName,sum(p.energy) num,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id, a.areaName cName,sum(p.energy) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a where num is not null
+    </select>
+
+    <select id="platformAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select '' id,'平台总能耗' cName,sum(p.energy) num,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id, a.areaName cName,sum(p.energy) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="areaAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select a.id,a.areaName cName,sum(p.energy) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,sum(p.energy) num,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where num is not null limit #{num},#{showNum}
+    </select>
+
+    <select id="countAreaAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select a.id,a.areaName cName,sum(p.energy) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,sum(p.energy) num,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where num is not null
+    </select>
+
+    <select id="roadAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select r.id, r.road_name cName,sum(p.energy) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,sum(p.energy) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select r.id, r.road_name cName,sum(p.energy) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,sum(p.energy) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+    </select>
+
+    <select id="roadLineAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select rm.id, rm.cname cName,sum(p.energy) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadLineAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from(
+        select rm.id, rm.cname cName,sum(p.energy) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+    </select>
+
+    <select id="platformEnergyAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,sum(energy) energy from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.area_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time asc
+    </select>
+
+    <select id="roadEnergyAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,sum(energy) energy from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on r.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.road_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time asc
+    </select>
+
+    <select id="roadLineEnergyAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,sum(energy) energy from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.roadline_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time asc
+    </select>
+
+    <select id="platformRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select * from
+    (
+    select '' id,'总维修次数' cName,count(1) num,'plfatm' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join area_manage a on a.id = r.area_id
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    union
+    select a.id,a.areaName cName,count(1) num, 'area' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join area_manage a on a.id = r.area_id
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    group by a.id
+    ) a where a.id is not null limit #{num},#{showNum}
+    </select>
+
+    <select id="countPlatformRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from
+        (
+        select '' id,'总维修次数',count(1) num,'platform' as flag from buildinfo b
+        left join road_manage r on r.id = b.roadid
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on b.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id,a.areaName,count(1) num, 'area' as flag from buildinfo b
+        left join road_manage r on r.id = b.roadid
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on b.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by a.id
+        ) a where a.id is not null
+    </select>
+
+    <select id="areaRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select * from (
+    select a.id,a.areaName cName,count(1) num, 'area' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join area_manage a on a.id = r.area_id
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and a.id = #{areaId}
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    union
+    select r.id,r.road_name cName,count(1) num, 'road' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and r.area_id = #{areaId}
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    group by r.id
+    ) a
+    limit #{num},#{showNum}
+    </select>
+
+    <select id="countAreaRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+    select count(1) from (
+    select a.id,a.areaName cName,count(1) num, 'area' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join area_manage a on a.id = r.area_id
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and a.id = #{areaId}
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    union
+    select r.id,r.road_name cName,count(1) num, 'road' as flag from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and r.area_id = #{areaId}
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    ) a
+    </select>
+
+    <select id="roadRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select r.id,r.road_name cName,count(1) num, 'road' as flag from buildinfo b
+        left join road_manage r on r.id = b.roadid
+        left join sys_user u on b.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and r.id is not null and r.id = #{roadId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadRepairAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select r.id,r.road_name cName,count(1) num, 'road' as flag from buildinfo b
+        left join road_manage r on r.id = b.roadid
+        left join sys_user u on b.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0 and r.id is not null and r.id = #{roadId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(buildtime,'%Y-%m-%d') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(buildtime,'%Y-%m-%d') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a
+    </select>
+
+    <select id="platformRepairAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select count(1) num,buildtime times from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join area_manage a on a.id = r.area_id
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+    <if test="dataId != null and '' != dataId">
+        and a.id = #{dataId}
+    </if>
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    GROUP BY str_to_date(buildtime,'%Y-%m-%d') order by str_to_date(buildtime,'%Y-%m-%d') ASC
+    </select>
+
+    <select id="roadRepairAnalysisDataForChart"  parameterType="java.util.HashMap" resultType="java.util.Map">
+    select count(1) num,buildtime times from buildinfo b
+    left join road_manage r on r.id = b.roadid
+    left join sys_user u on b.createby = u.id
+    left join organization o on o.id = u.org_id
+    where o.org_code like CONCAT('%',#{orgCode},'%') and b.state = 0
+    <if test="dataId != null and '' != dataId">
+        and r.id = #{dataId}
+    </if>
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(buildtime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    GROUP BY str_to_date(buildtime,'%Y-%m-%d') order by str_to_date(buildtime,'%Y-%m-%d') ASC
+    </select>
+
+    <select id="platformRoutingAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select '' id,'巡检总次数' cName,count(1) num,'platform' flag from checkinfo c
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id,a.areaName cName,count(1) num,'area' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by a.id
+        ) a
+        where id is not null limit #{num},#{showNum}
+    </select>
+
+    <select id="countPlatformRoutingAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select '' id,'巡检总次数' cName,count(1) num,'platform' flag from checkinfo c
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select a.id,a.areaName cName,count(1) num,'area' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by a.id
+        ) a
+        where id is not null
+    </select>
+
+    <select id="areaRoutingAnalysisDataForList"  parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select a.id,a.areaName cName,count(1) num,'area' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and a.id = #{areaId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select r.id,r.road_name cName,count(1) num,'road' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and r.area_id = #{areaId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where id is not null limit #{num},#{showNum}
+    </select>
+
+    <select id="countAreaRoutingAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select a.id,a.areaName cName,count(1) num,'area' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and a.id = #{areaId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select r.id,r.road_name cName,count(1) num,'road' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and r.area_id = #{areaId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where id is not null
+    </select>
+
+    <select id="roadRoutingAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select r.id,r.road_name cName,count(1) num,'road' flag from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and r.id = #{roadId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d') &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d') &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where id is not null limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadRoutingAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and r.id = #{roadId}
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+    </select>
+
+    <select id="areaRoutingAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select count(1) num,startime times from checkinfo c
+        left join road_manage r on c.roadid = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="dataId != null and '' != dataId">
+            and a.id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        GROUP BY str_to_date(c.startime,'%Y-%m-%d') order by str_to_date(c.startime,'%Y-%m-%d') desc
+    </select>
+
+    <select id="roadRoutingAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select count(1) num ,startime times from checkinfo c
+    left join sys_user u on c.createby = u.id
+    left join organization o on o.id = u.org_id
+    where c.state = 0 and o.org_code like CONCAT('%',#{orgCode},'%')
+    <if test="dataId != null and '' != dataId">
+        and c.roadid = #{dataId}
+    </if>
+    <if test="null != startDate and '' != startDate ">
+        and str_to_date(c.startime,'%Y-%m-%d')  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+        and str_to_date(c.startime,'%Y-%m-%d')  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+    </if>
+    GROUP BY str_to_date(c.startime,'%Y-%m-%d') order by str_to_date(c.startime,'%Y-%m-%d') desc
+    </select>
+
+    <select id="platformRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select '' id,'平台完好率' cName, round(avg(p.good_rate),2) num,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        UNION
+        select a.id, a.areaName cName,round(avg(p.good_rate),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countPlatformRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select '' id,'平台完好率' cName, round(avg(p.good_rate),2) num,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        UNION
+        select a.id, a.areaName cName,round(avg(p.good_rate),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a where num is not null
+    </select>
+
+    <select id="areaRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select a.id,a.areaName cName,round(avg(p.good_rate),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,round(avg(p.good_rate),2) num,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countAreaRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select a.id,a.areaName cName,round(avg(p.good_rate),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,round(avg(p.good_rate),2) num,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a where num is not null
+    </select>
+
+    <select id="roadRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select r.id, r.road_name cName,round(avg(p.good_rate),2) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,round(avg(p.good_rate),2) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select r.id, r.road_name cName,round(avg(p.good_rate),2) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,round(avg(p.good_rate),2) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+    </select>
+
+    <select id="roadLineRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select rm.id, rm.cname cName,round(avg(p.good_rate),2) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a  where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadLineRateAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select rm.id, rm.cname cName,round(avg(p.good_rate),2) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+    </select>
+
+    <select id="platformRateAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,p.good_rate rate from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.area_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time ASC
+    </select>
+
+    <select id="roadRateAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,p.good_rate rate from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on r.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.road_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time ASC
+    </select>
+
+    <select id="roadLineRateAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,p.good_rate rate from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.roadline_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time ASC
+    </select>
+
+    <select id="platformWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select '' id,'平台总时间' cName, round(sum(p.work_hour),2) num,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        UNION
+        select a.id, a.areaName cName,round(sum(p.work_hour),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a  where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countPlatformWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select '' id,'平台总时间' cName, round(sum(p.work_hour),2) work_hour,'platform' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        UNION
+        select a.id, a.areaName cName,round(sum(p.work_hour),2) work_hour,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by area_id
+        ) a
+    </select>
+
+    <select id="areaWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select a.id,a.areaName cName,round(sum(p.work_hour),2) num,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,round(sum(p.work_hour),2) num,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a  where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countAreaWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select a.id,a.areaName cName,round(sum(p.work_hour),2) work_hour,'area' as flag_name from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.id = #{areaId} and a.delFlag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select  r.id,r.road_name cName,round(sum(p.work_hour),2) work_hour,'road' as flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.area_id = #{areaId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by r.id
+        ) a
+    </select>
+
+    <select id="roadWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select r.id, r.road_name cName,round(sum(p.work_hour),2) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,round(sum(p.work_hour),2) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a  where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select r.id, r.road_name cName,round(sum(p.work_hour),2) num,'road' flag_name from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on u.id = r.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and r.id = #{roadId} and r.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        union
+        select rm.id, rm.cname cName,round(sum(p.work_hour),2) num,'lineId'  flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.road_id = #{roadId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a
+    </select>
+
+    <select id="roadLineWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select * from (
+        select rm.id, rm.cname cName,round(sum(p.work_hour),2) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id limit #{num},#{showNum}
+        ) a where num is not null
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countRoadLineWorkHourAnalysisDataForList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from (
+        select rm.id, rm.cname cName,round(sum(p.work_hour),2) num,'lineId' as flag_name from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and rm.id = #{lineId} and rm.del_flag = 0
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by rm.id
+        ) a where num is not null
+    </select>
+
+    <select id="platformWorkHourAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,round(sum(p.work_hour),2) data from record_area_power p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on u.id = a.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.area_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time desc
+    </select>
+
+    <select id="roadWorkHourAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,p.work_hour data from record_road_power p
+        left join road_manage r on p.road_id = r.id
+        left join sys_user u on r.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.road_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time desc
+    </select>
+
+    <select id="roadLineWorkHourAnalysisDataForChart" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select DATE_FORMAT(record_time,'%Y-%m-%d') times,p.work_hour data from record_roadline_power p
+        left join roadline_manage rm on p.roadline_id = rm.id
+        left join sys_user u on u.id = rm.createby
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="dataId != null and '' != dataId ">
+            and p.roadline_id = #{dataId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and p.record_time  &gt;= str_to_date(#{startDate}, '%Y-%m-%d')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and p.record_time  &lt;= str_to_date(#{endDate}, '%Y-%m-%d')
+        </if>
+        group by record_time order by record_time desc
+    </select>
+
+    <select id="getLampStatusReport" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.areaName,r.road_name,rm.cname,nm.nb_device,nm.nb_code,l.lampnum,rd.conn_state,rd.on_off,round(rd.vol,0) vol,
+        round(rd.ele*1000,0) ele,round(rd.ele,0) ele,round(rd.power,0) power,rd.dimming,rd.working_hours,rd.signal_intensity,rd.record_time,
+        rd.pvol,rd.pele,rd.bvol,rd.temp,0 sendele,0 enterele
+        from real_nb_data rd
+        left join nbiot_manage nm on rd.nbid = nm.id
+        left join controller c on rd.nbid = c.nboit_manage_id
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.delflag = 0  and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.delFlag = 0 and r.del_flag = 0
+        and .rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+            and  a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+            and  r.id = #{roadId}
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') desc
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy ">
+                order by rm.cname ${sort}
+            </when>
+            <when test="'lampnum' == orderBy">
+                order by lampnum ${sort}
+            </when>
+            <when test="'nb_device' == orderBy">
+                order by nm.nb_device ${sort}
+            </when>
+            <when test="'nb_code' == orderBy">
+                order by nm.nb_code ${sort}
+            </when>
+            <when test="'on_off' == orderBy">
+                order by rd.on_off ${sort}
+            </when>
+            <when test="'conn_state' == orderBy">
+                order by rd.conn_state ${sort}
+            </when>
+            <when test="'vol' == orderBy">
+                order by rd.vol ${sort}
+            </when>
+            <when test="'ele' == orderBy">
+                order by rd.ele ${sort}
+            </when>
+            <when test="'pvol' == orderBy">
+                order by rd.pvol ${sort}
+            </when>
+            <when test="'pele' == orderBy">
+                order by rd.pele ${sort}
+            </when>
+            <when test="'bvol' == orderBy">
+                order by rd.bvol ${sort}
+            </when>
+            <when test="'temp' == orderBy">
+                order by rd.temp ${sort}
+            </when>
+            <when test="'sendele' == orderBy">
+                order by sendele ${sort}
+            </when>
+            <when test="'enterele' == orderBy">
+                order by enterele ${sort}
+            </when>
+            <when test="'dimming' == orderBy">
+                order by rd.dimming ${sort}
+            </when>
+            <when test="'working_hours' == orderBy">
+                order by working_hours ${sort}
+            </when>
+            <when test="'signal_intensity' == orderBy">
+                order by signal_intensity ${sort}
+            </when>
+            <when test="'signal_intensity' == orderBy">
+                order by signal_intensity ${sort}
+            </when>
+            <when test="'record_time' == orderBy">
+                order by rd.record_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(rd.record_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="countGetLampStatusReport" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from real_nb_data rd
+        left join nbiot_manage nm on rd.nbid = nm.id
+        left join controller c on rd.nbid = c.nboit_manage_id
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.delflag = 0  and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.delFlag = 0 and r.del_flag = 0
+        and .rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+           and  a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+          and  r.id = #{roadId}
+        </if>
+    </select>
+
+    <select id="exportGetLampStatusReport" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.areaName,r.road_name,rm.cname,nm.nb_device,nm.nb_code,l.lampnum,
+        case rd.conn_state when 1 then '已联网' else '未联网' end conn_state,
+        case rd.on_off when 0 then '开灯' else '关灯' end  on_off,round(rd.vol,0) vol,
+        round(rd.ele*1000,0) ele,round(rd.ele,0) ele,round(rd.power,0) power,rd.dimming,rd.working_hours,rd.signal_intensity,rd.record_time,
+        rd.pvol,rd.pele,rd.bvol,rd.temp,0 sendele,0 enterele
+        from real_nb_data rd
+        left join nbiot_manage nm on rd.nbid = nm.id
+        left join controller c on rd.nbid = c.nboit_manage_id
+        left join lamp l on l.controller_id = c.id
+        left join lamptype lt on l.typeId = lt.id
+        left join roadline_manage rm on rm.id = l.roadline_id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on c.createby = u.id
+        left join organization o on o.id = u.org_id
+        where c.delflag = 0  and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and a.delFlag = 0 and r.del_flag = 0
+        and .rm.del_flag = 0 and lt.lamptypename = #{typeId}
+        <if test="areaId != null and '' != areaId">
+            and  a.id = #{areaId}
+        </if>
+        <if test="roadId != null and '' != roadId">
+            and  r.id = #{roadId}
+        </if>
+    </select>
+</mapper>

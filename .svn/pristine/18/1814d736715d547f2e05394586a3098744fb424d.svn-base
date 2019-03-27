@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TPlatformSettingMapper" >
+    <select id="getDianXiIotData" resultType="java.util.Map">
+        select d.*,u.real_name from iot_dianxin d
+        left join sys_user u on d.oper_id = u.id
+    </select>
+
+    <update id="updateDianXiIotDataById" parameterType="com.lamp.model.TDianXiIot">
+        update iot_dianxin set iot_address = #{iotAddress},appid = #{appId},
+        secret = #{secret},oper_id = #{operId},oper_time = #{operTime},service_address = #{serviceAddress}
+        where id  = #{id}
+    </update>
+
+    <select id="getChanYeYuanIot" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.id,case c.protocol_type when 0 then 'UDP协议' else 'COAP协议' end protocol_type,c.iot_address,c.oper_time,u.real_name from iot_chanyeyuan c
+        left join sys_user u on c.oper_id = u.id
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(c.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </when>
+            <when test="'protocol_type' == orderBy">
+                order by protocol_type ${sort}
+            </when>
+            <when test="'iot_address' == orderBy ">
+                order by iot_address ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by c.oper_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(c.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getChanYeYuanIotById" parameterType="integer" resultType="java.util.HashMap">
+        select * from iot_chanyeyuan where id = #{id}
+    </select>
+
+    <update id="updateChanYeYuanIot" parameterType="java.util.HashMap">
+        update iot_chanyeyuan set iot_address = #{address},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+    </update>
+
+    <insert id="insertPowerrate" parameterType="com.lamp.model.TPowerRate" >
+        insert into power_rate (power_rate,org_id,oper_id,oper_time)
+        values (#{powerRate},#{orgId},#{operId},#{operTime})
+    </insert>
+
+    <update id="updatePowerRate" parameterType="com.lamp.model.TPowerRate" >
+        update power_rate set power_rate = #{powerRate},oper_id = #{operId},oper_time = #{operTime}
+        where id = #{id}
+    </update>
+
+    <select id="getPowerRateCount" parameterType="java.util.HashMap"  resultType="integer">
+        select count(1)  from power_rate p
+        left join organization o on p.org_id = o.id
+        where o.del_flag = 0 and o.org_code LIKE CONCAT('%',#{orgCode},'%')
+    </select>
+
+    <select id="getPowerRateList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select p.id,power_rate,u.real_name,o.org_name,p.oper_time from power_rate p
+        left join organization o on p.org_id = o.id
+        left join sys_user u on p.oper_id = u.id
+        and o.del_flag = 0 and o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        <choose>
+            <when test="'power_rate' == orderBy">
+                order by power_rate ${sort}
+            </when>
+            <when test="'org_name' == orderBy">
+                order by org_name ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by str_to_date(p.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(p.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getPowerRateById" parameterType="integer" resultType="java.util.Map" >
+        select id,power_rate from power_rate where id = #{id}
+    </select>
+
+    <select id="countGetLogoInfo" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from logo l
+        left join organization o on l.orgid = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+    </select>
+
+    <select id="getLogoInfo" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select l.*,o.org_name,u.real_name from logo l
+        left join organization o on l.orgid = o.id
+        left join sys_user u on l.operid = u.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <choose>
+            <when test="'imager' == orderBy">
+                order by imager ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by l.name ${sort}
+            </when>
+            <when test="'real_name' == orderBy ">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'org_name' == orderBy">
+                order by o.org_name ${sort}
+            </when>
+            <when test="'uptime' == orderBy">
+                order by l.uptime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date( l.uptime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="updateLogoInfo" parameterType="com.lamp.model.Tlogo">
+        update logo set imager = #{imager},name = #{name},operid = #{operid},uptime = #{uptime} where id = #{id}
+    </update>
+
+    <select id="getLogoInfoById" parameterType="integer" resultType="java.util.HashMap">
+        select * from logo where id = #{id}
+    </select>
+
+    <select id="getCityDataNum" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from lamp_city_setting l
+        left join organization o on l.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+    </select>
+
+    <select id="getCityData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select l.*,u.real_name,o.org_name from lamp_city_setting l
+        left join sys_user u on l.operid = u.id
+        left join organization o on o.id = l.org_id
+        where o.org_code like  CONCAT('%',#{orgCode},'%')
+        <choose>
+            <when test="orderBy == null or orderBy == ''or orderBy == 'oper_time'">
+                order by str_to_date(l.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'city_name' == orderBy">
+                order by l.city_name ${sort}
+            </when>
+            <when test="'longitude' == orderBy ">
+                order by l.longitude ${sort}
+            </when>
+            <when test="'latitude' == orderBy ">
+                order by l.latitude ${sort}
+            </when>
+            <when test="'org_name' == orderBy ">
+                order by o.org_name ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u.real_name ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(l.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCityDataById" parameterType="integer" resultType="java.util.Map">
+        select * from lamp_city_setting where id = #{id}
+    </select>
+
+    <update id="updateCityData" parameterType="com.lamp.model.TCitySetting">
+        update lamp_city_setting set city_name = #{cityName},longitude = #{lo},latitude = #{la},
+        operid = #{operId},oper_time = #{oper_time},low_temperature=#{lowTemp},high_temperature=#{heightTemp},
+        temperature_detail=#{tempDetail},weather_pic=#{weatherPic},sunrise=#{sunRise},sunset=#{sunSet}
+        where id = #{id}
+    </update>
+
+</mapper>

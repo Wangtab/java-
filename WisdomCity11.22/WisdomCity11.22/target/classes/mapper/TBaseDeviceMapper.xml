@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TBaseDeviceMapper">
+    <cache/>
+    <select id="getAreaManageData" resultType="java.util.Map">
+        select a.id,a.areaName,a.areaDes,uu.real_name,a.operTime,a.points from area_manage a
+        left join sys_user u on a.createby = u.id
+        left join sys_user uu on a.operId = uu.id
+        left join organization o on o.id = u.org_id
+        where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%') and delFlag = 0
+        <if test="null != areaName and '' != areaName">
+            and a.areaName LIKE CONCAT('%',#{areaName},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(operTime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'areaDes' == orderBy ">
+                order by a.areaDes ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by uu.real_name ${sort}
+            </when>
+            <when test="'operTime' == orderBy">
+                order by a.operTime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(operTime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+
+        limit ${num},${showNum}
+    </select>
+
+    <select id="getCountAreaManageData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) num from area_manage a
+        left join sys_user u on a.createby = u.id
+        left join sys_user uu on a.operId = uu.id
+        left join organization o on o.id = u.org_id
+        where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%') and delFlag = 0
+        <if test="null != areaName and '' != areaName">
+            and a.areaName LIKE CONCAT('%',#{areaName},'%')
+        </if>
+    </select>
+
+    <select id="checkDelAreaById" parameterType="integer" resultType="integer">
+        select count(1) from road_manage where area_id = #{id} and del_flag = 0
+    </select>
+
+    <select id="checkDelRoadById" parameterType="integer" resultType="integer">
+        select count(1) from pole_manage where del_flag = 0 and road_id = #{id}
+    </select>
+
+    <select id="getOrganizationList" resultType="java.util.Map">
+        select id,org_name from organization where del_flag=0
+    </select>
+
+    <select id="getAreaManageDataById" parameterType="integer" resultType="java.util.Map">
+        select * from area_manage a where a.id = #{areaId}
+    </select>
+
+    <insert id="saveAreaMangeData" parameterType="com.lamp.model.Tareamanage">
+        insert into area_manage (areaName,areaDes,operId,operTime,delFlag,points,createby,createTime)
+        values
+        (#{areaname},#{areades},#{operid},#{opertime},0,#{points},#{createby},#{createTime})
+    </insert>
+
+    <update id="updateAreaManageData" parameterType="com.lamp.model.Tareamanage">
+        update area_manage set areaName = #{areaname},areaDes = #{areades},operId = #{operid},operTime = #{opertime},points=#{points}
+        where id = #{id}
+    </update>
+
+    <update id="delteAreaMangeDataById" parameterType="integer">
+        update area_manage set delFlag = 1 where id = #{areaId}
+    </update>
+
+    <select id="getRoadManageData" resultType="java.util.Map">
+        select r.id,r.road_name,road_des,area_id,r.oper_time,r.points,a.areaName,u.real_name from road_manage r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on r.oper_id = u.id
+        where r.del_flag = 0
+        <if test="null != roadName and '' != roadName">
+            and r.road_name LIKE CONCAT('%',#{roadName},'%')
+        </if>
+        order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') desc limit #{num},#{showNum}
+    </select>
+
+    <select id="getRoadManageDataByOrgCode" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select r.id,r.road_name,road_des,area_id,r.oper_time,r.points,a.areaName,u.real_name from road_manage r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on r.oper_id = u.id
+        left join sys_user uu on r.createby = uu.id
+        left join organization o on o.id = uu.org_id
+        where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="null != roadName and '' != roadName">
+            and r.road_name LIKE CONCAT('%',#{roadName},'%')
+        </if>
+        <if test="areaId != null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'road_name' == orderBy">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'road_des' == orderBy ">
+                order by road_des ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(r.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountRoadManageData" resultType="integer">
+        select count(*) from road_manage r
+        left join area_manage a on r.area_id = a.id
+        where r.del_flag = 0
+        <if test="null != roadName and '' != roadName">
+            and r.road_name LIKE CONCAT('%',#{roadName},'%')
+        </if>
+    </select>
+
+    <select id="getCountRoadManageDataByOrgCode" resultType="integer">
+        select count(*) from road_manage r
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on r.oper_id = u.id
+        left join sys_user uu on r.createby = uu.id
+        left join organization o on o.id = uu.org_id
+        where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%') and r.del_flag = 0
+        <if test="null != roadName and '' != roadName">
+            and r.road_name LIKE CONCAT('%',#{roadName},'%')
+        </if>
+        <if test="areaId != null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+    </select>
+
+    <insert id="saveRoadNameData" parameterType="com.lamp.model.Troadmanage">
+        insert into road_manage (road_name,road_des,area_id,oper_id,oper_time,del_flag,points,createby,createTime,cuton)
+        values
+        (#{roadName},#{roadDes},#{areaId},#{operId},#{operTime},0,#{points},#{createby},#{createTime},250)
+    </insert>
+
+    <update id="updateRoadNameData" parameterType="com.lamp.model.Troadmanage">
+    update road_manage set road_name = #{roadName},road_des = #{roadDes},area_id = #{areaId},
+    oper_id = #{operId},oper_time = #{operTime},del_flag = 0,points = #{points}
+    where id = #{id}
+    </update>
+
+    <select id="getRoadNameManageById" parameterType="integer" resultType="java.util.Map">
+        select * from road_manage where id  = #{id}
+    </select>
+
+    <update id="deleteRoadManageDataById" parameterType="integer">
+        update road_manage set del_flag = 1 where id = #{id}
+    </update>
+
+    <insert id="addControllerData" parameterType="com.lamp.model.Tcontroller">
+    insert into controller (controllerkindid,c_num,factory_name,concentrator_id,business,protocol,sim_code,createby,createTime,operator,opertime,nboit_manage_id)
+    values(#{controllerkindid},#{cNum},#{factoryName},#{concentratorId},#{business},#{protocol},#{simCode},#{createby},#{createTime},#{operator},#{opertime},#{NBManageId})
+    </insert>
+
+    <update id="updateControllerData" parameterType="com.lamp.model.Tcontroller">
+    update controller set nb_code = #{nbCode},controllerkindid = #{controllerkindid},c_num = #{cNum},factory_name = #{factoryName},
+    concentrator_id = #{concentratorId},business = #{business},protocol = #{protocol},sim_code = #{simCode}
+    where id = #{id}
+    </update>
+
+    <select id="getCOntrollerDataById" parameterType="integer" resultType="java.util.Map">
+        select * from controller where id = #{id}
+    </select>
+
+    <select id="getNbInfoByControllerId" parameterType="integer" resultType="java.util.HashMap">
+        select nm.nb_device,c.business,c.controllerkindid,nm.id from controller c
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        where c.id =#{id}
+    </select>
+
+    <update id="deleteControllerById" parameterType="integer">
+        update controller set delflag = 1 where id =#{id}
+    </update>
+
+    <delete id="deleteNbManageById" parameterType="integer">
+        delete from nbiot_manage where id = #{id}
+    </delete>
+
+    <delete id="deleteRealNbDataById" parameterType="integer">
+        delete from real_nb_data where nbId = #{id}
+    </delete>
+
+    <select id="getControllerData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select c.*,concen.concentratorname,ck.kindname,(select u.real_name from controller c1
+        left join sys_user u on c1.operator = u.id
+        where c1.id = c.id) realName,nm.nb_code nb_code1,nm.nb_device from controller c
+        left join concentrator concen on c.concentrator_id = concen.id
+        left join controllerkind ck on c.controllerkindid = ck.id
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        left join nbiot_manage nm  on c.nboit_manage_id = nm.id
+        where c.delflag = 0 and o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != cname and '' != cname">
+            and c.nb_code LIKE CONCAT('%',#{cname},'%')
+        </if>
+        <choose>
+            <when test="'nb_code1' == orderBy">
+                order by nb_code1 ${sort}
+            </when>
+            <when test="'kindname' == orderBy ">
+                order by kindname ${sort}
+            </when>
+            <when test="'c_num' == orderBy ">
+                order by c_num ${sort}
+            </when>
+            <when test="'factory_name' == orderBy ">
+                order by factory_name ${sort}
+            </when>
+            <when test="'concentratorname' == orderBy ">
+                order by concentratorname ${sort}
+            </when>
+            <when test="'business' == orderBy ">
+                order by business ${sort}
+            </when>
+            <when test="'protocol' == orderBy ">
+                order by protocol ${sort}
+            </when>
+            <when test="'nb_device' == orderBy ">
+                order by nb_device ${sort}
+            </when>
+            <when test="'sim_code' == orderBy ">
+                order by sim_code ${sort}
+            </when>
+            <when test="'oper' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'oper' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by str_to_date(c.operTime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(c.operTime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountControllerData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from controller c
+        left join sys_user u on c.createby = u.id
+        left join organization o on u.org_id = o.id
+        where c.delflag = 0 and o.org_code LIKE CONCAT('%',#{orgCode},'%') and o.del_flag = 0
+        <if test="null != cname and '' != cname">
+            and c.nb_code LIKE CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+    <select id="getConcentratorKindData" resultType="java.util.Map">
+        select id,kindname from concentratorkind where delflag = 0
+    </select>
+
+    <insert id="addConcentratorData" parameterType="com.lamp.model.Tconcentrator">
+        insert into concentrator (concentratoraddr,concentratorname,concentratorkindid,concentratordes,la,lo,operator,opertime,
+        del_flag,ibox,road_id,createby,createTime,factory_name,concentrator_model,concentrator_kind,areaid)
+        values
+        (#{concentratoraddr},#{concentratorname},#{concentratorkindid},#{concentratordes},#{la},#{lo},#{operator},#{opertime},
+        0,#{ibox},#{roadId},#{createby},#{createTime},#{factoryName},#{cModel},#{cKind},#{areaid})
+    </insert>
+
+    <update id="updateConcentratorData" parameterType="com.lamp.model.Tconcentrator">
+    update concentrator set concentratoraddr = #{concentratoraddr},concentratorname=#{concentratorname},
+    concentratorkindid=#{concentratorkindid},concentratordes=#{concentratordes},
+    la=#{la},lo=#{lo},operator=#{operator},opertime=#{opertime},ibox = #{ibox},road_id=#{roadId},factory_name=#{factoryName},
+    concentrator_model=#{cModel},concentrator_kind=#{cKind},areaid = #{areaid} where id = #{id}
+    </update>
+    
+    <update id="deleteConcentratorData" parameterType="integer">
+        update concentrator set del_flag = 1 where id = #{id}
+    </update>
+
+    <select id="getConcentratorListData" resultType="java.util.Map">
+        select concen.*,a.areaName,r.road_name,u.real_name,emon.name from concentrator concen
+        left join road_manage r on concen.road_id = r.id
+        left join area_manage a on r.area_id = a.id
+        left join sys_user u on concen.operator = u.id
+        left join elecbox_manage emon on concen.ibox = emon.id
+        left join sys_user uu on concen.createby = uu.id
+        left join organization o on uu.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and concen.del_flag = 0
+        <if test="null != cname and '' != cname">
+            and concen.concentratorname LIKE CONCAT('%',#{cname},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by STR_TO_DATE(concen.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </when>
+            <when test="'concentratoraddr' == orderBy">
+                order by concentratoraddr ${sort}
+            </when>
+            <when test="'concentratorname' == orderBy ">
+                order by concentratorname ${sort}
+            </when>
+            <when test="'concentratordes' == orderBy">
+                order by concentratordes ${sort}
+            </when>
+            <when test="'road_name' == orderBy">
+                order by road_name ${sort}
+            </when>
+            <when test="'concentrator_kind' == orderBy">
+                order by concentrator_kind ${sort}
+            </when>
+            <when test="'concentrator_model' == orderBy">
+                order by concentrator_model ${sort}
+            </when>
+            <when test="'factory_name' == orderBy">
+                order by factory_name ${sort}
+            </when>
+            <when test="'lo' == orderBy">
+                order by lo ${sort}
+            </when>
+            <when test="'la' == orderBy">
+                order by lo ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by STR_TO_DATE(concen.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by STR_TO_DATE(concen.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+         limit #{num},#{showNum}
+    </select>
+
+    <select id="getConcentratorDataById" parameterType="integer" resultType="java.util.Map">
+        select * from concentrator where id = #{id}
+    </select>
+
+    <select id="getCountConcentratorNum" resultType="integer">
+        select count(1) from concentrator concen
+        left join sys_user u on concen.operator = u.id
+        left join sys_user uu on concen.createby = uu.id
+        left join organization o on uu.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and concen.del_flag = 0
+        <if test="null != cname and '' != cname">
+            and concen.concentratorname LIKE CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+    <select id="getLampTypeData" resultType="java.util.Map">
+        select id,lamptypename from lamptype where delflag=0
+    </select>
+
+    <select id="getUserManageData" resultType="java.util.Map">
+        select id,user_name from sys_user where del_flag = 0
+    </select>
+
+    <insert id="importControlerData"  parameterType="java.util.List">
+        insert into controller (nb_code,controllerkindid,c_num,factory_name,concentrator_id,business,protocol,sim_code,
+        createby,createTime,operator,opertime)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.nbcode},#{item.controllerType},#{item.cNum},#{item.factoryName},#{item.concentratorName},
+            #{item.business},#{item.protocol},#{item.simCode},#{item.createby},#{item.createTime},#{item.operator},#{item.opertime})
+        </foreach>
+    </insert>
+
+    <insert id="importConcentratorData"  parameterType="java.util.List">
+        insert into concentrator (concentratoraddr,concentratorname,concentratorkindid,concentratordes,areaid,ip,
+        subnetmask,defaultgateway,serverip,serverport,la,lo,operator,opertime,del_flag,ibox)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.concentratoraddr},#{item.concentratorname},#{item.concentratorkindid},#{item.concentratordes},#{item.areaid},#{item.ip},
+        #{item.subnetmask},#{item.defaultgateway},#{item.serverip},#{item.serverport},#{item.la},#{item.lo},#{item.operator},#{item.opertime},0,#{item.ibox})
+        </foreach>
+    </insert>
+
+    <select id="geteleBoxData" resultType="java.util.Map">
+        select e.id,e.name,e.latitude,e.longitude,u.real_name,r.road_name,a.areaName,e.oper_time from elecbox_manage e
+        left join sys_user u on e.oper_id = u.id
+        left join sys_user uu on e.createby = uu.id
+        left join organization o on uu.org_id = o.id
+        left join road_manage r on e.road_id = r.id
+        left join area_manage a on r.area_id = a.id
+        where o.org_code LIKE CONCAT('%',#{orgCode},'%') and e.del_flag =0
+        <if test="eleNum != null and '' != eleNum">
+            and e.name LIKE CONCAT('%',#{eleNum},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by STR_TO_DATE(e.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'name' == orderBy ">
+                order by name ${sort}
+            </when>
+            <when test="'longitude' == orderBy ">
+                order by longitude ${sort}
+            </when>
+            <when test="'latitude' == orderBy ">
+                order by latitude ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u.real_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by STR_TO_DATE(e.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by STR_TO_DATE(e.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+       limit #{num},#{showNum}
+    </select>
+    
+    <select id="getCountEleBoxData" resultType="integer">
+        select count(1) from elecbox_manage e
+        left join sys_user u on e.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code LIKE CONCAT('%',#{orgCode},'%') and e.del_flag = 0
+        <if test="eleNum != null and '' != eleNum">
+            and e.name LIKE CONCAT('%',#{eleNum},'%')
+        </if>
+    </select>
+
+    <insert id="addeleBoxData" parameterType="com.lamp.model.Telecboxmanage">
+    insert into elecbox_manage (name,longitude,latitude,road_id,oper_id,oper_time,del_flag,createby,createTime)
+    VALUES
+    (#{name},#{longitude},#{latitude},#{roadId},#{operId},#{operTime},0,#{createby},#{createTime})
+    </insert>
+
+    <update id="updateeleBoxData" parameterType="com.lamp.model.Telecboxmanage">
+        update elecbox_manage set name = #{name},longitude = #{longitude},latitude=#{latitude},road_id=#{roadId},oper_id=#{operId},oper_time=#{operTime} where id =#{id}
+    </update>
+
+    <select id="geteleBoxDataById" parameterType="integer" resultType="java.util.Map">
+           SELECT *,a.id FROM elecbox_manage e
+    LEFT JOIN road_manage r ON e.road_id = r.id
+         LEFT JOIN area_manage a ON r.area_id = a.id
+         WHERE e.id = #{id}
+    </select>
+
+    <delete id="delEleBoxDataById" parameterType="integer">
+      update elecbox_manage set del_flag= 1 where id= #{id}
+    </delete>
+
+    <select id="getLampWarnningData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select l.id lampId,a.areaName,rl.cname AS linename,r.road_name,lty.lampFactory AS factoryname,
+        lt.lamptypename,c.nb_code,ck.kindname,rw.warn_time,rw.nb_device,
+        case rw.deal_flag when 0 then '未处理' when 10 then '已处理' end
+        deal_flag,wc.cname warn_name,wl.cname levelname,rw.ordernum
+        from record_warn rw
+        left join controller c on c.nboit_manage_id = rw.nb_device
+        left join lamp l on  l.controller_id= c.id
+        left join lamptype lty on  lty.id= l.typeId
+        left join controllerkind ck on c.controllerkindid = ck.id
+        left join lamptype lt on l.typeId = lt.id
+        left join warn_content wc on rw.warn_content_id = wc.id
+        left join warn_level wl on wc.warn_level = wl.id
+        left join sys_user AS  u ON  c.createby = u.id
+        left join organization o ON o.id = u.org_id
+        left join roadline_manage rl ON l.roadline_id = rl.id
+        left join road_manage r on r.id = rl.road_id
+        left join area_manage a on a.id = r.area_id
+        left join roadline_manage rlm on l.roadline_id = rlm.id
+        where l.delflag = 0 and r.del_flag = 0 and a.delFlag = 0
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+        <if test="lampId != null">
+            and l.id = #{lampId}
+        </if>
+        <if test="lineId != null">
+            and l.roadline_id = #{lineId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != orgCode and '' != orgCode ">
+        AND o.org_code like CONCAT('%',#{orgCode},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'roadName' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'linename' == orderBy">
+                order by linename ${sort}
+            </when>
+            <when test="'factoryname' == orderBy">
+                order by factoryname ${sort}
+            </when>
+            <when test="'lamptypename' == orderBy">
+                order by lt.lamptypename ${sort}
+            </when>
+            <when test="'kindname' == orderBy">
+                order by ck.kindname ${sort}
+            </when>
+            <when test="'levelname' == orderBy">
+                order by levelname ${sort}
+            </when>
+            <when test="'warn_name' == orderBy">
+                order by warn_name ${sort}
+            </when>
+            <when test="'deal_flag' == orderBy">
+                order by rw.deal_flag ${sort}
+            </when>
+            <when test="'operTime' == orderBy">
+                order by warn_time ${sort}
+            </when>
+            <when test="'ordernum' == orderBy">
+                order by ordernum ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountLampWarnningData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from record_warn rw
+        left join controller c on c.nboit_manage_id = rw.nb_device
+        left join lamp l on  l.controller_id= c.id
+        left join lamptype lty on  lty.id= l.typeId
+        left join controllerkind ck on c.controllerkindid = ck.id
+        left join lamptype lt on l.typeId = lt.id
+        left join warn_content wc on rw.warn_content_id = wc.id
+        left join warn_level wl on wc.warn_level = wl.id
+        left join sys_user AS  u ON  c.createby = u.id
+        left join organization o ON o.id = u.org_id
+        left join roadline_manage rl ON l.roadline_id = rl.id
+        left join road_manage r on r.id = rl.road_id
+        left join area_manage a on a.id = r.area_id
+        left join roadline_manage rlm on l.roadline_id = rlm.id
+        where l.delflag = 0 and r.del_flag = 0 and a.delFlag = 0
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+        <if test="lampId != null">
+            and l.id = #{lampId}
+        </if>
+        <if test="lineId != null">
+            and l.roadline_id = #{lineId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != orgCode and '' != orgCode ">
+            AND o.org_code like CONCAT('%',#{orgCode},'%')
+        </if>
+    </select>
+
+    <select id="getExportWarnData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.areaName,r.road_name,rl.cname AS linename,lty.lampFactory AS factoryname,lt.lamptypename,c.nb_code,ck.kindname,rw.warn_time,rw.nb_device,
+        case rw.deal_flag when 0 then '未处理' when 10 then '已处理' end deal_flag,wc.cname warn_name,wl.cname levelname,rw.ordernum
+        from record_warn rw
+        left join controller c on c.nboit_manage_id = rw.nb_device
+        left join lamp l on  l.controller_id= c.id
+        left join lamptype lty on  lty.id= l.typeId
+        left join controllerkind ck on c.controllerkindid = ck.id
+
+        left join lamptype lt on l.typeId = lt.id
+        left join warn_content wc on rw.warn_content_id = wc.id
+        left join warn_level wl on wc.warn_level = wl.id
+        left join sys_user AS  u ON  rw.createby = u.id
+        left join organization o ON o.id = u.org_id
+        left join roadline_manage rl ON l.roadline_id = rl.id
+        left join road_manage r on r.id = rl.road_id
+        left join area_manage a on a.id = r.area_id
+        where l.delflag = 0 and r.del_flag = 0 and a.delFlag = 0
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+        <if test="lampId != null">
+            and l.id = #{lampId}
+        </if>
+        <if test="null != startDate and '' != startDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != endDate and '' != endDate ">
+            and  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="null != orgCode and '' != orgCode ">
+            AND o.org_code like CONCAT('%',#{orgCode},'%')
+        </if>
+        order by  str_to_date(warn_time,'%Y-%m-%d %H:%i:%s') desc
+    </select>
+
+    <select id="getSendBuildingDataByLampId" parameterType="integer" resultType="java.util.Map">
+        select a.id areaid,r.id roadid,nm.nb_code from lamp l
+        left join nbiot_manage nm on nm.id = l.nbdeviceId
+        left join pole_manage p on l.pole_id = p.id
+        left join road_manage r on r.id = p.road_id
+        left join area_manage a on a.id = r.area_id
+        where l.id = #{id}
+    </select>
+
+    <select id="getdealingBuillingInfo" resultType="java.util.Map">
+        select rw.nb_device,rw.ordernum from record_warn rw
+         left join controller c on c.nboit_manage_id = rw.nb_device
+        left join lamp l on  l.controller_id= c.id
+        left join buildinfo b on rw.ordernum = b.ordernum
+        where rw.ordernum is not null and b.deal_result = 0 and rw.deal_flag = 0
+        group by rw.nb_device
+    </select>
+
+    <update id="updateWarnLampDataByOrderNum">
+        update record_warn set ordernum = #{ordernum} where deal_flag = 0 and nb_device = #{nb_device}
+    </update>
+
+    <select id="hasNbCode" parameterType="string" resultType="integer">
+        select count(1) from nbiot_manage where nb_code = ${_parameter}
+    </select>
+
+    <insert id="addNbLotManageData" useGeneratedKeys="true" keyProperty="id"  parameterType="com.lamp.model.Tnbmanage">
+        insert into nbiot_manage (nb_device,nb_code,oper_id,oper_time)
+        values (#{nbDevice},#{nbCode},#{operId},#{operTime})
+    </insert>
+
+    <insert id="addRealNBData" parameterType="java.util.HashMap">
+    insert into real_nb_data (nb_device,networking_state,vol,ele,power,pvol,pele,bvol,dimming,on_off,conn_state,working_hours,signal_intensity,record_time,nbid,temp)
+    values (#{nb_device},#{networking_state},#{vol},#{ele},#{power},#{pVol},#{pele},#{bVol},#{dimming},#{onOff},#{conn_state},#{hour},#{signal},#{record_time},#{nbId},#{temp})
+    </insert>
+
+    <insert id="saveRoadLineManageData" parameterType="com.lamp.model.TRoadLineManage">
+        insert into roadline_manage (cname,road_id,createby,create_time,oper_id,oper_time)
+        values (#{cName},#{roadId},#{createBy},#{createTime},#{operId},#{operTime})
+    </insert>
+
+    <update id="updateRoadLineManageData" parameterType="com.lamp.model.TRoadLineManage">
+      update roadline_manage set cname = #{cName},road_id = #{roadId},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+    </update>
+
+    <select id="queryRoadLineManage" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select rm.id,a.areaName,r.road_name,rm.cname,(select u2.real_name from sys_user u2 where id = rm.oper_id ) oper_name,
+        rm.oper_time from roadline_manage rm
+        left join road_manage r on rm.road_id = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on rm.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like  CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="roadId != null and roadId !='' ">
+            and rm.road_id = #{roadId}
+        </if>
+        <if test="areaId != null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+        <if test="cName != null and cName != ''">
+            and rm.cname like  CONCAT('%',#{cName},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(rm.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'cname' == orderBy ">
+                order by rm.cname ${sort}
+            </when>
+            <when test="'oper_name' == orderBy">
+                order by oper_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by rm.oper_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(rm.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="queryCountRoadLineManage" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from roadline_manage rm
+        left join road_manage r on rm.road_id = r.id
+        left join area_manage a on a.id = r.area_id
+        left join sys_user u on rm.createby = u.id
+        left join organization o on u.org_id = o.id
+        where o.org_code like  CONCAT('%',#{orgCode},'%') and rm.del_flag = 0
+        <if test="roadId != null and roadId !='' ">
+            and rm.road_id = #{roadId}
+        </if>
+        <if test="areaId != null and areaId != '' ">
+            and a.id = #{areaId}
+        </if>
+        <if test="cName != null and cName != ''">
+            and rm.cname like  CONCAT('%',#{cName},'%')
+        </if>
+    </select>
+
+    <select id="queryRoadLineManageById" parameterType="integer" resultType="java.util.HashMap">
+        select a.id areaId,r.id roadId,rm.* from roadline_manage rm
+        left join road_manage r on rm.road_id = r.id
+        left join area_manage a on a.id = r.area_id
+        where rm.id = #{id}
+    </select>
+
+    <update id="deleteRoadLineManageById" parameterType="integer">
+        update roadline_manage set del_flag = 1 where id = #{id}
+    </update>
+
+    <select id="getPlatformTemperatureInfo" resultType="java.util.HashMap">
+        select l.* from lamp_city_setting l
+        left join organization o on l.org_id = o.id
+        where o.org_code = #{orgCode} limit 0,1
+    </select>
+
+    <insert id="ImportDeviceData"  parameterType="java.util.List">
+        INSERT INTO temp_device_data
+        (
+        area_name, area_desc, road_name, road_desc,roadline_name,user_id,
+        lamp_type_id,lamp_type_desc,lamp_type_model,lamp_type_power,lamp_type_factory,dimming_model,lamp_type_sun_power,lamp_type_ceil_power,
+        elebox_name,ele_la,ele_lo,
+        ammter_address,ammter_name,ammter_elebox_loop,ammter_flag
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+          #{item.areaName},#{item.areaDesc},#{item.roadName},#{item.roadDesc},#{item.roadLineName},#{item.userId},
+          #{item.lampType},#{item.lampTypeDesc},#{item.lampTypeModel},#{item.lampTypePower},#{item.lampTypeFactory},#{item.lampTypeDimmingModel},#{item.lampTypeSunPower},#{item.lampTypeCeilPower},
+          #{item.eleBoxName},#{item.eleBoxLa},#{item.eleBoxLo},
+          #{item.ammeterAddress},#{item.ammeterName},#{item.ammeterLoop},#{item.ammeterCommunication}
+        )
+        </foreach>
+    </insert>
+
+    <select id="getAmmeterList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select a.id,a.c_address,a.c_name,e.name,elec_box_loop,c_flag,u2.real_name,a.oper_time from ammeter_manage a
+        left join elecbox_manage e on a.elecbox_id = e.id
+        left join sys_user u on a.createby = u.id
+        left join sys_user u2 on a.createby = u2.id
+        left join organization o on u.org_id = o.id
+        where a.del_flag = 0 and o.del_flag = 0 and o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        <if test="cName != null and '' != cName">
+            and a.c_name LIKE CONCAT('%',#{cName},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(a.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'c_address' == orderBy">
+                order by c_address ${sort}
+            </when>
+            <when test="'c_name' == orderBy ">
+                order by c_name ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by e.name ${sort}
+            </when>
+            <when test="'elec_box_loop' == orderBy">
+                order by elec_box_loop ${sort}
+            </when>
+            <when test="'c_flag' == orderBy">
+                order by c_flag ${sort}
+            </when>
+            <when test="'oper_name' == orderBy">
+                order by oper_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by str_to_date(a.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(a.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountAmmeterNum" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from ammeter_manage am
+        left join sys_user u on am.createby = u.id
+        left join organization o on u.org_id = o.id
+        where u.del_flag = 0
+        and o.del_flag = 0
+        and o.org_code LIKE CONCAT('%',#{orgCode},'%')
+        <if test="cName != null and '' != cName">
+            and am.c_name LIKE CONCAT('%',#{cName},'%')
+        </if>
+    </select>
+
+    <insert id="insertAmmeter" parameterType="com.lamp.model.Tammeter">
+        insert into ammeter_manage (c_address,c_name,elecbox_id,elec_box_loop,c_flag,del_flag,createby,create_time,oper_id,oper_time)
+        values
+        (#{cAddress},#{cName},#{elecboxId},#{elecBoxLoop},#{cFlag},0,#{createby},#{createTime},#{operId},#{operTime})
+    </insert>
+
+    <update id="updateAmmeterSelective" parameterType="com.lamp.model.Tammeter">
+        update ammeter_manage set c_address = #{cAddress},c_name = #{cName},elecbox_id = #{elecboxId},elec_box_loop = #{elecBoxLoop},c_flag = #{cFlag},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+    </update>
+
+    <select id="getAmmeterDataById" parameterType="integer" resultType="java.util.HashMap">
+        select * from ammeter_manage
+        where id = #{id}
+    </select>
+
+    <delete id="deleteAmmeterDataById" parameterType="java.lang.Integer" >
+        UPDATE ammeter_manage SET del_flag = 1 where id = #{id}
+    </delete>
+
+    <select id="getCountLampTypeList" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) FROM lamptype AS l
+        LEFT JOIN sys_user AS  u ON  l.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND  l.delflag = 0
+        <if test="typeName != '' and typeName != null">
+            AND l.lampModel like CONCAT('%',#{typeName},'%')
+        </if>
+    </select>
+
+    <select id="getLampTypeList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT l.id,case l.lamptypename when 1 then '普通路灯' when 2 then '太阳能路灯' end lamptypename,l.lamptypedes,l.lampModel,l.imgurl,l.power,l.lampFactory,
+        l.dimmingmode,u2.real_name,l.opertime,l.spower,l.bpower,l.lampModel FROM lamptype AS l
+        LEFT JOIN sys_user u ON  l.createby = u.id
+        left join sys_user u2 on l.operator = u2.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND  l.delflag = 0
+        <if test="typeName != '' and typeName != null">
+            AND l.lampModel like CONCAT('%',#{typeName},'%')
+        </if>
+        <choose>
+            <when test="'lamptypename' == orderBy">
+                order by lamptypename ${sort}
+            </when>
+            <when test="'lamptypedes' == orderBy ">
+                order by lamptypedes ${sort}
+            </when>
+            <when test="'lampModel' == orderBy">
+                order by lampModel ${sort}
+            </when>
+            <when test="'imgurl' == orderBy">
+                order by imgurl ${sort}
+            </when>
+            <when test="'power' == orderBy">
+                order by power ${sort}
+            </when>
+            <when test="'lampFactory' == orderBy">
+                order by lampFactory ${sort}
+            </when>
+            <when test="'spower' == orderBy">
+                order by spower ${sort}
+            </when>
+            <when test="'bpower' == orderBy">
+                order by bpower ${sort}
+            </when>
+            <when test="'dimmingmode' == orderBy">
+                order by dimmingmode ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by str_to_date(l.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(l.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getLampTypeDataById" parameterType="integer" resultType="java.util.HashMap">
+        select * from lamptype where id = #{id}
+    </select>
+
+    <update id="delLampTypeDataById" parameterType="integer">
+        update lamptype set delflag = 1 where id = #{id}
+    </update>
+
+    <insert id="addLampTypeData" parameterType="com.lamp.model.Tlamptype" >
+        insert into lamptype (lamptypename,lamptypedes,imgurl,power,dimmingmode,operator,opertime,delflag,spower,bpower,lampModel,createby,createTime,lampFactory)
+        values(#{lamptypename},#{lamptypedes},#{imgurl},#{power},#{dimmingmode},#{operator},#{opertime},0,#{spower},#{bpower},#{lampModel},#{createby},#{createTime},#{lampFactory})
+    </insert>
+
+    <update id="updateLampTypeData" parameterType="com.lamp.model.Tlamptype">
+        update lamptype set lamptypename = #{lamptypename},lamptypedes = #{lamptypedes},imgurl = #{imgurl} ,power = #{power},
+        dimmingmode = #{dimmingmode},operator = #{operator},opertime = #{opertime},
+        spower = #{spower},bpower = #{bpower},lampModel = #{lampModel},lampFactory = #{lampFactory}
+        where id = #{id}
+    </update>
+
+    <select id="checkLampTypeModel" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from lamptype l
+        left join sys_user u on u.id = l.createby
+        left join organization o on u.org_id = o.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and l.delflag = 0 and o.del_flag = 0
+        and lamptypename = #{typeId} and lampModel = #{model}
+        <if test="null != id and '' != id ">
+            and l.id != #{id}
+        </if>
+    </select>
+
+    <select id="getCountLampManageData" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from lamp l
+        left join sys_user u on l.createby = u.id
+        left join organization o on u.org_id = o.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and l.delflag = 0
+        <if test="lineId != null and '' != lineId">
+            and rm.id = #{lineId}
+        </if>
+        <if test="roadId != null and '' != roadId ">
+            and r.id = #{roadId}
+        </if>
+        <if test="areaId != null and '' != areaId">
+            and r.area_id = #{areaId}
+        </if>
+        <if test="poleCode != null and '' != poleCode ">
+            and l.poleCode like CONCAT('%',#{poleCode},'%')
+        </if>
+    </select>
+
+    <select id="getLampManageData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select l.id, a.areaName,r.road_name,rm.cname,em.name,l.dbcircuit,l.poleCode,lt.lampModel,nm.nb_code,l.lampnum,lt.power,
+        l.la,l.lo,u2.real_name,l.opertime,lt.lampFactory  from lamp l
+        left join sys_user u on l.createby = u.id
+        left join organization o on u.org_id = o.id
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on r.id = rm.road_id
+        left join area_manage a on a.id = r.area_id
+        left join elecbox_manage em on l.pdId = em.id
+        left join lamptype lt on l.typeId = lt.id
+        left join controller c on l.controller_id = c.id
+        left join nbiot_manage nm on c.nboit_manage_id = nm.id
+        left join sys_user u2 on l.oper_id = u2.id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and o.del_flag = 0 and l.delflag = 0
+        <if test="lineId != null and '' != lineId">
+            and rm.id = #{lineId}
+        </if>
+        <if test="roadId != null and '' != roadId ">
+            and r.id = #{roadId}
+        </if>
+        <if test="areaId != null and '' != areaId">
+            and r.area_id = #{areaId}
+        </if>
+        <if test="poleCode != null and '' != poleCode ">
+            and l.poleCode like CONCAT('%',#{poleCode},'%')
+        </if>
+        <choose>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'cname' == orderBy">
+                order by rm.cname ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by em.name ${sort}
+            </when>
+            <when test="'dbcircuit' == orderBy">
+                order by l.dbcircuit ${sort}
+            </when>
+            <when test="'poleCode' == orderBy">
+                order by l.poleCode ${sort}
+            </when>
+            <when test="'lampModel' == orderBy">
+                order by lt.lampModel ${sort}
+            </when>
+            <when test="'nb_code' == orderBy">
+                order by nm.nb_code ${sort}
+            </when>
+            <when test="'lampnum' == orderBy">
+                order by l.lampnum ${sort}
+            </when>
+            <when test="'power' == orderBy">
+                order by lt.power ${sort}
+            </when>
+            <when test="'la' == orderBy">
+                order by l.la ${sort}
+            </when>
+            <when test="'lo' == orderBy">
+                order by l.lo ${sort}
+            </when>
+            <when test="'lampFactory' == orderBy">
+                order by lt.lampFactory ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by u2.real_name ${sort}
+            </when>
+            <when test="'opertime' == orderBy">
+                order by str_to_date(l.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(l.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getLampManageDataById" parameterType="integer" resultType="java.util.HashMap">
+        select l.*,r.id road_id,r.area_id,lt.lamptypename from lamp l
+        left join roadline_manage rm on l.roadline_id = rm.id
+        left join road_manage r on rm.road_id = r.id
+        left join lamptype lt on l.typeId = lt.id
+        where l.id =#{id}
+    </select>
+
+    <update id="delLampManageDataById" parameterType="integer">
+        update lamp set delflag = 1 where id = #{id}
+    </update>
+
+    <insert id="addLampManageData" parameterType="com.lamp.model.Tlamp">
+        insert into lamp (lampnum,la,lo,oper_id,opertime,delflag,controller_id,typeId
+        ,pdId,dbcircuit,createby,createTime,poleCode,roadline_id)
+        values
+        (#{lampnum},#{la},#{lo},#{operId},#{opertime},0,#{controllerId},#{typeId},
+        #{pdId},#{dbcircuit},#{createby},#{createTime},#{poleCode},#{roadlineId})
+    </insert>
+
+    <update id="updateLampManageData" parameterType="com.lamp.model.Tlamp">
+        update lamp set lampnum = #{lampnum},la= #{la},lo= #{lo},oper_id= #{operId},opertime= #{opertime},controller_id = #{controllerId},typeId= #{typeId},
+        pdId= #{pdId},dbcircuit= #{dbcircuit},poleCode= #{poleCode},roadline_id = #{roadlineId}
+        where id = #{id}
+    </update>
+
+</mapper>

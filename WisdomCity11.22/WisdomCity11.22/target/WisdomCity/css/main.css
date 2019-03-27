@@ -1,0 +1,9 @@
+﻿.content{clear: both;background: url(../images/main_bg.jpg);}
+.models{width:1110px;margin: 0 auto;}
+.content a img{width:30%;float: left;margin-top: 5%;margin-right:5%}
+.foot{height: 72px;background: url(../images/main_top_bg.jpg) ;position: fixed;width: 100%;left: 0px;bottom: 0px;}
+.foot p{width: 741px;float: left;height: 72px;line-height: 72px;position: relative;left: 50%;top:0px;margin-left: -370px;}
+.foot p span,.foot p strong{height: 100%;padding: 0 2px;color:#fff;font-size: 20px;}
+.foot p span{float: left;}
+.foot p strong{font-weight: normal;float: right;}
+

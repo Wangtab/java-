@@ -1,0 +1,10 @@
+﻿.work_content_box .table_box tr .sendRepairBtn{width:30px;height: 20px;line-height: 20px;font-size: 14px;color:#fff;padding: 0 6px}
+.work_content_box .table_box table tr td img{width: 14px;height: 12px;}
+.table_win .form_box select{width:220px;}
+.table_win .form_node{height: 100px;}
+.table_win .form_node textarea{width:220px;height:100px;max-height: 100px;min-height: 100px;max-width: 220px;min-width: 220px}
+.second_form{height: 480px;}
+.second_form .detail_box select{width:220px}
+.detail_text{height: 100px;width:800px;float: left;clear: both;}
+.second_form .detail_text span{float: left;height: 30px;line-height:30px;font-size: 14px;margin-right:16px;width:120px;text-align:center;}
+.second_form .detail_text textarea{width: 606px;height: 100px;float: left;max-height: 100px;min-height: 100px;max-width: 606px;min-width: 606px}

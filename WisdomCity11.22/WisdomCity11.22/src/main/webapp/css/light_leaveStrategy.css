@@ -1,0 +1,20 @@
+﻿.work_content_box .group_box{padding: 20px;overflow: hidden;clear: both;}
+.work_content_box .left_group{width: 35%;float: left;}
+.work_content_box .right_group{width: 62%;float: left;;margin-left:3%;}
+.work_content_box .left_group table,.work_content_box .right_group table{width: 100%;border-collapse:collapse;}
+.work_content_box .left_group table tr{cursor: pointer;}
+.work_content_box .left_group table tr th, .work_content_box .left_group table tr td,
+.work_content_box .right_group table tr th, .work_content_box .right_group table tr td{color:#fff;height: 30px;line-height: 30px;border:1px solid #fff;text-align: center;}
+.work_content_box .right_group table tr td a {width: 21px;height: 21px;display: inline-block;margin-right: 2px;
+ background: url(../images/table_ico.png) -64px -6px no-repeat;position: relative;top:4px}
+.work_content_box .left_group table tr th, .work_content_box .right_group table tr th{background-color:#FF9900;}
+.work_content_box .left_group table tr td, .work_content_box .right_group table tr td{background-color:#014B94}
+.work_content_box .left_group table tr td .delete_button, .work_content_box .left_group table tr td .add_button,
+.left_group table tr td .edit_button,.left_group table tr td .set_pwd_button{width: 21px;height: 21px;display: inline-block;margin-right: 4px;
+ background: url(../images/table_ico.png) no-repeat;position: relative;top: 6px}
+.work_content_box .left_group table tr td .delete_button{background-position:-97px -6px}
+.work_content_box .left_group table tr td .edit_button{background-position:-27px -6px}
+.work_content_box .left_group table tr td .set_pwd_button{background-position:-64px -6px}
+.work_content_box .left_group table tr td .add_button{background: url(../images/jia.png) -6px -5px no-repeat;}
+.work_content_box .search_box span{float: left;height: 32px;line-height: 32px;color:#fff;font-size: 14px;padding: 0 6px}
+.table_win .form_box select{width: 220px;}

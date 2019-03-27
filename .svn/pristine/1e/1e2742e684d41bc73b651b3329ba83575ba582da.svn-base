@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TlampMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tlamp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="lampnum" property="lampnum" jdbcType="INTEGER" />
+    <result column="la" property="la" jdbcType="DECIMAL" />
+    <result column="lo" property="lo" jdbcType="DECIMAL" />
+    <result column="oper_id" property="operId" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+    <result column="typeId" property="typeId" jdbcType="INTEGER"/>
+    <result column="controller_id" property="controllerId" jdbcType="INTEGER"/>
+    <result column="delflag" property="delflag" jdbcType="INTEGER" />
+
+    <result column="pdId" property="pdId" jdbcType="INTEGER"></result>
+    <result column="dbcircuit" property="dbcircuit" jdbcType="INTEGER"></result>
+    <result column="createby" property="createby" jdbcType="INTEGER"></result>
+    <result column="createTime" property="createTime" jdbcType="VARCHAR"></result>
+    <result column="poleCode" property="poleCode" jdbcType="VARCHAR"></result>
+    <result column="roadline_id" property="roadlineId" jdbcType="INTEGER"></result>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, lampnum,la, lo,oper_id,opertime, delflag,typeId,controller_id
+  </sql>
+  <!--查询所有的灯具工厂-->
+  <select id="querylampFactoryAll" resultType="java.util.Map">
+    SELECT lf.id,lf.factoryname FROM lampfactory AS lf
+    LEFT JOIN sys_user AS  u ON  lf.operator = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND lf.delflag = 0;
+  </select>
+  <!--查询所有的路灯信息-->
+  <select id="queryLampALL" resultType="java.util.Map">
+  SELECT l.id,a.areaName,r.road_name AS roadName,l.roadline_id AS roadlineId,e.name,l.dbcircuit,l.poleCode,
+  rm.cname,lt.lampModel,lt.power,l.lampnum,lt.lampFactory,l.la,l.lo,nm.nb_code AS nbCode,
+  (select u2.real_name from sys_user as u2 where u2.id = l.oper_id) AS realName,l.opertime FROM  lamp AS l
+  LEFT JOIN roadline_manage AS rm ON l.roadline_id = rm.id
+  LEFT JOIN road_manage AS r ON rm.road_id = r.id
+  LEFT JOIN area_manage AS a ON r.area_id = a.id
+  LEFT JOIN elecbox_manage AS e ON l.pdId = e.id
+  LEFT JOIN lamptype AS lt ON lt.id = l.typeId
+  LEFT JOIN controller AS con ON l.controller_id = con.id
+  LEFT JOIN nbiot_manage AS nm ON nm.id = con.nboit_manage_id
+  LEFT JOIN sys_user AS  u ON  l.createby = u.id
+  LEFT JOIN organization o ON o.id = u.org_id
+  WHERE o.org_code like CONCAT('%',#{org_code},'%') AND l.delflag = 0
+  <if test="areaId != '' and areaId != null">
+    AND a.id = #{areaId}
+  </if>
+  <if test="roadId != '' and roadId != null">
+    AND r.id = #{roadId}
+  </if>
+  <if test="lineId != '' and lineId != null">
+    AND rm.id = #{lineId}
+  </if>
+  ORDER BY l.opertime DESC
+  <if test="page != -1">
+    LIMIT #{page},10
+  </if>;
+</select>
+
+
+  <select id="queryLampManage" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT l.id,a.areaName,r.road_name AS roadName,l.roadline_id AS roadlineId,e.name,l.dbcircuit,l.poleCode,
+    rm.cname,lt.lampModel,lt.power,l.lampnum,lt.lampFactory,l.la,l.lo,nm.nb_code AS nbCode,
+    (select u2.real_name from sys_user as u2 where u2.id = l.oper_id) AS realName,l.opertime FROM  lamp AS l
+    LEFT JOIN roadline_manage AS rm ON l.roadline_id = rm.id
+    LEFT JOIN road_manage AS r ON rm.road_id = r.id
+    LEFT JOIN area_manage AS a ON r.area_id = a.id
+    LEFT JOIN elecbox_manage AS e ON l.pdId = e.id
+    LEFT JOIN lamptype AS lt ON lt.id = l.typeId
+    LEFT JOIN controller AS con ON l.controller_id = con.id
+    LEFT JOIN nbiot_manage AS nm ON nm.id = con.nboit_manage_id
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND l.delflag = 0
+    <if test="region_id != '' and region_id != null">
+      AND a.id = #{region_id}
+    </if>
+    <if test="road_id != '' and road_id != null">
+      AND r.id = #{road_id}
+    </if>
+    <if test="line_id != '' and line_id != null">
+      AND rm.id = #{line_id}
+    </if>
+    ORDER BY l.opertime DESC
+      limit #{num},#{showNum}
+  </select>
+
+  <select id="queryLampManageCount" parameterType="java.util.HashMap" resultType="integer">
+    SELECT count(1) FROM  lamp AS l
+    LEFT JOIN roadline_manage AS rm ON l.roadline_id = rm.id
+    LEFT JOIN road_manage AS r ON rm.road_id = r.id
+    LEFT JOIN area_manage AS a ON r.area_id = a.id
+    LEFT JOIN elecbox_manage AS e ON l.pdId = e.id
+    LEFT JOIN lamptype AS lt ON lt.id = l.typeId
+    LEFT JOIN controller AS con ON l.controller_id = con.id
+    LEFT JOIN nbiot_manage AS nm ON nm.id = con.nboit_manage_id
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND l.delflag = 0
+    <if test="region_id != '' and region_id != null">
+      AND a.id = #{region_id}
+    </if>
+    <if test="road_id != '' and road_id != null">
+      AND r.id = #{road_id}
+    </if>
+    <if test="line_id != '' and line_id != null">
+      AND rm.id = #{line_id}
+    </if>
+
+  </select>
+
+  <!--根据ID查询灯具信息-->
+  <select id="queryLamp" resultType="java.util.Map">
+    SELECT l.id,a.id AS regionId,r.id AS roadId,l.roadline_id AS roadlineId,l.controller_id AS conId,
+    l.typeId,l.pdId,l.dbcircuit,l.poleCode,lt.lamptypename,l.lampnum,l.la,l.lo FROM  lamp AS l
+    LEFT JOIN roadline_manage AS rm ON l.roadline_id = rm.id
+    LEFT JOIN road_manage AS r ON rm.road_id = r.id
+    LEFT JOIN area_manage AS a ON r.area_id = a.id
+    LEFT JOIN lamptype AS lt ON lt.id = l.typeId
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND l.delflag = 0
+    AND l.id = #{id}
+  </select>
+  <!--查询所有的灯具信息-->
+  <select id="queryLampList" resultType="java.util.Map">
+    SELECT l.id,l.controller_id  FROM lamp AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND l.delflag = 0
+  </select>
+  <!--增加路灯信息-->
+  <insert id="insertTlampManage" parameterType="com.lamp.model.Tlamp">
+    INSERT INTO lamp
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="lampnum !=null">
+        lampnum,
+      </if>
+      <if test="la !=null">
+        la,
+      </if>
+      <if test="lo !=null">
+        lo,
+      </if>
+      <if test="operId !=null">
+        oper_id,
+      </if>
+      <if test="opertime !=null">
+        opertime,
+      </if>
+      <if test="typeId !=null">
+        typeId,
+      </if>
+      <if test="controllerId !=null">
+        controller_id,
+      </if>
+      <if test="delflag !=null">
+        delflag,
+      </if>
+      <if test="pdId !=null">
+        pdId,
+      </if>
+      <if test="dbcircuit !=null">
+        dbcircuit,
+      </if>
+      <if test="roadlineId !=null">
+        roadline_id,
+      </if>
+      <if test="createby !=null">
+        createby,
+      </if>
+      <if test="createTime !=null">
+        createTime,
+      </if>
+      <if test="poleCode !=null">
+        poleCode,
+      </if>
+    </trim>
+    <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+      <if test=" lampnum !=null">
+        #{lampnum,jdbcType=VARCHAR},
+      </if>
+      <if test="la !=null">
+        #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo !=null">
+        #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="operId !=null">
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="opertime !='' and opertime !=null">
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId !='' and typeId !=null">
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="controllerId !='' and controllerId !=null">
+        #{controllerId,jdbcType=INTEGER},
+      </if>
+      <if test="delflag !=null">
+        #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="pdId !=null">
+        #{pdId,jdbcType=INTEGER},
+      </if>
+      <if test="dbcircuit !=null">
+        #{dbcircuit,jdbcType=INTEGER},
+      </if>
+      <if test="roadlineId !=null">
+        #{roadlineId,jdbcType=INTEGER},
+      </if>
+      <if test="createby !=null">
+        #{createby,jdbcType=INTEGER},
+      </if>
+      <if test="createTime !=null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="poleCode !=null">
+        #{poleCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--更新灯具信息-->
+  <update id="updateTlampMsg" parameterType="com.lamp.model.Tlamp">
+    UPDATE lamp SET
+    <trim prefix="" suffix="" suffixOverrides=",">
+      <if test="lampnum !=null">
+        lampnum = #{lampnum,jdbcType=VARCHAR},
+      </if>
+      <if test="la !=null">
+        la = #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo !=null">
+        lo = #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="operId !=null">
+        oper_id = #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime !=null">
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId !=null">
+        typeId = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="controllerId !=null">
+        controller_id =  #{controllerId,jdbcType=INTEGER},
+      </if>
+      <if test="delflag !=null">
+        delflag = #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="pdId != null">
+        pdId = #{pdId,jdbcType=INTEGER},
+      </if>
+      <if test="dbcircuit !=null">
+        dbcircuit = #{dbcircuit,jdbcType=INTEGER},
+      </if>
+      <if test="roadlineId !=null">
+        roadline_id = #{roadlineId,jdbcType=INTEGER},
+      </if>
+      <if test="createby !=null">
+        createby = #{createby,jdbcType=INTEGER},
+      </if>
+      <if test="createTime !=null">
+        createTime = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="poleCode !=null">
+        poleCode = #{poleCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    WHERE id = #{id}
+  </update>
+  <!--查询所有的灯具类型信息-->
+  <select id="queryLampType" resultType="java.util.Map">
+      SELECT l.id,l.lamptypename,l.lampModel FROM lamptype AS l
+      LEFT JOIN sys_user AS  u ON  l.createby = u.id
+      LEFT JOIN organization o ON o.id = u.org_id
+      WHERE o.org_code like CONCAT('%',#{org_code},'%')
+      AND  l.lamptypename = #{mid}
+      AND  l.delflag = 0;
+  </select>
+  <!--查询控制器-->
+  <select id="queryController" resultType="java.util.Map">
+    SELECT con.id,nm.nb_code AS nbCode FROM controller AS con
+    LEFT JOIN nbiot_manage AS nm ON nm.id = con.nboit_manage_id
+    LEFT JOIN sys_user AS  u ON  con.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    <if test="list.size() != 0">
+      AND con.id
+      <foreach collection="list" item="item" open="NOT IN ( " separator="," close=" )">
+        #{item.controller_id}
+      </foreach>
+    </if>
+    AND  con.delflag = 0;
+  </select>
+  <!--控制器信息-->
+  <select id="queryControllerOne" resultType="java.util.Map">
+    SELECT con.id,nm.nb_code AS nbCode FROM controller AS con
+    LEFT JOIN nbiot_manage AS nm ON nm.id = con.nboit_manage_id
+    LEFT JOIN sys_user AS  u ON  con.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND  con.id = #{contId}
+    AND  con.delflag = 0;
+  </select>
+  <!--查询所有的运营商信息-->
+  <select id="queryNetworkOperators" resultType="java.util.Map">
+    SELECT netId,netName FROM networkOperators;
+  </select>
+  <!--查询所有的运营商信息-->
+  <select id="queryProtocolAll" resultType="java.util.Map">
+    SELECT protocolType,protocolName FROM protocol;
+  </select>
+  <!--查询所有的灯杆信息-->
+  <select id="queryPoleAll" resultType="java.util.Map">
+    SELECT p.id,p.pole_code AS poleCode FROM pole_manage AS p
+    LEFT JOIN sys_user AS  u ON  p.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND p.del_flag = 0;
+  </select>
+  <!--根据名称查询区域道路ID-->
+  <select id="queryRegionalList" resultType="java.util.Map">
+    SELECT r.id AS roadId,a.id AS regionId FROM area_manage AS a
+    LEFT JOIN road_manage AS r ON r.area_id = a.id
+    LEFT JOIN sys_user AS  u ON  a.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND a.areaName = #{region}
+    AND r.road_name = #{road}
+    AND a.delFlag = 0;
+  </select>
+  <!--查询配电箱编号-->
+  <select id="queryELeBoxList" resultType="java.util.Map">
+    SELECT e.id,e.name FROM elecbox_manage AS e
+    LEFT JOIN sys_user AS  u ON  e.oper_id = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND e.name = #{boxName}
+    AND  e.del_flag = 0
+  </select>
+
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lamp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lamp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tlamp" >
+    insert into lamp (id, lampnum,
+      lamptypename, la,
+      lo, nbdeviceId, operator, 
+      opertime, delflag)
+    values (#{id,jdbcType=INTEGER}, #{lampnum,jdbcType=INTEGER},
+      #{lamptypename,jdbcType=VARCHAR}, #{la,jdbcType=DECIMAL},
+      #{lo,jdbcType=DECIMAL}, #{nbdeviceid,jdbcType=INTEGER}, #{operator,jdbcType=VARCHAR}, 
+      #{opertime,jdbcType=VARCHAR}, #{delflag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelectivelamp" parameterType="com.lamp.model.Tlamp" >
+    insert into lamp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="lamptypename != null" >
+        lamptypename,
+      </if>
+      <if test="la != null" >
+        la,
+      </if>
+      <if test="lo != null" >
+        lo,
+      </if>
+      <if test="nbdeviceid != null" >
+        nbdeviceId,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+      <if test="delflag != null" >
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="lampnum != null" >
+        #{lampnum,jdbcType=INTEGER},
+      </if>
+      <if test="lamptypename != null" >
+        #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="la != null" >
+        #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo != null" >
+        #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="nbdeviceid != null" >
+        #{nbdeviceid,jdbcType=INTEGER},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        #{delflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tlamp" >
+    update lamp
+    <set >
+      <if test="lampnum != null" >
+        lampnum = #{lampnum,jdbcType=INTEGER},
+      </if>
+      <if test="lamptypename != null" >
+        lamptypename = #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="la != null" >
+        la = #{la,jdbcType=DECIMAL},
+      </if>
+      <if test="lo != null" >
+        lo = #{lo,jdbcType=DECIMAL},
+      </if>
+      <if test="nbdeviceid != null" >
+        nbdeviceId = #{nbdeviceid,jdbcType=INTEGER},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        delflag = #{delflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tlamp" >
+    update lamp
+    set
+      lampnum = #{lampnum,jdbcType=INTEGER},
+      lamptypename = #{lamptypename,jdbcType=VARCHAR},
+      la = #{la,jdbcType=DECIMAL},
+      lo = #{lo,jdbcType=DECIMAL},
+      nbdeviceId = #{nbdeviceid,jdbcType=INTEGER},
+      operator = #{operator,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR},
+      delflag = #{delflag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAlllamp" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from lamp
+  </select>
+
+  <select id="selectlampsite" resultType="java.util.HashMap" >
+    select
+      la,lo
+    from lamp
+  </select>
+
+
+</mapper>

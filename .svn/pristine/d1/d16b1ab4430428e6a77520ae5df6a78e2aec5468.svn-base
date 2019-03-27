@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TammeterStatusMapper">
+    <select id="getammeterStatusList" resultType="java.util.Map">
+        SELECT
+        ams.`id`,a.`areaName`,r.`road_name`,el.name,am.`c_name`,ams.`num`,ams.`record_time` FROM ammeter_status ams
+        LEFT JOIN ammeter_manage am ON ams.`ammeter_id` = am.`id`
+        LEFT JOIN sys_user u ON am.`createby` = u.`id`
+        LEFT JOIN organization o ON o.id = u.`org_id`
+        LEFT JOIN elecbox_manage el ON am.`elecbox_id` = el.`id`
+        LEFT JOIN road_manage r ON r.id = el.`road_id`
+        LEFT JOIN area_manage a ON a.id = r.area_id
+        WHERE am.del_flag = 0 AND o.`org_code` LIKE CONCAT('%',#{orgCode},'%')
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(ams.record_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'roadName' == orderBy ">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'name' == orderBy">
+                order by el.name ${sort}
+            </when>
+            <when test="'c_name' == orderBy">
+                order by am.c_name ${sort}
+            </when>
+            <when test="'num' == orderBy">
+                order by ams.num ${sort}
+            </when>
+            <when test="'recordTime' == orderBy">
+                order by ams.record_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(ams.record_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        LIMIT #{num},#{showNum}
+    </select>
+
+    <select id="getExceportList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT
+        ams.`id`,a.`areaName`,r.`road_name`,el.name,am.`c_name`,ams.`num`,ams.`record_time` FROM ammeter_status ams
+        LEFT JOIN ammeter_manage am ON ams.`ammeter_id` = am.`id`
+        LEFT JOIN sys_user u ON am.`createby` = u.`id`
+        LEFT JOIN organization o ON o.id = u.`org_id`
+        LEFT JOIN elecbox_manage el ON am.`elecbox_id` = el.`id`
+        LEFT JOIN road_manage r ON r.id = el.`road_id`
+        LEFT JOIN area_manage a ON a.id = r.area_id
+        WHERE am.del_flag = 0 AND o.`org_code` LIKE CONCAT('%',#{orgCode},'%')
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+        order by str_to_date(ams.record_time,'%Y-%m-%d %H:%i:%s') desc
+    </select>
+
+    <select id="getammStatusDataCount" parameterType="java.util.HashMap" resultType="integer">
+        SELECT
+        count(1)
+        FROM
+        ammeter_status ams
+        LEFT JOIN ammeter_manage am ON ams.`ammeter_id` = am.`id`
+        LEFT JOIN sys_user u ON am.`createby` = u.`id`
+        LEFT JOIN organization o ON o.id = u.`org_id`
+        LEFT JOIN elecbox_manage el ON am.`elecbox_id` = el.`id`
+        LEFT JOIN road_manage r ON r.id = el.`road_id`
+        LEFT JOIN area_manage a ON a.id = r.area_id
+        WHERE am.del_flag = 0 AND o.`org_code` LIKE CONCAT('%',#{orgCode},'%')
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="roadId != null">
+            and r.id = #{roadId}
+        </if>
+    </select>
+
+</mapper>

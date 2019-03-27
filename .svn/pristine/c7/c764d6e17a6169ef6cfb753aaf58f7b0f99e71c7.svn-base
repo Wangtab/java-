@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TPlatFormTestMapper" >
+
+  <delete id="delRecordSumPower">
+    delete from record_sum_power where 1=1
+  </delete>
+
+  <select id="getFourDaysAgoSumPower" resultType="java.util.Map">
+    select STR_TO_DATE(rd.record_time,'%Y-%m-%d') record_date from record_nb_data rd
+    where STR_TO_DATE(rd.record_time,'%Y-%m-%d') &lt; adddate(date(sysdate()),0)
+    group by record_date order by record_date desc limit 0,4
+  </select>
+
+  <select id="getSumPowerByDate" parameterType="java.lang.String" resultType="java.lang.Double">
+    select ifnull(FORMAT(sum(power)/1000*3,3),0) num from record_nb_data rd
+    left join lamp l on l.nbdeviceId = rd.nb_device
+    where l.delFlag = 0 and STR_TO_DATE(rd.record_time,'%Y-%m-%d') &lt;= STR_TO_DATE(#{_parameter},'%Y-%m-%d')
+    and rd.power !=0
+  </select>
+
+  <insert id="batchSaveSumpPowerData" parameterType="java.util.List">
+    insert into record_sum_power
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.uuid},#{item.sumPower},#{item.record_date})
+    </foreach>
+  </insert>
+
+  <select id="getAllRecordData" resultType="java.util.Map">
+    select STR_TO_DATE(rd.record_time,'%Y-%m-%d') times  from record_nb_data rd
+    where STR_TO_DATE(rd.record_time,'%Y-%m-%d') &lt; adddate(date(sysdate()),0)
+    group by times
+  </select>
+
+  <select id="getPowerDateByDate" parameterType="java.lang.String" resultType="java.util.Map">
+    select nb_device,ifnull(sum(power),0) power from record_nb_data rd
+    left join lamp l on l.nbdeviceId = rd.nb_device
+    where STR_TO_DATE(rd.record_time,'%Y-%m-%d') = STR_TO_DATE(#{_parameter},'%Y-%m-%d') and rd.power != 0 and l.delflag = 0
+    group by nb_device
+  </select>
+
+  <delete id="delRecordLampPower">
+    delete from record_lamp_power where 1=1
+  </delete>
+
+  <insert id="batchSaveLampPower" parameterType="java.util.List">
+    insert into record_lamp_power
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id},#{item.nb_device},#{item.power},#{item.record_time})
+    </foreach>
+  </insert>
+
+  <delete id="clearRecordRoadPower">
+    delete from record_road_power where 1=1
+  </delete>
+
+  <select id="getRecordLampPowerDate" resultType="java.util.Map">
+    select record_time from record_lamp_power
+    group by record_time
+  </select>
+
+  <select id="dealRoadRecordPowerByDate" parameterType="java.lang.String" resultType="java.util.Map">
+    select r.id,ifnull(sum(power)*3,0) power from record_lamp_power rd
+    left join lamp l on l.nbdeviceId = rd.nb_device
+    left join pole_manage p on l.pole_id = p.id
+    left join road_manage r on r.id = p.road_id
+    where STR_TO_DATE(rd.record_time,'%Y-%m-%d') = STR_TO_DATE(#{_parameter},'%Y-%m-%d')
+    and r.del_flag = 0
+    group by r.id
+  </select>
+
+  <insert id="batchSaveRoadPower" parameterType="java.util.List">
+    insert into record_road_power
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id},#{item.road_id},#{item.power},#{item.record_time})
+    </foreach>
+  </insert>
+
+  <delete id="clearRecordAreaPower">
+    delete from record_area_power where 1=1
+  </delete>
+
+  <select id="getRecordRoadPowerDate" resultType="java.util.Map">
+    select record_time from record_road_power
+    group by record_time
+  </select>
+
+  <select id="dealAreaRecordPowerByDate" parameterType="java.lang.String" resultType="java.util.Map">
+    select a.id,ifnull(sum(power),0) power from record_road_power rd
+    left join road_manage r on r.id = rd.road_id
+    left join area_manage a on a.id = r.area_id
+    where STR_TO_DATE(rd.record_time,'%Y-%m-%d') = STR_TO_DATE(#{_parameter},'%Y-%m-%d')
+    and r.del_flag = 0
+    group by a.id
+  </select>
+
+  <insert id="batchSaveAreaPower" parameterType="java.util.List">
+    insert into record_area_power
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id},#{item.area_id},#{item.power},#{item.record_time})
+    </foreach>
+  </insert>
+
+</mapper>

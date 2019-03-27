@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TSafeManageMapper" >
+
+  <select id="getCountRoleManageNum" resultType="integer">
+    select count(1) from role_manage rm
+    left join sys_user uu on rm.createby = uu.id
+    left join organization o on uu.org_id = o.id
+    where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%')
+    <if test="roleName != null and '' != roleName">
+      and role_name LIKE CONCAT('%',#{roleName},'%')
+    </if>
+  </select>
+
+  <select id="getRoleManageData" resultType="java.util.Map">
+    select rm.*,u.real_name from role_manage rm
+    left join sys_user u on rm.oper_id = u.id
+    left join sys_user uu on rm.createby = uu.id
+    left join organization o on uu.org_id = o.id
+    where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%')
+    <if test="roleName != null and '' != roleName">
+      and role_name LIKE CONCAT('%',#{roleName},'%')
+    </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(rm.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="'role_name' == orderBy">
+        order by rm.role_name ${sort}
+      </when>
+      <when test="'role_desc' == orderBy ">
+        order by rm.role_desc ${sort}
+      </when>
+      <when test="'real_name' == orderBy">
+        order by u.real_name ${sort}
+      </when>
+      <when test="'operTime' == orderBy">
+        order by rm.oper_time ${sort}
+      </when>
+      <otherwise>
+        order by str_to_date(rm.oper_time,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+     limit #{num},#{showNum}
+  </select>
+
+  <select id="getRoleDataById" parameterType="integer" resultType="java.util.HashMap">
+    select * from role_manage where id = #{id}
+  </select>
+
+  <insert id="saveRoleData" parameterType="com.lamp.model.TRoleManage">
+  insert into role_manage
+  values (#{id},#{roleName},#{roleDesc},#{operId},#{operTime},#{createby},#{createTime})
+  </insert>
+
+  <update id="updateRoleData" parameterType="com.lamp.model.TRoleManage">
+    update role_manage set role_name = #{roleName},role_desc = #{roleDesc},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+  </update>
+
+  <delete id="deleteRoleDataById" parameterType="integer">
+    delete from role_manage where id = #{id}
+  </delete>
+
+  <delete id="clearDataByRoId" parameterType="integer">
+    delete from lamp_power_list where role_id = #{roleId}
+  </delete>
+
+  <delete id="clearBtnDataByRoId" parameterType="integer">
+    delete from lamp_btn_list where role_id = #{roleId}
+  </delete>
+
+  <insert id="batchSaveLampPowerList" parameterType="java.util.List">
+    insert into lamp_power_list
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.roleId},#{item.menuId})
+    </foreach>
+  </insert>
+
+  <insert id="batchSaveLampBtnList" parameterType="java.util.List">
+    insert into lamp_btn_list (role_id,menu_id,btn_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.roleId},#{item.menuId},#{item.id})
+    </foreach>
+  </insert>
+
+  <select id="getRolManageForSelect" resultType="java.util.Map">
+    select distinct rm.id,role_name cname
+    from role_manage rm
+    left join sys_user su on rm.createby=su.id
+    left join organization o on su.org_id=o.id
+    where o.org_code like concat ('%',#{org_code},'%')
+  </select>
+
+  <delete id="deleteRoleListByRoleId" parameterType="integer">
+    delete from lamp_power_list where role_id = #{id}
+  </delete>
+
+  <select id="getMenuListByRoleId" parameterType="integer" resultType="java.util.Map">
+    select menu_id from lamp_power_list where role_id = #{id}
+  </select>
+
+  <select id="getOrgManageForSelect" parameterType="string" resultType="java.util.Map">
+    select id,org_name cname,pid
+    from organization
+    where del_flag = 0
+    AND org_code  LIKE CONCAT ('%',#{org_code},'%')
+  </select>
+
+  <select id="getUserList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select u.id, u.user_name,u.real_name,r.role_name,o.org_name,(select u2.real_name from sys_user u2 where id = u.oper_id ) oper_name,u.oper_time from sys_user u
+    left join role_manage r on u.auth_id = r.id
+    left join organization o on u.org_id = o.id
+    where u.del_flag = 0
+    and o.del_flag = 0
+    and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="userName != null and '' != userName">
+      and u.user_name LIKE CONCAT('%',#{userName},'%')
+    </if>
+    <if test="realName != null and '' != realName">
+      and u.real_name LIKE CONCAT('%',#{realName},'%')
+    </if>
+    <if test="orgId != null and '' != orgId">
+      and o.id = #{orgId}
+    </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(u.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="'user_name' == orderBy">
+        order by u.user_name ${sort}
+      </when>
+      <when test="'real_name' == orderBy ">
+        order by u.real_name ${sort}
+      </when>
+      <when test="'role_name' == orderBy">
+        order by r.role_name ${sort}
+      </when>
+      <when test="'org_name' == orderBy">
+        order by o.org_name ${sort}
+      </when>
+      <when test="'oper_name' == orderBy">
+      order by oper_name ${sort}
+      </when>
+      <otherwise>
+        order by str_to_date(u.oper_time,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+    limit #{num},#{showNum}
+  </select>
+
+  <select id="getCountUserNum" parameterType="java.util.HashMap" resultType="integer">
+    select count(1) from sys_user u
+    left join role_manage r on u.auth_id = r.id
+    left join organization o on u.org_id = o.id
+    where u.del_flag = 0
+    and o.del_flag = 0
+    and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="userName != null and '' != userName">
+      and u.user_name LIKE CONCAT('%',#{userName},'%')
+    </if>
+    <if test="realName != null and '' != realName">
+      and u.real_name LIKE CONCAT('%',#{realName},'%')
+    </if>
+    <if test="orgId != null and '' != orgId">
+      and o.id = #{orgId}
+    </if>
+  </select>
+
+  <select id="getUserById" parameterType="integer" resultType="java.util.Map">
+    select * from sys_user where id = #{id}
+  </select>
+
+  <insert id="saveUserData" parameterType="com.lamp.model.Tsysuser">
+    insert into sys_user (user_name,`password`,real_name,tel_num,auth_id,oper_id,oper_time,org_id,del_flag,createby,createTime)
+    values
+    (#{userName},#{password},#{realName},#{telNum},#{authId},#{operId},#{operTime},#{orgId},0,#{createBy},#{createTime})
+  </insert>
+
+  <update id="updateUserData" parameterType="com.lamp.model.Tsysuser">
+    update sys_user set user_name = #{userName},real_name = #{realName},auth_id = #{authId},org_id = #{orgId},oper_id =#{operId},
+    tel_num = #{telNum},oper_time = #{operTime} where id = #{id}
+  </update>
+
+  <delete id="deleteUserById" parameterType="integer">
+    update sys_user set del_flag = 1 where id = #{id}
+  </delete>
+
+  <select id="getUserOldPwd" resultType="integer">
+    select count(1) from sys_user where id = #{id} and `password` = #{pwd}
+  </select>
+
+  <update id="changeUserPwd">
+    update sys_user set `password` = #{pwd} where id = #{id}
+  </update>
+
+  <select id="getTopOrganizationTree" resultType="java.util.Map">
+    select * from organization o
+    where org_code like CONCAT('%',#{orgCode},'%')  and del_flag = 0 order by LENGTH(org_code) asc limit 0,1
+  </select>
+
+  <select id="getOrganizationTreeByPid" resultType="java.util.Map">
+    select o.*,u.real_name from organization o
+    left join sys_user u on o.operId = u.id
+    where org_code like CONCAT('%',#{orgCode},'%') and pid = #{pid} and o.del_flag = 0
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(o.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="'org_name' == orderBy">
+        order by org_name ${sort}
+      </when>
+      <when test="'org_des' == orderBy ">
+        order by org_des ${sort}
+      </when>
+      <when test="'real_name' == orderBy">
+        order by real_name ${sort}
+      </when>
+      <when test="'operTime' == orderBy">
+        order by str_to_date(o.oper_time,'%Y-%m-%d %H:%i:%s') desc
+      </when>
+      <otherwise>
+        order by str_to_date(o.oper_time,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+
+  </select>
+
+  <select id="getOrganizationById" parameterType="integer" resultType="java.util.HashMap">
+    select * from organization where id = #{id}
+  </select>
+
+  <select id="getOrganizationCodeByPid" parameterType="integer" resultType="java.util.Map">
+    select org_code from organization where pid = #{pid} and del_flag = 0
+  </select>
+
+  <update id="updateOrganizationParentId" parameterType="integer">
+    update organization set has_child = 20 where id = #{id}
+  </update>
+
+  <insert id="saveOrganizationData" useGeneratedKeys="true" keyProperty="id" parameterType="com.lamp.model.Torganization">
+    insert into organization (org_name,org_des,pid,org_code,operId,oper_time,has_child,createby,create_time)
+    values (#{orgName},#{orgDes},#{pid},#{orgCode},#{operid},#{operTime},10,#{operid},#{operTime})
+  </insert>
+
+  <update id="updateOrganizationData" parameterType="com.lamp.model.Torganization">
+    update organization set org_name = #{orgName},org_des = #{orgDes},operId = #{operid},oper_time = #{operTime} where id = #{id}
+  </update>
+
+  <update id="delOrganizationById" parameterType="integer">
+    update organization set del_flag = 1 where id = #{id}
+  </update>
+
+  <select id="checkParentNodeChildren" parameterType="integer" resultType="integer">
+    select count(1) from organization where pid = (select pid from organization where id = #{id})
+  </select>
+
+  <update id="updateParentNodeChildStatus" parameterType="integer">
+    update organization set has_child = 10 where id =
+    (
+        select * from(
+        select pid from organization where id = #{id}
+        ) a
+    )
+  </update>
+
+  <select id="checkHasChildrenData" parameterType="integer" resultType="integer">
+    select count(1) from organization where pid = #{id} and del_flag = 0
+  </select>
+
+  <insert id="saveLogoData" parameterType="java.util.HashMap">
+    INSERT INTO logo (imager,NAME,uptime,operid,orgid)
+    VALUES (#{img},#{cname},#{times},#{operId},#{org_id})
+  </insert>
+  <delete id="deleteLogoDataById" parameterType="integer">
+    DELETE FROM logo WHERE orgid = #{id}
+  </delete>
+
+  <insert id="addDataBaseData" parameterType="com.lamp.model.sjkhf">
+    insert into sjkhf (sjkname,sjkaddress,info,addtime,cztime,operid,delflag)
+    values
+    (#{sjkname},#{sjkaddress},#{info},#{addtime},#{cztime},#{operid},0)
+  </insert>
+  <update id="updateDataBaseData" parameterType="com.lamp.model.sjkhf">
+    update sjkhf sj set sj.info =#{info} where id=#{id}
+  </update>
+  <select id="getDataBaseDataById" parameterType="integer" resultType="java.util.HashMap">
+    select * from sjkhf where id = #{id}
+  </select>
+
+  <select id="getDataBaseData" parameterType="java.util.HashMap" resultType="java.util.Map">
+    select s.id,s.sjkname,s.sjkaddress,s.info,s.addtime,s.cztime,u.real_name from sjkhf s
+    left join sys_user u on s.operid = u.id
+    where delflag = 0
+    <if test="null != startDate and '' != startDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    <choose>
+      <when test="'sjkname' == orderBy">
+        order by s.sjkname ${sort}
+      </when>
+      <when test="'sjkaddress' == orderBy ">
+        order by sjkaddress ${sort}
+      </when>
+      <when test="'info' == orderBy">
+        order by info ${sort}
+      </when>
+      <when test="'addtime' == orderBy">
+        order by addtime ${sort}
+      </when>
+      <when test="'cztime' == orderBy">
+        order by cztime ${sort}
+      </when>
+      <when test="'real_name' == orderBy">
+        order by real_name ${sort}
+      </when>
+      <otherwise>
+        order by  str_to_date(s.cztime,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+     limit #{num},#{showNum}
+  </select>
+
+  <select id="getCountDataBaseData" parameterType="java.util.HashMap" resultType="integer">
+      select count(1) from sjkhf s where delflag = 0
+      <if test="null != startDate and '' != startDate ">
+        and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+      </if>
+      <if test="null != endDate and '' != endDate ">
+        and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+      </if>
+  </select>
+
+  <update id="deleteDataBaseById" parameterType="integer">
+    update sjkhf set delflag = 1 where id = #{id}
+  </update>
+
+  <select id="getCountDataBaseStrategy" parameterType="java.util.HashMap" resultType="integer">
+    SELECT count(1) FROM sjkcl s
+    WHERE 1=1
+    <if test="null != startDate and '' != startDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    order by  str_to_date(s.uptime,'%Y-%m-%d %H:%i:%s') desc
+  </select>
+
+  <select id="getDataBaseStrategy" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT s.id,s.clname,case s.zxname when 1 then '每月' when 2 then '每周' when 3 then '每天' end zxname,s.zxtime,
+    s.addtime,s.uptime,su.real_name FROM sjkcl s
+    LEFT JOIN  sys_user su on su.id=s.operid
+    WHERE 1=1
+    <if test="null != startDate and '' != startDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &gt;= str_to_date(#{startDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    <if test="null != endDate and '' != endDate ">
+      and  str_to_date(s.addtime,'%Y-%m-%d %H:%i:%s') &lt;= str_to_date(#{endDate}, '%Y-%m-%d %H:%i:%s')
+    </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(s.uptime,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="'clname' == orderBy">
+        order by s.clname ${sort}
+      </when>
+      <when test="'zxname' == orderBy ">
+        order by s.zxname ${sort}
+      </when>
+      <when test="'zxtime' == orderBy">
+        order by s.zxtime ${sort}
+      </when>
+      <when test="'addtime' == orderBy">
+        order by s.addtime ${sort}
+      </when>
+      <when test="'real_name' == orderBy">
+        order by su.real_name ${sort}
+      </when>
+      <when test="'uptime' == orderBy">
+        order by str_to_date(s.uptime,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <otherwise>
+        order by  str_to_date(s.uptime,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+    limit #{num},#{showNum}
+  </select>
+
+  <delete id="deleteDataBaseStrategyById" parameterType="integer">
+    delete from sjkcl where id = #{id}
+  </delete>
+
+  <select id="getDataBaseStrategyById" parameterType="integer" resultType="java.util.HashMap">
+    select * from sjkcl s where id= #{id}
+  </select>
+
+  <insert id="addDataBaseStrategy" parameterType="com.lamp.model.Sjkcl">
+    insert into sjkcl (clname,zxname,zxtime,addtime,operid,uptime)
+    values
+    (#{clname},#{zxname},#{zxtime},#{addtime},#{operid},#{uptime})
+  </insert>
+
+  <update id="updateDataBaseStrategy" parameterType="com.lamp.model.Sjkcl">
+    update sjkcl sj set sj.clname =#{clname} , sj.zxname=#{zxname} , sj.zxtime=#{zxtime} , sj.operid=#{operid} , sj.uptime=#{uptime}  where id=#{id}
+  </update>
+
+  <select id="getDataBaseStrategyForTask" resultType="java.util.Map">
+    select * from sjkcl
+  </select>
+
+</mapper>

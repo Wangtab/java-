@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TPlanManageMapper" >
+    <select id="getAreasByOrgCode" resultType="java.util.Map">
+        select a.id,a.areaName from area_manage a
+        left join sys_user u on a.createby = u.id
+        left join organization o on o.id = u.org_id
+        where 1=1 and o.org_code like CONCAT('%',#{orgCode},'%') and delFlag = 0
+    </select>
+
+    <!--加了组织限定的分组计划查询-->
+    <select id="getAllplanGroup" resultType="java.util.Map">
+        select p.*,a.areaName from plan_group_manage p
+        LEFT JOIN area_manage a on p.area_id = a.id
+        LEFT JOIN sys_user AS  u ON  p.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') AND p.delFlag = 0
+    </select>
+
+    <select id="getplanGroup" resultType="java.util.Map">
+        select p.*,a.areaName from plan_group_manage p
+        left join area_manage a on p.area_id = a.id
+        left join sys_user u on p.createby = u.id
+        left join organization o on u.org_id = o.id
+        where p.delFlag = 0 AND o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="areaId != null">
+            and p.area_id = #{areaId}
+        </if>
+        <if test="orderMsg != null and orderMsg != ''">
+            ORDER BY ${orderMsg} ${sort}
+        </if>
+    </select>
+
+    <insert id="addPlanGroup">
+        insert into plan_group_manage (group_name,group_code,area_id,delFlag,createby,createTime)
+        values (#{groupName},unix_timestamp(now()),#{areaId},0,#{createby},#{createTime});
+    </insert>
+
+    <update id="updPlanGroup">
+        update plan_group_manage set group_name = #{groupName},area_id = #{areaId} where id = #{id}
+    </update>
+
+    <update id="delPlans">
+      update plan_group_manage set delFlag = 1 where id =#{id}
+    </update>
+
+    <select id="getPlanRoadByAreaId" resultType="java.util.Map">
+        select r.id,r.road_name from road_manage r where del_flag=0 and area_id = #{areaId}
+    </select>
+
+    <select id="getConCernDataByRoadId" resultType="java.util.Map">
+    select con.id as concen_id,con.concentratorname,c.id controller_id,l.id lamp_id,l.lampnum,r.road_name from lamp l
+    left join pole_manage p on l.pole_id = p.id
+    left join road_manage r on r.id = p.road_id
+    left join controller c on l.controller_id = c.id
+    left join concentrator con on con.id = c.concentrator_id
+    where r.id = #{roadId} and l.id not in
+    (
+    select l.id from plan_group_manage_detail gd
+    left join lamp l on gd.lamp_id = l.id
+    left join concentrator con on con.id = gd.concentrator_id
+    left join controller c on gd.controller_id = c.id
+    left join road_manage r on r.id = gd.road_id
+    where 1=1  and r.id = #{roadId}  and gd.plan_group_id = #{groupId}
+    )
+    </select>
+
+    <insert id="batchAdd" parameterType="java.util.List">
+        insert into plan_group_manage_detail (plan_group_id,concentrator_id,controller_id,lamp_id,road_id,is_work)
+        values
+        <foreach collection="list" item="item" index="index" separator =",">
+            (#{item.group_id,jdbcType=INTEGER},#{item.concen_id,jdbcType=INTEGER},#{item.controller_id,jdbcType=INTEGER},
+            #{item.lamp_id,jdbcType=INTEGER},#{item.road_id,jdbcType=INTEGER},#{item.is_work,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <select id="getSelGroupData" resultType="java.util.Map">
+        select con.id as concen_id,con.concentratorname,c.id controller_id,c.controllername,
+        l.id lamp_id,l.lampnum,r.road_name,gd.is_work from plan_group_manage_detail gd
+        left join lamp l on gd.lamp_id = l.id
+        left join concentrator con on con.id = gd.concentrator_id
+        left join controller c on gd.controller_id = c.id
+        left join road_manage r on r.id = gd.road_id
+        where 1=1
+        <if test="null != roadId">
+          and r.id = #{roadId}
+        </if>
+          and gd.plan_group_id = #{groupId}
+    </select>
+
+    <select id="getDetailByPlanId" resultType="java.util.Map">
+        select con.id as concen_id,con.concentratorname,c.id controller_id,
+        l.id lamp_id,l.lampnum,r.road_name,gd.is_work from plan_group_manage_detail gd
+        left join lamp l on gd.lamp_id = l.id
+        left join concentrator con on con.id = gd.concentrator_id
+        left join controller c on gd.controller_id = c.id
+        left join road_manage r on r.id = gd.road_id
+        left join plan_group_manage pl on gd.plan_group_id = pl.id
+        where pl.id = #{planId}
+    </select>
+
+    <delete id="delselData">
+      delete from plan_group_manage_detail where plan_group_id = #{groupId}
+    </delete>
+
+    <update id="deletePlanSenceData" parameterType="integer">
+        update plan_scene_manage set de_flag = 1 where id = #{id}
+    </update>
+    
+    <select id="getPlanstrategyData" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select p.id,p.cname,a.areaName ,pm.group_name,pscm.cname as content_name,p.weeks,p.start_date,p.end_date,p.start_time,p.end_time,p.dimming,
+        u2.real_name,p.oper_time from plan_strategy_manage p
+        left join area_manage a on p.area_id = a.id
+        left join plan_group_manage pm on p.group_id = pm.id
+        left join plan_strategy_content_manage pscm on p.plan_id = pscm.id
+        left join sys_user u on p.createby = u.id
+        left join sys_user u2 on u2.id = p.oper_id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.de_flag = 0
+        <if test="null != cName and '' != cName">
+            and p.cname like CONCAT('%',#{cName},'%')
+        </if>
+        <choose>
+            <when test="'cname' == orderBy">
+                order by cname ${sort}
+            </when>
+            <when test="'areaName' == orderBy ">
+                order by areaName ${sort}
+            </when>
+            <when test="'group_name' == orderBy">
+                order by pm.group_name ${sort}
+            </when>
+            <when test="'content_name' == orderBy">
+                order by content_name ${sort}
+            </when>
+            <when test="'weeks' == orderBy">
+                order by weeks ${sort}
+            </when>
+            <when test="'start_date' == orderBy">
+                order by str_to_date(p.start_date,'%Y-%m-%d') ${sort}
+            </when>
+            <when test="'end_date' == orderBy">
+                order by str_to_date(p.end_date,'%Y-%m-%d') ${sort}
+            </when>
+            <when test="'start_time' == orderBy">
+                order by str_to_date(p.start_time,'%H:%i') ${sort}
+            </when>
+            <when test="'end_time' == orderBy">
+                order by str_to_date(p.end_time,'%H:%i') ${sort}
+            </when>
+            <when test="'dimming' == orderBy">
+                order by p.dimming ${sort}
+            </when>
+            <when test="'buildtime' == orderBy">
+                order by str_to_date(b.buildtime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'real_name' == orderBy">
+                order by real_name ${sort}
+            </when>
+            <when test="'oper_time' == orderBy">
+                order by str_to_date(p.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(p.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="getCountPlanstrategyData" resultType="integer">
+        select count(1) from plan_strategy_manage p
+        left join sys_user u on p.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.de_flag = 0 and p.cname like CONCAT('%',#{cName},'%')
+    </select>
+    
+    <select id="getPlanContent" resultType="java.util.Map">
+        select id,cname from plan_content_manage where de_flag = 0
+    </select>
+
+    <update id="deltePlanStrategyById" parameterType="integer">
+        update plan_strategy_manage set de_flag = 1 where id =#{id}
+    </update>
+
+    <insert id="savePlanStrategyData" parameterType="com.lamp.model.TPlanStategy">
+      insert into plan_strategy_manage (cname,area_id,group_id,plan_id,sence_id,weeks,start_date,end_date,start_time,end_time
+        ,dimming,de_flag,createby,createTime,oper_id,oper_time)
+        values
+        (#{cName},#{areaId},#{groupId},#{planId},#{senceId},#{weeks},#{startDate},#{overDate},#{startTime},#{endTime},#{dimming},0,#{createBy},#{createTime},#{operId},#{operTime})
+    </insert>
+    
+    <select id="ajaxSePlanStrategyData" resultType="java.util.Map">
+        select a.id as area_id, a.areaName,st.group_id,pg.group_name,st.id,st.cname from plan_strategy_manage st
+        left join plan_group_manage pg on st.group_id = pg.id
+        left join area_manage a on pg.area_id = a.id
+        where st.de_flag = 0
+        <if test="areaId != null">
+            and a.id = #{areaId}
+        </if>
+        <if test="groupId != null">
+            and pg.id = #{groupId}
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by st.id  ${sort}
+            </when>
+            <when test=" orderBy == 'group_name'">
+                order by pg.group_name ${sort}
+            </when>
+            <when test="'areaName' == orderBy">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'cname' == orderBy ">
+                order by st.cname ${sort}
+            </when>
+            <otherwise>
+                order by st.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getPlanStragegyById" parameterType="integer" resultType="java.util.Map">
+        select * from plan_strategy_manage where id = #{id}
+    </select>
+
+    <update id="updatePlanStragegyById" parameterType="com.lamp.model.TPlanStategy">
+        update plan_strategy_manage set cname = #{cName},area_id = #{areaId},group_id = #{groupId},plan_id = #{planId},sence_id = #{senceId},weeks = #{weeks},
+        start_date = #{startDate},end_date = #{overDate},start_time = #{startTime},end_time = #{endTime},dimming = #{dimming},oper_id = #{operId},oper_time = #{operTime}
+        where id = #{id}
+    </update>
+
+    <select id="getConcentratorByStragegyId" parameterType="integer" resultType="java.util.Map">
+    select st.id,a.id as area_id,st.group_id,st.content_id,st.start_time,st.end_time,st.open_time,st.close_time, st.dimming,st.cname,content.cname content_name,
+    conc.concentratorname con_name,st.is_work
+    from plan_strategy_manage st
+    left join plan_group_manage pg on st.group_id = pg.id
+    left join area_manage a on pg.area_id = a.id
+    left join plan_content_manage content on st.content_id = content.id
+    left join plan_group_manage_detail pd on pg.id = pd.plan_group_id
+    left join concentrator conc on pd.concentrator_id = conc.id
+    where st.id = #{id}
+    group by conc.id,pd.is_work
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by st.id  ${sort}
+            </when>
+            <when test=" orderBy == 'con_name'">
+            order by conc.concentratorname ${sort}
+        </when>
+            <when test=" orderBy == 'content_name'">
+                order by content.cname ${sort}
+            </when>
+            <when test="'start_time' == orderBy">
+                order by  str_to_date(st.start_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'open_time' == orderBy">
+            order by  str_to_date(st.open_time,'%Y-%m-%d %H:%i:%s') ${sort}
+        </when>
+            <when test="'dimming' == orderBy ">
+                order by st.dimming ${sort}
+            </when>
+            <when test="'is_work' == orderBy ">
+                order by is_work ${sort}
+            </when>
+            <otherwise>
+                order by st.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getRoadByAreaId" parameterType="integer"  resultType="java.util.Map">
+      select r.id,r.road_name from road_manage r where r.area_id = #{id} and del_flag = 0
+    </select>
+    
+    <select id="getLampByRoadId" parameterType="integer" resultType="java.util.Map">
+    select  l.id,l.lampnum AS lampname from lamp l
+		LEFT JOIN roadline_manage rlm ON rlm.id = l.roadline_id
+        LEFT JOIN road_manage rm ON rm.id = rlm.road_id
+    where road_id = #{id} and l.delflag = 0
+    </select>
+    
+    <select id="getLampStrategyByLampId" resultType="java.util.Map">
+        select l.lampnum,pls.id,pls.cname,IFNULL(pls.is_work,0) is_work from lamp l
+        left join plan_light_strategy_manage pls on pls.lamp_id = l.id
+        LEFT JOIN sys_user AS  u ON  l.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND l.id = #{id}
+        <choose>
+            <when test="orderBy == null or orderBy == ''or orderBy == 'lampnum'">
+                order by l.lampnum ${sort}
+            </when>
+            <when test=" orderBy == 'cname'">
+                order by  pls.cname ${sort}
+            </when>
+            <otherwise>
+                order by l.lampnum desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getLightContent" resultType="java.util.Map">
+        select id,cname from plan_light_content_manage
+    </select>
+
+    <insert id="saveLampStrategyData" parameterType="com.lamp.model.TLightStrategyManage">
+        insert into plan_light_strategy_manage (cname,content_id,exe_time,dimming,lamp_id,is_work,createby,createTime)
+        VALUES
+        (#{cname},#{contentId},#{exe_time},#{dimming},#{lampId},0,#{createby},#{createTime})
+    </insert>
+
+    <delete id="delLampStrategyData" parameterType="integer">
+        delete from plan_light_strategy_manage where id = #{id}
+    </delete>
+
+    <select id="getLampStrategyById" parameterType="integer" resultType="java.util.Map">
+    SELECT pl.*,pm.cname AS conten_name,l.lampnum,c.c_num ,r.road_name FROM plan_light_strategy_manage pl
+    LEFT JOIN plan_light_content_manage pm ON pl.content_id = pm.id
+    LEFT JOIN lamp l ON pl.lamp_id = l.id
+    LEFT JOIN roadline_manage rm ON l.roadline_id= rm.id
+    LEFT JOIN road_manage r ON rm.road_id = r.id
+    LEFT JOIN controller c ON c.id = l.controller_id
+    where pl.id = #{id}
+    </select>
+
+    <update id="updateLampStrategy" parameterType="com.lamp.model.TLightStrategyManage">
+      update plan_light_strategy_manage set cname = #{cname},content_id = #{contentId},exe_time = #{exe_time},dimming = #{dimming} where id = #{id}
+    </update>
+
+    <select id="getSingleStrategyTask" resultType="java.util.Map">
+        select pm.id,exe_time,lamp_id,content_id,dimming,c.id cid from plan_light_strategy_manage pm
+        left join lamp l on l.id = pm.lamp_id
+        left join controller c on c.id = l.controller_id
+        where is_work = 0
+    </select>
+
+    <update id="updateSingleStrategyTaskStatus" parameterType="integer">
+      update plan_light_strategy_manage set is_work = 1 where id = #{id}
+    </update>
+
+    <select id="getGroupStrategyTask" resultType="java.util.Map">
+        select * from plan_strategy_manage where de_flag = 0
+    </select>
+
+    <update id="updateGroupStrategyTaskStatus">
+        update plan_group_manage_detail set is_work = 1 where id = #{id}
+    </update>
+
+    <update id="updateGroupStrategyTaskStatusById" parameterType="integer">
+        update plan_strategy_manage set is_work = 1 where id = #{id}
+    </update>
+
+    <select id="getSunRiseAndSunSet" resultType="java.util.Map">
+        select l.sunrise,l.sunset from lamp_city_setting l
+        left join organization o on l.org_id = o.id
+        where o.org_code = #{orgCode} limit 0,1
+    </select>
+
+    <select id="getPlanGroupById" parameterType="integer" resultType="java.util.Map">
+            SELECT p.group_name,a.areaName FROM plan_group_manage p
+            LEFT JOIN area_manage a ON p.area_id= a.id
+            WHERE p.id=#{Id}
+    </select>
+
+    <insert id="saveSceneData" parameterType="com.lamp.model.TPlanSence">
+        insert into plan_scene_manage (cname,de_flag,oper_id,oper_time,createby,create_time)
+        values (#{cName},0,#{operId},#{operTime},#{createBy},#{createTime})
+    </insert>
+
+    <update id="updateSceneData" parameterType="com.lamp.model.TPlanSence">
+      update plan_scene_manage set cname = #{cName},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+    </update>
+
+    <select id="initSceneSetting" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select p.id,p.cname,u2.real_name,p.oper_time from plan_scene_manage p
+        left join sys_user u on p.createby = u.id
+        left join sys_user u2 on p.oper_id = u2.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.de_flag = 0
+        <if test="null != name and '' != name">
+            and p.cname like CONCAT('%',#{name},'%')
+        </if>
+        <if test="orderMsg == null and orderMsg == ''">
+            order by str_to_date(p.oper_time,'%Y-%m-%d %H:%i:%s') desc
+        </if>
+        <if test="orderMsg != null and orderMsg != ''">
+            order by ${orderMsg} ${sort}
+        </if>
+        limit #{num},#{showNum}
+    </select>
+
+    <select id="initSceneSettingNum" parameterType="java.util.HashMap" resultType="integer">
+        select count(1) from plan_scene_manage p
+        left join sys_user u on p.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.de_flag = 0
+        <if test="null != name and '' != name">
+            and p.cname like CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <select id="getSceneDataById" parameterType="integer" resultType="java.util.HashMap">
+        select * from plan_scene_manage where id = #{id}
+    </select>
+
+    <select id="getSceneDataByName" resultType="java.lang.Integer" parameterType="String">
+        select count(*) from plan_scene_manage where cname = #{cname}
+    </select>
+
+    <insert id="saveSceneDetailData" parameterType="com.lamp.model.TPlanSceneDetail">
+        insert into plan_sence_detail
+        (area_id,group_id,plan_id,weeks,start_date,end_date,start_time,end_time,dimming,del_flag,createby,create_time,oper_id,oper_time,sence_id)
+        values (#{areaId},#{groupId},#{planId},#{weeks},#{startDate},#{endDate},#{startTime},
+        #{endTime},#{dimming},0,#{createBy},#{createTime},#{operId},#{operTime},#{sceneId})
+    </insert>
+
+    <update id="updateSceneDetailData" parameterType="com.lamp.model.TPlanSceneDetail">
+        update plan_sence_detail set area_id = #{areaId},group_id = #{groupId},plan_id = #{planId},weeks = #{weeks},
+        start_date = #{startDate},end_date = #{endDate},start_time = #{startTime},
+        end_time = #{endTime},dimming = #{dimming},oper_id = #{operId},oper_time = #{operTime} where id = #{id}
+    </update>
+
+    <select id="getPlanSceneDetailData" parameterType="integer" resultType="java.util.Map">
+        select pd.id,a.areaName,pg.group_name,pm.cname,pd.weeks,pd.start_date,pd.end_date,pd.start_time,pd.end_time,
+        pd.dimming from plan_sence_detail pd
+        left join area_manage a on pd.area_id = a.id
+        left join plan_group_manage pg on pd.group_id = pg.id
+        left join plan_content_manage pm on pd.plan_id = pm.id
+        where pd.sence_id = #{id} and pd.del_flag = 0 order by pd.id  desc
+    </select>
+
+    <select id="getPlanSceneDetailById" parameterType="integer" resultType="java.util.HashMap">
+        select * from plan_sence_detail where id = #{id}
+    </select>
+
+    <update id="deleteSceneDetailById" parameterType="integer">
+        update plan_sence_detail set del_flag = 1 where id = #{id}
+    </update>
+
+    <select id="getPlanStrategyPlanData" resultType="java.util.Map">
+        select * from plan_strategy_content_manage
+    </select>
+
+    <select id="getPlanSenceDataForSelect" resultType="java.util.Map">
+        select p.id,p.cname from plan_scene_manage p
+        left join sys_user u on p.createby = u.id
+        left join organization o on o.id = u.org_id
+        where o.org_code like CONCAT('%',#{orgCode},'%') and p.de_flag = 0
+    </select>
+
+    <select id="getPlansceneDeatilDataBySceneId" parameterType="integer" resultType="java.util.Map">
+        select * from plan_sence_detail where sence_id = #{id} and del_flag = 0
+    </select>
+
+<!--保存灯光策略-->
+
+    <insert id="saveLight_strategy" parameterType="com.lamp.model.Light_strategy" keyProperty="id">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        INSERT INTO light_strategy_manage
+        (cname,area_id,road_id,light_num,diming,is_open,oper_id,oper_time,createby,create_time)
+        VALUES (#{cname},#{area_id},#{road_id},#{light_num},#{diming},#{is_open},#{oper_id},#{oper_time},#{createby},#{create_time})
+    </insert>
+<!--查询所有灯光策略-->
+    <select id="selectLight_strategy" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT ls.id,cname,a.areaName,r.road_name,light_num,diming,case is_open when 0 then '开启' when 1 then '关闭' end is_open,
+        (SELECT u2.real_name FROM sys_user u2 WHERE id = ls.oper_id ) oper_name,ls.oper_time
+        FROM light_strategy_manage ls
+        LEFT JOIN area_manage a ON a.id = ls.area_id
+        LEFT JOIN road_manage r ON r.id = ls.road_id
+        <if test="cname != null and cname != ''">
+            WHERE ls.cname like  CONCAT('%',#{cname},'%')
+        </if>
+
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(ls.oper_time,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+            <when test="'cname' == orderBy">
+                order by cname ${sort}
+            </when>
+            <when test="'areaName' == orderBy ">
+                order by a.areaName ${sort}
+            </when>
+            <when test="'road_name' == orderBy">
+                order by r.road_name ${sort}
+            </when>
+            <when test="'light_num' == orderBy">
+                order by light_num ${sort}
+            </when>
+            <when test="'diming' == orderBy">
+                order by diming ${sort}
+            </when>
+            <when test="'is_open' == orderBy">
+                order by is_open ${sort}
+            </when>
+            <when test="'oper_name' == orderBy">
+                order by oper_name ${sort}
+            </when>
+            <when test="'operTime' == orderBy">
+                order by ls.oper_time ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(ls.oper_time,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <delete id="DeleteLight_strategyByid" parameterType="integer">
+        DELETE FROM light_strategy_manage WHERE id = #{id}
+    </delete>
+
+    <!--根据id查询灯光策略-->
+    <select id="selectLight_strategyByid" parameterType="integer" resultType="java.util.HashMap">
+        SELECT ls.*,cname,a.areaName,r.road_name,light_num,diming,is_open,
+        CASE is_open WHEN 0 THEN '开启' WHEN 1 THEN '关闭' END openName,
+        (SELECT u2.real_name FROM sys_user u2 WHERE id = ls.oper_id ) oper_name,ls.oper_time
+        FROM light_strategy_manage ls
+        LEFT JOIN area_manage a ON a.id = ls.area_id
+        LEFT JOIN road_manage r ON r.id = ls.road_id
+        WHERE ls.id = #{id}
+    </select>
+    <!--查询分页总记录数-->
+    <select id="getcount" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1) FROM light_strategy_manage ls
+        LEFT JOIN area_manage a ON a.id = ls.area_id
+        LEFT JOIN road_manage r ON r.id = ls.road_id
+        <if test="cname != null and cname != ''">
+            WHERE ls.cname like  CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+    <update id="updateLight_strategy" parameterType="com.lamp.model.Light_strategy">
+        UPDATE light_strategy_manage
+        SET cname = #{cname},area_id = #{area_id},road_id = #{road_id},light_num = #{light_num},
+        diming = #{diming},is_open = #{is_open},oper_id = #{oper_id},
+        oper_time = #{oper_time},createby = #{createby},create_time = #{create_time}
+        WHERE id = #{id}
+    </update>
+
+
+
+</mapper>

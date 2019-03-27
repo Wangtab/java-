@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TconcenstatusMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tconcenstatus" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="concen_id" property="concenId" jdbcType="INTEGER" />
+    <result column="link_status" property="linkStatus" jdbcType="INTEGER" />
+    <result column="a_ele" property="aEle" jdbcType="DECIMAL" />
+    <result column="a_pov" property="aPov" jdbcType="DECIMAL" />
+    <result column="a_power" property="aPower" jdbcType="DECIMAL" />
+    <result column="b_ele" property="bEle" jdbcType="DECIMAL" />
+    <result column="b_pov" property="bPov" jdbcType="DECIMAL" />
+    <result column="b_power" property="bPower" jdbcType="DECIMAL" />
+    <result column="c_ele" property="cEle" jdbcType="DECIMAL" />
+    <result column="c_pov" property="cPov" jdbcType="DECIMAL" />
+    <result column="c_power" property="cPower" jdbcType="DECIMAL" />
+    <result column="temp" property="temp" jdbcType="DECIMAL" />
+    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, concen_id, link_status, a_ele, a_pov, a_power, b_ele, b_pov, b_power, c_ele, 
+    c_pov, c_power, temp, record_time
+  </sql>
+
+  <select id="getConcenStatusCount" parameterType="java.util.HashMap" resultType="integer">
+    SELECT count(1) FROM concen_status c
+    left join concentrator co on c.concen_id = co.id
+    left join sys_user u on co.createby = u.id
+    left join organization o on u.org_id = o.id
+    AND u.del_flag = 0
+    and o.del_flag = 0
+    and o.org_code LIKE CONCAT('%',#{org_code},'%')
+  </select>
+
+  <select id="getConcenStatusList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT c.id, concen_id, link_status, a_ele, a_pov, a_power, b_ele, b_pov, b_power, c_ele,
+    c_pov, c_power, temp, record_time,a.areaName,co.concentratorname
+    FROM concen_status c
+    left join concentrator co on c.concen_id = co.id
+    left join sys_user u on co.createby = u.id
+    left join organization o on u.org_id = o.id
+    left join area_manage a on co.areaid = a.id
+    left join road_manage r ON r.id = co.road_id
+    WHERE u.del_flag = 0
+    and o.del_flag = 0
+    AND a.delFlag = 0
+    and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="areaId != null" >
+       AND a.id = #{areaId}
+    </if>
+    <if test="roadId != null" >
+      AND r.id = #{roadId}
+   </if>
+    <if test="concenSelect != null" >
+      AND co.id = #{concenSelect}
+  </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(c.record_time,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="id == null or orderBy == ''">
+        order by c.id ${sort}
+      </when>
+      <when test="'con_name' == orderBy">
+        order by co.concentratorname ${sort}
+      </when>
+      <when test="'link_status' == orderBy ">
+        order by link_status ${sort}
+      </when>
+      <when test="'a_ele' == orderBy ">
+        order by a_ele ${sort}
+      </when>
+      <when test="'a_pov' == orderBy ">
+        order by a_pov ${sort}
+      </when>
+      <when test="'a_power' == orderBy">
+        order by a_power ${sort}
+      </when>
+      <when test="'b_ele' == orderBy">
+        order by b_ele ${sort}
+      </when>
+      <when test="'b_pov' == orderBy">
+        order by b_pov ${sort}
+      </when>
+      <when test="'b_power' == orderBy">
+        order by b_power ${sort}
+      </when>
+      <when test="'c_ele' == orderBy">
+        order by c_ele ${sort}
+      </when>
+      <when test="'c_pov' == orderBy">
+        order by c_pov ${sort}
+      </when>
+      <when test="'c_power' == orderBy">
+        order by c_power ${sort}
+      </when>
+      <when test="'temp' == orderBy">
+        order by temp ${sort}
+      </when>
+     <when test="'record_time' == orderBy">
+        order by c.record_time ${sort}
+      </when>
+      <otherwise>
+        order by str_to_date(c.record_time,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+    limit #{num},#{showNum}
+  </select>
+
+  <select id="exportConcenStatusData" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT c.id, concen_id, link_status, a_ele, a_pov, a_power, b_ele, b_pov, b_power, c_ele,
+    c_pov, c_power, temp, record_time,a.areaName,co.concentratorname
+    FROM concen_status c
+    left join concentrator co on c.concen_id = co.id
+    left join sys_user u on co.createby = u.id
+    left join organization o on u.org_id = o.id
+    left join area_manage a on co.areaid = a.id
+    left join road_manage r ON r.id = co.road_id
+    WHERE u.del_flag = 0
+    and o.del_flag = 0
+    AND a.delFlag = 0
+    and o.org_code LIKE CONCAT('%',#{org_code},'%')
+    <if test="areaId != null" >
+      AND a.id = #{areaId}
+    </if>
+    <if test="roadId != null" >
+      AND r.id = #{roadId}
+    </if>
+    <if test="concenSelect != null" >
+      AND co.id = #{concenSelect}
+    </if>
+    <choose>
+      <when test="orderBy == null or orderBy == ''">
+        order by str_to_date(c.record_time,'%Y-%m-%d %H:%i:%s') ${sort}
+      </when>
+      <when test="id == null or orderBy == ''">
+        order by c.id ${sort}
+      </when>
+      <when test="concentratorname == orderBy">
+        order by co.concentratorname ${sort}
+      </when>
+      <when test="link_status == orderBy ">
+        order by link_status ${sort}
+      </when>
+      <when test="a_ele == orderBy ">
+        order by a_ele ${sort}
+      </when>
+      <when test="a_pov == orderBy ">
+        order by a_pov ${sort}
+      </when>
+      <when test="a_power == orderBy">
+        order by a_power ${sort}
+      </when>
+      <when test="b_ele == orderBy">
+        order by b_ele ${sort}
+      </when>
+      <when test="b_pov == orderBy">
+        order by b_pov ${sort}
+      </when>
+      <when test="b_power == orderBy">
+        order by b_power ${sort}
+      </when>
+      <when test="c_ele == orderBy">
+        order by c_ele ${sort}
+      </when>
+      <when test="c_pov == orderBy">
+        order by c_pov ${sort}
+      </when>
+      <when test="c_power == orderBy">
+        order by c_power ${sort}
+      </when>
+      <when test="temp == orderBy">
+        order by temp ${sort}
+      </when>
+      <when test="record_time == orderBy">
+        order by c.record_time ${sort}
+      </when>
+      <otherwise>
+        order by str_to_date(c.record_time,'%Y-%m-%d %H:%i:%s') desc
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from concen_status
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from concen_status
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tconcenstatus" >
+    insert into concen_status (id, concen_id, link_status, 
+      a_ele, a_pov, a_power, 
+      b_ele, b_pov, b_power, 
+      c_ele, c_pov, c_power, 
+      temp, record_time)
+    values (#{id,jdbcType=INTEGER}, #{concenId,jdbcType=INTEGER}, #{linkStatus,jdbcType=INTEGER}, 
+      #{aEle,jdbcType=DECIMAL}, #{aPov,jdbcType=DECIMAL}, #{aPower,jdbcType=DECIMAL}, 
+      #{bEle,jdbcType=DECIMAL}, #{bPov,jdbcType=DECIMAL}, #{bPower,jdbcType=DECIMAL}, 
+      #{cEle,jdbcType=DECIMAL}, #{cPov,jdbcType=DECIMAL}, #{cPower,jdbcType=DECIMAL}, 
+      #{temp,jdbcType=DECIMAL}, #{recordTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lamp.model.Tconcenstatus" >
+    insert into concen_status
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="concenId != null" >
+        concen_id,
+      </if>
+      <if test="linkStatus != null" >
+        link_status,
+      </if>
+      <if test="aEle != null" >
+        a_ele,
+      </if>
+      <if test="aPov != null" >
+        a_pov,
+      </if>
+      <if test="aPower != null" >
+        a_power,
+      </if>
+      <if test="bEle != null" >
+        b_ele,
+      </if>
+      <if test="bPov != null" >
+        b_pov,
+      </if>
+      <if test="bPower != null" >
+        b_power,
+      </if>
+      <if test="cEle != null" >
+        c_ele,
+      </if>
+      <if test="cPov != null" >
+        c_pov,
+      </if>
+      <if test="cPower != null" >
+        c_power,
+      </if>
+      <if test="temp != null" >
+        temp,
+      </if>
+      <if test="recordTime != null" >
+        record_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="concenId != null" >
+        #{concenId,jdbcType=INTEGER},
+      </if>
+      <if test="linkStatus != null" >
+        #{linkStatus,jdbcType=INTEGER},
+      </if>
+      <if test="aEle != null" >
+        #{aEle,jdbcType=DECIMAL},
+      </if>
+      <if test="aPov != null" >
+        #{aPov,jdbcType=DECIMAL},
+      </if>
+      <if test="aPower != null" >
+        #{aPower,jdbcType=DECIMAL},
+      </if>
+      <if test="bEle != null" >
+        #{bEle,jdbcType=DECIMAL},
+      </if>
+      <if test="bPov != null" >
+        #{bPov,jdbcType=DECIMAL},
+      </if>
+      <if test="bPower != null" >
+        #{bPower,jdbcType=DECIMAL},
+      </if>
+      <if test="cEle != null" >
+        #{cEle,jdbcType=DECIMAL},
+      </if>
+      <if test="cPov != null" >
+        #{cPov,jdbcType=DECIMAL},
+      </if>
+      <if test="cPower != null" >
+        #{cPower,jdbcType=DECIMAL},
+      </if>
+      <if test="temp != null" >
+        #{temp,jdbcType=DECIMAL},
+      </if>
+      <if test="recordTime != null" >
+        #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tconcenstatus" >
+    update concen_status
+    <set >
+      <if test="concenId != null" >
+        concen_id = #{concenId,jdbcType=INTEGER},
+      </if>
+      <if test="linkStatus != null" >
+        link_status = #{linkStatus,jdbcType=INTEGER},
+      </if>
+      <if test="aEle != null" >
+        a_ele = #{aEle,jdbcType=DECIMAL},
+      </if>
+      <if test="aPov != null" >
+        a_pov = #{aPov,jdbcType=DECIMAL},
+      </if>
+      <if test="aPower != null" >
+        a_power = #{aPower,jdbcType=DECIMAL},
+      </if>
+      <if test="bEle != null" >
+        b_ele = #{bEle,jdbcType=DECIMAL},
+      </if>
+      <if test="bPov != null" >
+        b_pov = #{bPov,jdbcType=DECIMAL},
+      </if>
+      <if test="bPower != null" >
+        b_power = #{bPower,jdbcType=DECIMAL},
+      </if>
+      <if test="cEle != null" >
+        c_ele = #{cEle,jdbcType=DECIMAL},
+      </if>
+      <if test="cPov != null" >
+        c_pov = #{cPov,jdbcType=DECIMAL},
+      </if>
+      <if test="cPower != null" >
+        c_power = #{cPower,jdbcType=DECIMAL},
+      </if>
+      <if test="temp != null" >
+        temp = #{temp,jdbcType=DECIMAL},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tconcenstatus" >
+    update concen_status
+    set concen_id = #{concenId,jdbcType=INTEGER},
+      link_status = #{linkStatus,jdbcType=INTEGER},
+      a_ele = #{aEle,jdbcType=DECIMAL},
+      a_pov = #{aPov,jdbcType=DECIMAL},
+      a_power = #{aPower,jdbcType=DECIMAL},
+      b_ele = #{bEle,jdbcType=DECIMAL},
+      b_pov = #{bPov,jdbcType=DECIMAL},
+      b_power = #{bPower,jdbcType=DECIMAL},
+      c_ele = #{cEle,jdbcType=DECIMAL},
+      c_pov = #{cPov,jdbcType=DECIMAL},
+      c_power = #{cPower,jdbcType=DECIMAL},
+      temp = #{temp,jdbcType=DECIMAL},
+      record_time = #{recordTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

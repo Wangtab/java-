@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TstockMapper">
+<resultMap id="BaseResultMap" type="com.lamp.model.Tstock">
+    <id column="id" property="id" jdbcType="INTEGER"></id>
+    <result column="catName" property="catName" jdbcType="VARCHAR"></result>
+    <result column="equipName" property="equipName" jdbcType="VARCHAR"></result>
+    <result column="totime" property="totime" jdbcType="VARCHAR"></result>
+    <result column="stocknum" property="stocknum" jdbcType="INTEGER"></result>
+    <result column="changenum" property="changenum" jdbcType="INTEGER"></result>
+    <result column="changetime" property="changetime" jdbcType="VARCHAR"></result>
+    <result column="endopertime" property="endopertime" jdbcType="VARCHAR"></result>
+    <result column="node" property="node" jdbcType="VARCHAR"></result>
+    <result column="operid" property="operid" jdbcType="INTEGER"></result>
+    <result column="opertime" property="opertime" jdbcType="VARCHAR"></result>
+    <result column="state" property="state" jdbcType="INTEGER"></result>
+    <result column="createby" property="createby" jdbcType="INTEGER"></result>
+    <result column="createTime" property="createTime" jdbcType="VARCHAR"></result>
+</resultMap>
+
+<sql id="Base_Column_List">
+    id,catName,equipName,totime,stocknum,changeNum,changetime,endopertime,node,operid,opertime,state,createby,createTime
+</sql>
+
+    <!--查询分页总记录数-->
+    <select id="getcount" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1) FROM stock AS s
+        LEFT JOIN sys_user AS  u ON  s.createby = u.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        LEFT JOIN category c ON c.catId = s.catId
+        WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND s.state = 0
+        <if test="equipName != null and equipName != ''">
+            AND s.equipName like  CONCAT('%',#{equipName},'%')
+        </if>
+        <if test="cname != null and cname != ''">
+            AND s.catId like  CONCAT('%',#{cname},'%')
+        </if>
+    </select>
+
+<!--查询库存信息-->
+<select id="queryTstockList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT s.id,s.catId,c.catName,s.equipName,s.totime,
+    s.stocknum,s.changeNum,s.changetime,s.endopertime,s.node,s.opertime,s.state,
+    (SELECT u2.real_name FROM sys_user AS u2 WHERE u2.id = s.operid) AS realName
+    FROM stock AS s
+    LEFT JOIN sys_user AS  u ON  s.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    LEFT JOIN category c ON c.catId = s.catId
+    WHERE o.org_code like CONCAT('%',#{orgCode},'%') AND s.state = 0
+    <if test="cname != null and cname !=''">
+        AND s.catId LIKE CONCAT('%',#{cname},'%')
+    </if>
+    <if test=" equipName != null and equipName !=''">
+        AND s.equipName LIKE CONCAT('%',#{equipName,jdbcType=VARCHAR},'%')
+    </if>
+    <choose>
+    <when test="orderBy == null or orderBy == ''">
+    order by str_to_date(s.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+    </when>
+        <when test="'endopertime' == orderBy">
+            order by s.endopertime ${sort}
+        </when>
+    <when test="'equipName' == orderBy">
+    order by s.equipName ${sort}
+    </when>
+        <when test="'catName' == orderBy ">
+            order by catName ${sort}
+        </when>
+    <when test="'stocknum' == orderBy ">
+    order by s.stocknum ${sort}
+    </when>
+    <when test="'changeNum' == orderBy">
+    order by s.changeNum ${sort}
+    </when>
+    <when test="'node' == orderBy">
+    order by s.node ${sort}
+    </when>
+    <when test="'realName' == orderBy">
+    order by realName ${sort}
+    </when>
+     <when test="'equipName' == orderBy">
+    order by s.equipName ${sort}
+     </when>
+     <when test="'operTime' == orderBy">
+            order by s.opertime ${sort}
+     </when>
+     <otherwise>
+        order by str_to_date(s.opertime,'%Y-%m-%d %H:%i:%s') DESC
+     </otherwise>
+    </choose>
+    limit #{num},#{showNum}
+
+</select>
+<!--根据ID查询库存-->
+<select id="queryTStock" parameterType="integer" resultType="java.util.HashMap">
+SELECT s.id,s.catId,c.catname,s.equipName,s.totime,s.stocknum,s.node
+    FROM stock AS s
+    LEFT JOIN category c ON c.catId = s.catId
+    WHERE s.id = #{id}
+</select>
+
+<!--查询控制器设备类型-->
+<select id="queryControllerkindAll" resultType="java.util.Map">
+    SELECT cont.id,cont.kindname FROM controllerkind AS cont;
+</select>
+<!--增加库存信息-->
+<insert id="addTStock" parameterType="com.lamp.model.Tstock">
+    INSERT INTO stock
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="catId != '' and catId != null">
+            catId,
+        </if>
+        <if test="equipName != '' and equipName != null">
+            equipName,
+        </if>
+        <if test="totime != '' and totime != null">
+            totime,
+        </if>
+        <if test="stocknum != '' and stocknum != null">
+            stocknum,
+        </if>
+        <if test="changenum != '' and changenum != null">
+            changenum,
+        </if>
+        <if test="changetime != '' and changetime != null">
+            changetime,
+        </if>
+        <if test="endopertime != '' and endopertime != null">
+            endopertime,
+        </if>
+        <if test="node != '' and node != null">
+            node,
+        </if>
+        <if test="operid != '' and operid != null">
+            operid,
+        </if>
+        <if test="opertime != '' and opertime != null">
+            opertime,
+        </if>
+        <if test="state != '' and state != null">
+            state,
+        </if>
+        <if test="createby != '' and createby != null">
+            createby,
+        </if>
+        <if test="createTime != '' and createTime != null">
+            createTime,
+        </if>
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="catId != '' and catId != null">
+            #{catId},
+        </if>
+        <if test="equipName != '' and equipName != null">
+            #{equipName},
+        </if>
+        <if test="totime != '' and totime != null">
+            #{totime},
+        </if>
+        <if test="stocknum != '' and stocknum != null">
+            #{stocknum},
+        </if>
+        <if test="changenum != '' and changenum != null">
+            #{changenum},
+        </if>
+        <if test="changetime != '' and changetime != null">
+            #{changetime},
+        </if>
+        <if test="endopertime != '' and endopertime != null">
+            #{endopertime},
+        </if>
+        <if test="node != '' and node != null">
+            #{node},
+        </if>
+        <if test="operid != '' and operid != null">
+            #{operid},
+        </if>
+        <if test="opertime != '' and opertime != null">
+            #{opertime},
+        </if>
+        <if test="state != '' and state != null">
+            #{state},
+        </if>
+        <if test="createby != '' and createby != null">
+            #{createby},
+        </if>
+        <if test="createTime != '' and createTime != null">
+            #{createTime},
+        </if>
+    </trim>
+</insert>
+<!--更新库存信息-->
+<update id="updateTStock" parameterType="com.lamp.model.Tstock">
+    UPDATE stock SET
+    <trim suffix="" prefix="" suffixOverrides=",">
+        <if test="catId != '' and catId != null">
+            catId =  #{catId},
+        </if>
+        <if test="equipName != '' and equipName != null">
+            equipName = #{equipName},
+        </if>
+        <if test="totime != '' and totime != null">
+            totime = #{totime},
+        </if>
+        <if test="changenum != '' and changenum != null">
+            changenum = #{changenum},
+        </if>
+        <if test="stocknum != '' and stocknum != null">
+            stocknum = #{stocknum},
+        </if>
+        <if test="changetime != '' and changetime != null">
+            changetime = #{changetime},
+        </if>
+        <if test="endopertime != '' and endopertime != null">
+            endopertime = #{endopertime},
+        </if>
+        <if test="node != '' and node != null">
+            node = #{node},
+        </if>
+        <if test="operid != '' and operid != null">
+            operid = #{operid},
+        </if>
+        <if test="opertime != '' and opertime != null">
+            opertime = #{opertime},
+        </if>
+        <if test="state != '' and state != null">
+            state = #{state},
+        </if>
+    </trim>
+    WHERE id = #{id}
+</update>
+    <!--根据ID查询库存-->
+    <select id="getStockubyid" parameterType="Integer" resultType="java.util.Map">
+        SELECT * ,c.catname FROM stock s
+      LEFT JOIN category c ON c.catId = s.catId
+       WHERE s.id= #{id}
+    </select>
+</mapper>

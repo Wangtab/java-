@@ -1,0 +1,47 @@
+﻿a,address,b,big,blockquote,body,cite,code,dd,del,div,dl,dt,em,fieldset,form,h1,h2,h3,h4,h5,h6,html,i,iframe,img,ins,label,input
+,legend,li,ol,p,pre,small,span,strong,ul{margin:0;padding:0;font-family: 'Microsoft YaHei'}
+li{list-style-type: none;}
+a{text-decoration: none;color:#333;}
+a:hover{text-decoration: none;}
+input{outline:none;}
+select{outline:none;}
+textarea{outline:none;}
+img{border:none;}
+
+#area_full_screen{height: 28px;width:29px;background: url(../images/area_full.png) no-repeat;cursor: pointer;;position: absolute;right:30px;top: 190px;z-index:500}
+body > .top{height: 133px;background: url(../images/main_top_bg.jpg);overflow: hidden;}
+.top .top_left{height:70px;position: absolute;left: 50px;top: 30px}
+.top .top_left img{height: 70px;width:96px;float: left;}
+.top .top_left h1{float: left;height: 70px;line-height:70px;font-size: 36px;color:#fff;margin-left: 22px}
+.top .top_right{width:40%;height: 100%;float: right;}
+.top .top_right .time_warpper{width:320px;line-height:20px;color:#fff;float: left;margin-top:46px;}
+.top .top_right .time_warpper h1{font-weight: normal;height: 20px;font-size: 20px;}
+.top .top_right .time_warpper p{height:60px;line-height: 60px;font-size: 20px;padding-left: 60px}
+.top .top_right .time_warpper p img{position: relative;top: 4px}
+.top .top_right .user_function{height:100%;float: right;margin-right:4%;}
+.top .top_right .user_function .top_user_name p{height:24px;line-height:24px;color:#fff;margin-top: 50px;font-size: 20px;text-align: center;padding: 0 24px;position: relative;}
+.top .top_right .user_function .top_user_name p i{position: absolute;right: 6px;top:8px;background: url(../images/down_sj.png) no-repeat;width:15px;height: 10px}
+.top .top_right .user_function .top_user_name ul{width: 100%;display: none;}
+.top .top_right .user_function .top_user_name ul li{height: 30px;line-height: 30px;width: 100%;text-align: center;}
+.top .top_right .user_function .top_user_name ul li a{color:#fff;font-size:16px}
+.top .top_right .user_function .top_user_name ul li a:hover{color:#F0A416;}
+.top .top_right .user_function .top_user_name:hover ul{display:block;}
+.top .top_right .temperature{float: left;line-height: 134px;color:#fff;font-size: 20px}
+.top .top_right .temperature .common_weather_pic{position: relative;top:4px}
+
+
+.location{height:49px;clear: both;background: url(../images/location_bg.png) repeat-x;}
+.location  span{height: 30px;line-height: 30px;float: right;margin-top:6px;margin-right: 20px;color:#fff;cursor: pointer;}
+.location .loc_box{height: 40px;position: relative;left: 0px;top: 2px;padding-left:50px;color:#fff;}
+.location .loc_box h1{float:left;width: 100px;height: 40px;}
+.location .loc_box p{float: left;margin-left: 30px;height: 40px;overflow: hidden;}
+.location .loc_box i{width: 23px;height: 23px;background: url(../images/platm_ico.jpg) no-repeat;float: left;margin-top: 9px;margin-right: 2px}
+.location .loc_box a{display:inline-block;line-height: 40px;padding: 0 6px;color:#fff;}
+.location .loc_box .data_all_look{float: right;margin-right: 20px;margin-top: 2px}
+.location .loc_box .now_location{color:#F9B001;}
+.location .loc_box a:hover{color:#F9B001;}
+
+
+html,body{height: 100%;width: 100%;background-color:#00284C;}
+.content{background-color:#00284C;clear: both;position: relative;height:calc(100% - 182px);}
+.content .work_content{height:100%;padding-left: 190px;}

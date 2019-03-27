@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TroadmanageMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Troadmanage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="road_name" property="roadName" jdbcType="VARCHAR" />
+    <result column="road_des" property="roadDes" jdbcType="VARCHAR" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="oper_time" property="operTime" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, road_name, road_des, area_id, oper_id, oper_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from road_manage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from road_manage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Troadmanage" >
+    insert into road_manage (id, road_name, road_des, 
+      area_id, oper_id, oper_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{roadName,jdbcType=VARCHAR}, #{roadDes,jdbcType=VARCHAR}, 
+      #{areaId,jdbcType=INTEGER}, #{operId,jdbcType=INTEGER}, #{operTime,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertRoadinfo" parameterType="com.lamp.model.Troadmanage" >
+    insert into road_manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roadName != null" >
+        road_name,
+      </if>
+      <if test="roadDes != null" >
+        road_des,
+      </if>
+      <if test="areaId != null" >
+        area_id,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="operTime != null" >
+        oper_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roadName != null" >
+        #{roadName,jdbcType=VARCHAR},
+      </if>
+      <if test="roadDes != null" >
+        #{roadDes,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Troadmanage" >
+    update road_manage
+    <set >
+      <if test="roadName != null" >
+        road_name = #{roadName,jdbcType=VARCHAR},
+      </if>
+      <if test="roadDes != null" >
+        road_des = #{roadDes,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Troadmanage" >
+    update road_manage
+    set road_name = #{roadName,jdbcType=VARCHAR},
+      road_des = #{roadDes,jdbcType=VARCHAR},
+      area_id = #{areaId,jdbcType=INTEGER},
+      oper_id = #{operId,jdbcType=INTEGER},
+      oper_time = #{operTime,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllRoad" resultType="java.util.HashMap" >
+    select
+    road_manage.id AS id, road_name, road_des, area_id, oper_id, oper_time, del_flag, areaName
+    from road_manage,area_manage
+    where road_manage.area_id=area_manage.id
+  </select>
+
+  <select id="selectByroadname" resultType="java.util.HashMap" parameterType="java.lang.String" >
+     select
+    road_manage.id, road_name, road_des, area_id, oper_id, oper_time, del_flag, areaName
+    from road_manage,area_manage
+    where road_manage.area_id=area_manage.id AND road_name LIKE CONCAT('%',#{road_name},'%')
+  </select>
+
+  <update id="DeleteRoadById" parameterType="java.lang.Integer" >
+    update road_manage
+    set
+     del_flag = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--查询所有的路段信息-->
+  <select id="queryTroadmanageList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from road_manage
+    WHERE area_id = #{id} AND  del_flag = 0;
+  </select>
+
+</mapper>

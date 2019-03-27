@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="main">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/WisdomCity11.22/src/main/mysql-connector-java-5.1.7-bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/WisdomCity11.22/src/main/mybatis-generator-core-1.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

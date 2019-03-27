@@ -1,0 +1,33 @@
+﻿    $(function() {
+        selectAll();
+    });
+    //查询全部
+    function selectAll(){
+        var btn_obj = {title:"修改",className:"edit_button"};
+        var data_arr = [];
+        data_arr[0] = btn_obj;
+        proUntil.commonSelect("PlatFomSetting/getDianXiIotData",{},function(){
+            init_btn();
+        },null,null,data_arr);
+    }
+
+    function init_btn(){
+        $('.edit_button').unbind("click").click(function(){
+            proUntil.request("PlatFomSetting/getDianXiIotData",{},function(data){
+                var val = JSON.parse(data)[0].data[0];
+                var box = $('.table_win');
+                box.find('input[name="id"]').val(val.id);
+                box.find('input[name="iotAddress"]').val(val.iot_address);
+                box.find('input[name="appId"]').val(val.appid);
+                box.find('input[name="secret"]').val(val.secret);
+                box.find('input[name="serviceAddress"]').val(val.service_address);
+                box.show(manage_table_time);
+            });
+        });
+    }
+
+    function saveData(){
+        proUntil.saveData("PlatFomSetting/updateDianXiIotDataById",$(".table_win"),function(){
+            selectAll();
+        });
+    }

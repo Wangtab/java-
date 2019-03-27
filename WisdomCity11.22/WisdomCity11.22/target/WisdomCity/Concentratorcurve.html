@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="shortcut icon" href="images/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" >
+		<link rel="stylesheet" type="text/css" href="css/bootstrap-datepicker3.css">
+	<link rel="stylesheet" type="text/css" href="css/common.css">
+	<link rel="stylesheet" type="text/css" href="css/common_table.css">
+	<script type="text/javascript" src = "js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/echarts-all.js" ></script>
+	<script type="text/javascript" src = "js/common.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8"></script>
+	<style type="text/css">
+	.area_analysis{width: 1000px;margin: 0 auto;}
+	.area_analysis .area_model{height:200px;margin-top: 60px}
+	</style>
+	<script type="text/javascript">
+	var result = [["2000-06-05",116],["2000-06-06",129],["2000-06-07",135],["2000-06-08",86],["2000-06-09",73],["2000-06-10",85],["2000-06-11",73],["2000-06-12",68],["2000-06-13",92],["2000-06-14",130],["2000-06-15",245],["2000-06-16",139],["2000-06-17",115],["2000-06-18",111],["2000-06-19",309],["2000-06-20",206],["2000-06-21",137],["2000-06-22",128],["2000-06-23",85],["2000-06-24",94],["2000-06-25",71],["2000-06-26",106],["2000-06-27",84],["2000-06-28",93],["2000-06-29",85],["2000-06-30",73],["2000-07-01",83],["2000-07-02",125],["2000-07-03",107],["2000-07-04",82],["2000-07-05",44],["2000-07-06",72],["2000-07-07",106],["2000-07-08",107],["2000-07-09",66],["2000-07-10",91],["2000-07-11",92],["2000-07-12",113],["2000-07-13",107],["2000-07-14",131],["2000-07-15",111],["2000-07-16",64],["2000-07-17",69],["2000-07-18",88],["2000-07-19",77],["2000-07-20",83],["2000-07-21",111],["2000-07-22",57],["2000-07-23",55],["2000-07-24",60]];
+
+var myChart = null;	
+var myChart2 = null;
+var myChart3 = null;
+	$(function() {
+		drawline();
+        $('.form-control').datepicker({
+            language: 'zh-CN'
+        });
+	});
+
+
+
+function drawline(){
+myChart2 = echarts.init(document.getElementById('area1'));
+myChart = echarts.init(document.getElementById('area2'));
+myChart3 = echarts.init(document.getElementById('area3'));
+    drawLine1();
+    drawLine2();
+    drawLine3();
+    myChart3.setOption(option3);
+    myChart.connect([myChart2, myChart3]);
+    myChart2.connect([myChart, myChart3]);
+    myChart3.connect([myChart, myChart2]);
+
+  /*  setTimeout(function (){
+        window.onresize = function () {
+            myChart.resize();
+            myChart2.resize();
+            myChart3.resize();
+        }
+    },200);*/
+                            
+}
+function drawLine1(result){
+	option = {
+    		tooltip : {
+                trigger: 'axis', 
+                textStyle:{
+		        	color:"#fff"
+		        },
+                showDelay: 0             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            },
+            legend: { 
+            	textStyle:{
+            		color:"#fff"
+            	},
+                data:['A电压曲线','B电压曲线','C电压曲线']
+            },
+            dataZoom : {
+                y: 250,
+                show : false,
+                realtime: true,
+                start : 50,
+                end : 100
+            },
+            grid: {
+                x: 80,
+                y:30,
+                x2:20,
+                y2:10
+            },
+        xAxis : [
+            {
+            	type : 'category',
+                boundaryGap : true,
+                axisTick: {onGap:false},
+    			axisLabel:{
+    		        textStyle:{
+    		        	color:"#fff"
+    		        }
+    			},
+                splitLine: {show:false},
+                data : "2017-12-12"
+            }
+        ],
+        
+        yAxis : [
+            {
+                type : 'value',
+                scale:true,
+                splitNumber: 3,
+                boundaryGap: [0.05, 0.05],
+                axisLabel: {
+        	        textStyle:{
+        	        	color:"#fff"
+        	        },
+                    formatter: function (v) {
+                        return v + ' V';
+                    }
+                },
+                splitArea : {show : true}
+            }
+        ],
+        series : [
+            {
+                name:'A电压曲线',
+                type:'line',
+                showAllSymbol: true,
+                symbolSize: function (value){
+                    return Math.round(value[2]/10) + 2;
+                },
+                data:[1.6, 5.9, 9.0, 26.4, 20.7, 40.7, 135.6, 14.2, 48.7, 18.8, 6.0, 2.3]/*,
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }*/
+            },
+            {
+            	 name:'B电压曲线',
+                 type:'line',
+                 showAllSymbol: true,
+                 symbolSize: function (value){
+                     return Math.round(value[2]/10) + 2;
+                 },
+                 data:[12.6, 15.9, 19.0, 36.4, 18.7, 60.7, 115.6, 182.2, 48.7, 18.8, 6.0, 2.3]/*,
+                 markLine : {
+                     data : [
+                         {type : 'average', name: '平均值'}
+                     ]
+                 }*/
+            },
+            {
+            	 name:'C电压曲线',
+                 type:'line',
+                 showAllSymbol: true,
+                 symbolSize: function (value){
+                     return Math.round(value[2]/10) + 2;
+                 },
+                 data:[12.6, 15.9, 21.0, 16.4, 28.7, 20.7, 75.6, 182.2, 48.7, 18.8, 6.0, 2.3]/*,
+                 markLine : {
+                     data : [
+                         {type : 'average', name: '平均值'}
+                     ]
+                 }*/
+            }
+        ]
+    };
+    myChart.setOption(option);
+}
+function  drawLine2(result){
+    option2 = {
+            tooltip : {
+                trigger: 'axis',
+            	textStyle:{
+            		color:"#fff"
+            	},
+                showDelay: 0             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            },
+            legend: {
+            	textStyle:{
+            		color:"#fff"
+            	},
+                data:['A电流曲线','B电流曲线','C电流曲线']
+            },
+            /*toolbox: {
+                y : -30,
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataZoom : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {show: true, type: ['line', 'bar']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },*/
+            dataZoom : {
+                y: 250,
+                show : false,
+                realtime: true,
+                start : 50,
+                end : 100
+            },
+            grid: {
+                x: 80,
+                y:5,
+                x2:20,
+                y2:10
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : true,
+                    axisLabel:{show:false},
+                    axisTick: {onGap:false},
+        			axisLabel:{
+        		        textStyle:{
+        		        	color:"#fff"
+        		        }
+        			},
+                    splitLine: {show:false},
+                    data : "2017-12-12"
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    splitNumber: 3,
+                    boundaryGap: [0.05, 0.05],
+                    axisLabel: {
+            	        textStyle:{
+            	        	color:"#fff"
+            	        },
+                        formatter: function (v) {
+                            return v + 'A';
+                        }
+                    },
+                    splitArea : {show : true}
+                }
+            ],
+            series : [
+                {
+                name:'A电流曲线',
+                type:'line',
+                showAllSymbol: true,
+                symbolSize: function (value){
+                    return Math.round(value[2]/10) + 2;
+                },
+                 data:[1.6, 5.9, 9.0, 26.4, 20.7, 40.7, 135.6, 14.2, 48.7, 18.8, 6.0, 2.3]/*,
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }*/
+            },
+            {
+            	 name:'B电流曲线',
+                 type:'line',
+                 showAllSymbol: true,
+                 symbolSize: function (value){
+                     return Math.round(value[2]/10) + 2;
+                 },
+                  data:[1.6, 5.9, 9.0, 26.4, 20.7, 40.7, 135.6, 14.2, 48.7, 18.8, 6.0, 2.3]/*,
+                 markLine : {
+                     data : [
+                         {type : 'average', name: '平均值'}
+                     ]
+                 }*/
+            },
+            {
+            	 name:'C电流曲线',
+                 type:'line',
+                 showAllSymbol: true,
+                 symbolSize: function (value){
+                     return Math.round(value[2]/10) + 2;
+                 },
+                 data:[1.6, 5.9, 9.0, 26.4, 20.7, 40.7, 135.6, 14.2, 48.7, 18.8, 6.0, 2.3]/*,
+                 markLine : {
+                     data : [
+                         {type : 'average', name: '平均值'}
+                     ]
+                 }*/
+            }
+          ]
+        };
+        myChart2.setOption(option2);
+}
+function drawLine3(result){
+	option3 = {
+    		tooltip : {
+                trigger: 'axis',
+            	textStyle:{
+            		color:"#fff"
+            	},
+                showDelay: 0             // 显示延迟，添加显示延迟可以避免频繁切换，单位ms
+            },
+            legend: {
+            	textStyle:{
+            		color:"#fff"
+            	},
+                data:['A功率曲线','B功率曲线','C功率曲线']
+            },
+            dataZoom : {
+                show : true,
+               // realtime: true,
+                start : 50
+            },
+            grid: {
+                x: 80,
+                y:5,
+                x2:20,
+                y2:70
+            },
+            xAxis : [
+                {
+                	type : 'category',
+                    position:'bottom',
+                    boundaryGap : true,
+                    axisTick: {onGap:false},
+        			axisLabel:{
+        		        textStyle:{
+        		        	color:"#fff"
+        		        }
+        			},
+                    splitLine: {show:false},
+                    data : "2017-02-02"
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    scale:true,
+                    splitNumber: 3,
+                    boundaryGap: [0.05, 0.05],
+                    axisLabel: {
+            	        textStyle:{
+            	        	color:"#fff"
+            	        },
+                        formatter: function (v) {
+                            return v + ' W';
+                        }
+                    },
+                    splitArea : {show : true}
+                }
+            ],
+            series : [
+                {
+            name:'A功率曲线',
+            type:'line',
+            showAllSymbol: true,
+            symbolSize: function (value){
+                return Math.round(value[2]/10) + 2;
+            },
+            data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+        },
+        {
+        	 name:'B功率曲线',
+             type:'line',
+             showAllSymbol: true,
+             symbolSize: function (value){
+                 return Math.round(value[2]/10) + 2;
+             },
+             data:[1.6, 3.9, 4.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+        },
+        {
+        	 name:'C功率曲线',
+             type:'line',
+             showAllSymbol: true,
+             symbolSize: function (value){
+                 return Math.round(value[2]/10) + 2;
+             },
+             data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+        }
+      ]
+    };
+}
+	</script>
+</head>
+<body>
+	<h6></h6>
+	<div class="work_content_box">
+		<p>配电箱曲线图</p>
+		<form action="" class="search_box">
+			<select name="" id="">
+				<option value="">请选择集中器</option>
+				<option value="">金闽路SITT集中器</option>
+			</select>
+			<div class="ipt_box">
+				<i></i>
+				<input type="text" name="" class = "form-control" placeholder="请输入开始时间" />
+			</div>
+			<div class="ipt_box">
+				<i></i>
+				<input type="text" name="" class = "form-control" placeholder="请输入结束时间" />
+			</div>
+			<input type="submit" value="查询">
+		</form>
+		<div class="area_analysis">
+			<div class="area_model" id = "area1"></div>
+			<div class="area_model" id = "area2"></div>
+			<div class="area_model" id = "area3"></div>
+		</div>
+	</div>
+</body>
+</html>

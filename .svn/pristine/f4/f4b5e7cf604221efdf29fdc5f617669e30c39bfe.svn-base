@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TroutingInspectionMapper">
+    <resultMap id="BaseResultMap" type="com.lamp.model.TroutingInspection">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="roadid" property="roadid" jdbcType="INTEGER"></result>
+        <result column="uid" property="uid" jdbcType="INTEGER"></result>
+        <result column="startime" property="startime" jdbcType="VARCHAR"></result>
+        <result column="endtime" property="endtime" jdbcType="VARCHAR"></result>
+        <result column="checkdescribe" property="checkdescribe" jdbcType="VARCHAR"></result>
+        <result column="operid" property="operid" jdbcType="INTEGER"></result>
+        <result column="opertime" property="opertime" jdbcType="VARCHAR"></result>
+        <result column="state" property="state" jdbcType="INTEGER"></result>
+        <result column="createby" property="createby" jdbcType="INTEGER"></result>
+        <result column="createTime" property="createTime" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,roadid,uid,startime,endtime,checkdescribe,operid,opertime,state,createby,createTime
+    </sql>
+    <!--查询维修人员-->
+    <select id="newrepairPeopleList" resultType="java.util.Map">
+      SELECT p.id ,p.name AS cname
+      FROM repair_people AS  p
+      LEFT JOIN sys_user AS  u ON  p.createby = u.id
+      LEFT JOIN organization o ON o.id = u.org_id
+      WHERE o.org_code like CONCAT('%',#{orgCode},'%')AND p.del_flag = 0;
+    </select>
+
+    <!--根据ID查询巡检-->
+    <select id="queryRoutingInspection" parameterType="integer" resultType="java.util.HashMap">
+       SELECT ch.id,a.areaName,p.name,r.road_name,r.area_id AS
+       areaid,ch.roadid,ch.uid,ch.startime,ch.endtime,ch.checkdescribe FROM checkinfo AS ch
+        LEFT JOIN road_manage AS r ON ch.roadid = r.id
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN area_manage AS a ON a.id = r.area_id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0  AND ch.id = #{id}
+    </select>
+
+    <!--查询维修人员-->
+    <select id="repairPeopleList" resultType="java.util.Map">
+      SELECT p.id AS pid,p.name AS pname
+      FROM repair_people AS  p
+      WHERE p.del_flag = 0;
+    </select>
+
+    <!--查询巡检管理信息-->
+    <select id="queryRoutingInspectionList" parameterType="java.util.HashMap" resultType="java.util.Map">
+        SELECT  a.areaName,ch.id,ch.roadid,ch.uid,r.road_name AS roadname,p.name AS peopleName,ch.startime,
+        ch.endtime,ch.checkdescribe,u.real_name AS opername,ch.opertime,ch.state
+        FROM checkinfo AS ch LEFT JOIN road_manage AS r ON ch.roadid = r.id
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN area_manage AS a ON a.id = r.area_id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0 AND o.org_code like CONCAT('%',#{orgCode},'%')
+        <if test="cname != '' and cname != null">
+            AND  p.name LIKE CONCAT('%',#{cname,jdbcType=VARCHAR},'%')
+        </if>
+        <choose>
+            <when test="orderBy == null or orderBy == ''">
+                order by str_to_date(ch.opertime,'%Y-%m-%d %H:%i:%s') ${sort}
+            </when>
+
+            <when test="'areaName' == orderBy">
+                order by areaName ${sort}
+            </when>
+            <when test="'roadName' == orderBy">
+                order by roadname ${sort}
+            </when>
+            <when test="'peopleName' == orderBy ">
+                order by peopleName ${sort}
+            </when>
+            <when test="'startime' == orderBy">
+                order by ch.startime ${sort}
+            </when>
+            <when test="'endtime' == orderBy">
+                order by ch.endtime ${sort}
+            </when>
+            <when test="'checkdescribe' == orderBy">
+                order by ch.checkdescribe ${sort}
+            </when>
+            <when test="'opername' == orderBy">
+                order by opername ${sort}
+            </when>
+            <when test="'operTime' == orderBy">
+                order by ch.opertime ${sort}
+            </when>
+            <otherwise>
+                order by str_to_date(ch.opertime,'%Y-%m-%d %H:%i:%s') desc
+            </otherwise>
+        </choose>
+        limit #{num},#{showNum}
+    </select>
+
+    <!--获取巡检总记录条数-->
+    <select id="getcount" parameterType="java.util.HashMap" resultType="integer">
+        SELECT COUNT(1)  FROM checkinfo AS ch
+        LEFT JOIN sys_user AS u ON ch.createby = u.id
+        LEFT JOIN repair_people AS p ON ch.uid = p.id
+        LEFT JOIN organization o ON o.id = u.org_id
+        WHERE ch.state = 0 AND o.org_code LIKE CONCAT('%',#{orgCode},'%') AND ch.state = 0
+        <if test="cname != '' and cname != null">
+            AND  p.name LIKE CONCAT('%',#{cname,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <!--增加巡检管理信息-->
+    <insert id="addRoutingInspectionManage" parameterType="com.lamp.model.TroutingInspection" keyProperty="id">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+        INSERT INTO checkinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roadid != 0">
+                roadid,
+            </if>
+            <if test="uid != 0">
+                uid,
+            </if>
+            <if test="startime != '' and startime != null">
+                startime,
+            </if>
+            <if test="endtime != '' and endtime != null">
+                endtime,
+            </if>
+            <if test="checkdescribe != '' and checkdescribe != null">
+                checkdescribe,
+            </if>
+            <if test="operid != '' and operid != null">
+                operid,
+            </if>
+            <if test="opertime != '' and opertime != null">
+                opertime,
+            </if>
+            <if test="state != '' and state != null">
+                state,
+            </if>
+            <if test="createby != '' and createby != null">
+                createby,
+        </if>
+            <if test="createTime != '' and createTime != null">
+                createTime,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roadid != 0">
+                #{roadid},
+            </if>
+            <if test="uid != 0">
+                #{uid},
+            </if>
+            <if test="startime != '' and startime != null">
+                #{startime},
+            </if>
+            <if test="endtime != '' and endtime != null">
+                #{endtime},
+            </if>
+            <if test="checkdescribe != '' and checkdescribe != null">
+                #{checkdescribe},
+            </if>
+            <if test="operid != '' and operid != null">
+                #{operid},
+            </if>
+            <if test="opertime != '' and opertime != null">
+                #{opertime},
+            </if>
+            <if test="state != '' and state != null">
+                #{state},
+            </if>
+            <if test="createby != '' and createby != null">
+            #{createby},
+        </if>
+            <if test="createTime != '' and createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+    <!--更新或删除巡检管理信息-->
+    <update id="updateAnDdeteleRoutingInspectionManage" parameterType="com.lamp.model.TroutingInspection">
+        UPDATE checkinfo SET
+        <trim suffixOverrides=",">
+            <if test="roadid != 0">
+                roadid = #{roadid},
+            </if>
+            <if test="uid != 0">
+                uid = #{uid},
+            </if>
+            <if test="startime != '' and startime != null">
+                startime = #{startime},
+            </if>
+            <if test="endtime != '' and endtime != null">
+                endtime = #{endtime},
+            </if>
+            <if test="checkdescribe != '' and checkdescribe != null">
+                checkdescribe = #{checkdescribe},
+            </if>
+            <if test="operid != '' and operid != null">
+                operid = #{operid},
+            </if>
+            <if test="opertime != '' and opertime != null">
+                opertime = #{opertime},
+            </if>
+            <if test="state != '' and state != null">
+                state = #{state},
+            </if>
+        </trim>
+        WHERE  id = #{id}
+    </update>
+</mapper>

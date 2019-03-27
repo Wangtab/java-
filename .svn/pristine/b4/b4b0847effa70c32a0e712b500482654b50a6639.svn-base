@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lamp.dao.TlamptypeMapper" >
+  <resultMap id="BaseResultMap" type="com.lamp.model.Tlamptype" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="lamptypename" property="lamptypename" jdbcType="VARCHAR" />
+    <result column="lamptypedes" property="lamptypedes" jdbcType="VARCHAR" />
+    <result column="imgurl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="power" property="power" jdbcType="INTEGER" />
+    <result column="factoryid" property="factoryid" jdbcType="INTEGER" />
+    <result column="dimmingmode" property="dimmingmode" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="opertime" property="opertime" jdbcType="VARCHAR" />
+    <result column="delflag" property="delflag" jdbcType="INTEGER" />
+    <result column="spower" property="spower" jdbcType="INTEGER" />
+    <result column="bpower" property="bpower" jdbcType="INTEGER" />
+    <result column="lampModel" property="lampModel" jdbcType="VARCHAR" />
+    <result column="createby" property="createby" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    <result column="lampFactory" property="lampFactory" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, lamptypename, lamptypedes, imgurl, power, factoryid, dimmingmode, operator, opertime,
+    delflag ,spower ,bpower,lampModel,createby,createTime
+  </sql>
+  <!--跳转灯具类型管理页面并分页-->
+  <select id="queryLampTypeManageList" resultType="java.util.Map">
+    SELECT l.id,l.lamptypename,l.lamptypedes,l.lampModel,l.imgurl,l.power,l.lampFactory,
+    l.dimmingmode,l.operator,l.opertime,l.spower,l.bpower,l.lampModel FROM lamptype AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND  l.delflag = 0
+    <if test="typeName != '' and typeName != null">
+      AND l.lampModel like CONCAT('%',#{typeName},'%')
+    </if>
+    ORDER BY l.opertime DESC
+    <if test="page != -1">
+      LIMIT #{page},10;
+    </if>
+  </select>
+
+  <select id="getCountLampTypeList" parameterType="java.util.HashMap" resultType="integer">
+    select count(1) FROM lamptype AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND  l.delflag = 0
+    <if test="typeName != '' and typeName != null">
+      AND l.lampModel like CONCAT('%',#{typeName},'%')
+    </if>
+  </select>
+
+  <select id="getLampTypeList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    SELECT l.id,l.lamptypename,l.lamptypedes,l.lampModel,l.imgurl,l.power,l.lampFactory,
+    l.dimmingmode,l.operator,l.opertime,l.spower,l.bpower,l.lampModel FROM lamptype AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%') AND  l.delflag = 0
+    <if test="typeName != '' and typeName != null">
+      AND l.lampModel like CONCAT('%',#{typeName},'%')
+    </if>
+    ORDER BY l.opertime DESC
+      limit #{num},#{showNum}
+  </select>
+  <!--查询调光值信息-->
+  <select id="querydimmingmodeList" resultType="java.util.Map">
+    SELECT id,dimminName FROM dimmingmode;
+  </select>
+  <!--增加灯具类型信息-->
+  <insert id="addTlamptype"  parameterType="com.lamp.model.Tlamptype">
+    INSERT INTO lamptype
+    <trim prefix=" (" suffix=" )" suffixOverrides="," >
+      <if test="lamptypename != null">
+        lamptypename,
+      </if>
+      <if test="lamptypedes != null">
+        lamptypedes,
+      </if>
+      <if test="imgurl != null">
+        imgurl,
+      </if>
+      <if test="power != null">
+        power,
+      </if>
+      <if test="factoryid != null">
+        factoryid,
+      </if>
+      <if test="dimmingmode != null">
+        dimmingmode,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+      <if test="opertime != null">
+        opertime,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+      <if test="spower != null">
+        spower,
+      </if>
+      <if test="bpower != null">
+        bpower,
+      </if>
+      <if test="lampModel != null">
+        lampModel,
+      </if>
+      <if test="createby != null">
+        createby,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="lampFactory != null">
+        lampFactory,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=" )" suffixOverrides="," >
+      <if test="lamptypename != null">
+        #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptypedes != null">
+        #{lamptypedes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null">
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null">
+        #{power,jdbcType=INTEGER},
+      </if>
+      <if test="factoryid != null">
+        #{factoryid,jdbcType=INTEGER},
+      </if>
+      <if test="dimmingmode != null">
+        #{dimmingmode,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null">
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="spower != null">
+        #{spower,jdbcType=INTEGER},
+      </if>
+      <if test="bpower != null">
+        #{bpower,jdbcType=INTEGER},
+      </if>
+      <if test="lampModel != null">
+        #{lampModel,jdbcType=VARCHAR},
+      </if>
+      <if test="createby != null">
+        #{createby,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="lampFactory != null">
+        #{lampFactory,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--批量查询灯具-->
+  <select id="queryLampRelation" resultType="java.util.Map">
+    SELECT l.id,lt.lampModel FROM lamp AS l
+    LEFT JOIN lamptype AS lt ON lt.id = l.typeId WHERE l.typeId IN
+    <foreach collection="list" item="item" index="index" separator=" , " open=" ( " close=" ) ">
+      #{item.id}
+    </foreach>
+  </select>
+  <!--批量删除灯具信息-->
+  <update id="LampTypeBatchDelete" parameterType="java.util.List">
+    UPDATE lamptype SET
+    <trim suffixOverrides=",">
+      <trim prefix=" delflag = CASE " suffix=" END, ">
+        <foreach collection="list" item="item" index="index">
+          <if test="item.delflag != null">
+            WHEN id = #{item.id} THEN #{item.delflag}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    WHERE id IN
+    <foreach collection="list" item="item" index="index" separator=" , " open=" ( " close=" ) ">
+      #{item.id}
+    </foreach>
+  </update>
+  <!--更新灯具信息-->
+  <update id="updateTypeManage" parameterType="com.lamp.model.Tlamptype">
+    UPDATE lamptype SET
+    <trim prefix="" suffix="" suffixOverrides="," >
+      <if test="lamptypename != null">
+        lamptypename = #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptypedes != null">
+        lamptypedes = #{lamptypedes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null">
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null">
+        power = #{power,jdbcType=INTEGER},
+      </if>
+      <if test="factoryid != null">
+        factoryid = #{factoryid,jdbcType=INTEGER},
+      </if>
+      <if test="dimmingmode != null">
+        dimmingmode = #{dimmingmode,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null">
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null">
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="spower != null">
+        spower = #{spower,jdbcType=INTEGER},
+      </if>
+      <if test="bpower != null">
+        bpower = #{bpower,jdbcType=INTEGER},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=INTEGER},
+      </if>
+      <if test="lampModel != null">
+        lampModel = #{lampModel,jdbcType=VARCHAR},
+      </if>
+      <if test="lampFactory != null">
+        lampFactory = #{lampFactory,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    WHERE  id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--查询灯具信息-->
+  <select id="queryLampType" resultType="java.util.Map">
+    SELECT l.id,l.lamptypename,l.lamptypedes,l.lampModel,l.imgurl,l.power,l.lampFactory,
+    l.dimmingmode,l.operator,l.opertime,l.spower,l.bpower FROM lamptype AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND l.id = #{id}
+    AND l.delflag = 0;
+  </select>
+  <!--查询所有的灯具信息-->
+  <select id="queryLampTypeAll" resultType="java.util.Map">
+    SELECT id,lamptypename FROM lamptype
+    WHERE  delflag = 0;
+  </select>
+
+
+
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from lamptype
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from lamptype
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.lamp.model.Tlamptype" >
+    insert into lamptype (id, lamptypename, lamptypedes, 
+      imgurl, power, factoryid, 
+      dimmingmode, operator, opertime, 
+      delflag)
+    values (#{id,jdbcType=INTEGER}, #{lamptypename,jdbcType=VARCHAR}, #{lamptypedes,jdbcType=VARCHAR}, 
+      #{imgurl,jdbcType=VARCHAR}, #{power,jdbcType=INTEGER}, #{factoryid,jdbcType=INTEGER}, 
+      #{dimmingmode,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR}, #{opertime,jdbcType=VARCHAR}, 
+      #{delflag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertlamptype" parameterType="com.lamp.model.Tlamptype" >
+    insert into lamptype
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lamptypename != null" >
+        lamptypename,
+      </if>
+      <if test="lamptypedes != null" >
+        lamptypedes,
+      </if>
+      <if test="imgurl != null" >
+        imgurl,
+      </if>
+      <if test="power != null" >
+        power,
+      </if>
+      <if test="factoryid != null" >
+        factoryid,
+      </if>
+      <if test="dimmingmode != null" >
+        dimmingmode,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="opertime != null" >
+        opertime,
+      </if>
+      <if test="delflag != null" >
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lamptypename != null" >
+        #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptypedes != null" >
+        #{lamptypedes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null" >
+        #{power,jdbcType=INTEGER},
+      </if>
+      <if test="factoryid != null" >
+        #{factoryid,jdbcType=INTEGER},
+      </if>
+      <if test="dimmingmode != null" >
+        #{dimmingmode,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        #{delflag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lamp.model.Tlamptype" >
+    update lamptype
+    <set >
+      <if test="lamptypename != null" >
+        lamptypename = #{lamptypename,jdbcType=VARCHAR},
+      </if>
+      <if test="lamptypedes != null" >
+        lamptypedes = #{lamptypedes,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="power != null" >
+        power = #{power,jdbcType=INTEGER},
+      </if>
+      <if test="factoryid != null" >
+        factoryid = #{factoryid,jdbcType=INTEGER},
+      </if>
+      <if test="dimmingmode != null" >
+        dimmingmode = #{dimmingmode,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="opertime != null" >
+        opertime = #{opertime,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null" >
+        delflag = #{delflag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lamp.model.Tlamptype" >
+    update lamptype
+    set lamptypename = #{lamptypename,jdbcType=VARCHAR},
+      lamptypedes = #{lamptypedes,jdbcType=VARCHAR},
+      imgurl = #{imgurl,jdbcType=VARCHAR},
+      power = #{power,jdbcType=INTEGER},
+      factoryid = #{factoryid,jdbcType=INTEGER},
+      dimmingmode = #{dimmingmode,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      opertime = #{opertime,jdbcType=VARCHAR},
+      delflag = #{delflag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAlllamptype" resultType="java.util.HashMap" >
+    select
+   lamptype.id, lamptypename, lamptypedes, lamptype.imgurl, power, factoryname, dimmingmode,  lamptype.operator,  lamptype.opertime,
+     lamptype.delflag
+    from lamptype,lampfactory
+    where lamptype.factoryid=lampfactory.id
+  </select>
+
+  <!--查询是否有灯具类型-->
+  <select id="queryLampM" resultType="java.lang.Integer">
+    SELECT  count(*) FROM lamptype AS l
+    LEFT JOIN sys_user AS  u ON  l.createby = u.id
+    LEFT JOIN organization o ON o.id = u.org_id
+    WHERE o.org_code like CONCAT('%',#{org_code},'%')
+    AND l.lampModel = #{msg}
+    AND l.delflag = 0
+  </select>
+
+</mapper>
